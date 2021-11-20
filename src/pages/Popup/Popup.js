@@ -55,14 +55,17 @@ class Popup extends Component {
             images: {},
             basket: {},
             bgcolor: 'black',
+            settings: {
+              showUrl: true
+            },
             tab: 0 // 0=Manifests 1=Images 2=Collections 3=Basket
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
         this.openBasketCollection = this.openBasketCollection.bind(this)
 
-        // chrome.storage.sync.get('favoriteColor', (data) => {
-        //   this.setState({bgcolor:data.favoriteColor})
-        // })
+        chrome.storage.sync.get('showUrl', (data) => {
+          this.setState({settings:Object.assign({},this.state.settings,data)})
+        })
 
     }
 
@@ -181,6 +184,7 @@ class Popup extends Component {
                   error = { this.state.manifests[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
                   addToBasket = {this.addToBasket.bind(this)}
+                  settings = {this.state.settings}
               />)
           }
         } else {
@@ -269,7 +273,7 @@ class Popup extends Component {
         return(
           <div className="App">
             <header className="App-header" style={{backgroundColor:this.state.bgcolor}}>
-              <h2 className="App-title">detektIIIF</h2>
+              <h2 className="App-title">detektIIIF 2</h2>
               <small className="version">{chrome.runtime.getManifest().version}</small>
             </header>
             <div className="App-body">

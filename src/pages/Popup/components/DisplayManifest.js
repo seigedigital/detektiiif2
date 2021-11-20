@@ -3,8 +3,8 @@ import manifesto from 'manifesto.js';
 
 export default class DisplayManifest extends Component {
     constructor(props) {
+        console.log("CONS DM")
         super(props);
-        // this.copyUrl = this.copyUrl.bind(this);
     }
 
     render() {
@@ -32,6 +32,11 @@ export default class DisplayManifest extends Component {
         // need more logic here: URL vs ID
         // <a href={this.props.id} target="_blank">{this.props.id}</a><br />
 
+        let showUrl = <span></span>
+        if(this.props.settings.showUrl===true) {
+          showUrl = <a href={this.props.url} target="_blank">{this.props.url}</a>
+        }
+
         return (
             <div className="box">
                 <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}}>
@@ -39,7 +44,7 @@ export default class DisplayManifest extends Component {
                 </div>
                 <div className="box_text">
                     {this.props.label}<br />
-                    <a href={this.props.url} target="_blank">{this.props.url}</a><br />
+                    {showUrl}
                     {corsflag[this.props.cors.toString()]}
                     {httpsflag[this.props.url.startsWith("https").toString()]}<br />
                     <button onClick={() => this.props.copyUrl(this.props.url)}>COPY URL</button>
