@@ -7,16 +7,11 @@ import DisplayManifest from "./components/DisplayManifest"
 import DisplayImage from "./components/DisplayImage"
 import DisplayBasket from "./components/DisplayBasket"
 
-// import * as React from 'react';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-
-
-// import { Tab, Tabs, TabList, TabPanel } from 'react-tabs'
-// import 'react-tabs/style/react-tabs.css'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -288,18 +283,22 @@ class Popup extends Component {
                   <Tab label="Basket" value={3} {...a11yProps(3)} />
                 </Tabs>
               </Box>
-              <TabPanel value={this.state.tab} index={0}>
-                {ms}
-              </TabPanel>
-              <TabPanel value={this.state.tab} index={1}>
-                {is}
-              </TabPanel>
-              <TabPanel value={this.state.tab} index={2}>
-                {cs}
-              </TabPanel>
-              <TabPanel value={this.state.tab} index={3}>
-                {bs}
-              </TabPanel>
+              <div id="div2" style={{maxHeight:"100%",overflow:"auto",border:"0px solid red"}}>
+                <div id="div3" style={{border:"0px solid yellow"}}>
+                  <TabPanel value={this.state.tab} index={0}>
+                    {ms}
+                  </TabPanel>
+                  <TabPanel value={this.state.tab} index={1}>
+                    {is}
+                  </TabPanel>
+                  <TabPanel value={this.state.tab} index={2}>
+                    {cs}
+                  </TabPanel>
+                  <TabPanel value={this.state.tab} index={3}>
+                    {bs}
+                  </TabPanel>
+                </div>
+              </div>
             </Box>
 
             </div>

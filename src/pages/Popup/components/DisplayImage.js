@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import manifesto from 'manifesto.js';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+
 
 export default class DisplayImage extends Component {
     constructor(props) {
@@ -32,11 +34,16 @@ export default class DisplayImage extends Component {
         // need more logic here: URL vs ID
         // <a href={this.props.id} target="_blank">{this.props.id}</a><br />
 
+        <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}}>
+          {errorflag[this.props.error]}
+        </div>
+
         return (
             <div className="box">
-                <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}}>
-                  {errorflag[this.props.error]}
-                </div>
+                <LazyLoadImage
+                  height={"100"}
+                  src={this.props.thumb}
+                />
                 <div className="box_text">
                     {this.props.label}<br />
                     <a href={this.props.url} target="_blank">{this.props.url}</a><br />
