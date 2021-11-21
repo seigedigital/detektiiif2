@@ -1,7 +1,7 @@
 import './Styles.css'
 
 class Theme {
-  title = "AU An University"
+  title = "AU University"
 }
 
 export default Theme
