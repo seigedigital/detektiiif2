@@ -15,7 +15,7 @@ derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
 
 ## Build-time Theming
 
-Duplicate one of the folders in src/themes for your themes
+Duplicate one of the folders in src/themes for your own theme
 ```
 cp -r detektiiif2 myinstitution
 ```
