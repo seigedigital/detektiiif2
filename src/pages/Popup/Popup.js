@@ -1,6 +1,8 @@
 /*global chrome*/
 import React, { Component } from 'react'
-import './App.css'
+
+import Theme from '../../themes/Selector.js'
+
 import {getCurrentTab} from "./common/Utils"
 import DisplayCollection from "./components/DisplayCollection"
 import DisplayManifest from "./components/DisplayManifest"
@@ -49,12 +51,12 @@ function a11yProps(index) {
 class Popup extends Component {
     constructor(props) {
         super(props)
+        this.theme = new Theme()
         this.state = {
             manifests: {},
             collections: {},
             images: {},
             basket: {},
-            bgcolor: 'black',
             settings: {
               showUrl: true
             },
@@ -272,8 +274,8 @@ class Popup extends Component {
 
         return(
           <div className="App">
-            <header className="App-header" style={{backgroundColor:this.state.bgcolor}}>
-              <h2 className="App-title">detektIIIF 2</h2>
+            <header className="App-header">
+              <h2 className="App-title">H: {this.theme.title}</h2>
               <small className="version">{chrome.runtime.getManifest().version}</small>
             </header>
             <div className="App-body">
