@@ -5,6 +5,14 @@ Completely new revamped Version of DetektIIIF (Version 1: https://github.com/lea
 derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
 
 
+## Usage
+
+* clone this repo ```git clone https://github.com/seigedigital/detektiiif2```
+* ```cd detektiiif2```
+* ```npm install```
+* ```npm run build``` or ```npm start```
+* provide build folder to Chrome (unpacked in Developer Mode or as ZIP via the Chrome Web Store)
+
 ## Build-time Theming
 
 Duplicate one of the folders in src/themes for your themes
