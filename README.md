@@ -27,4 +27,4 @@ import Theme from './myinstitution/Theme.js'
 
 export default Theme
 ```
-That's it!
+Rebuild the extension. That's it!
