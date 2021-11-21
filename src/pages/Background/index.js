@@ -350,11 +350,17 @@
             Object.keys(tabStorage[tabId].iiif.manifests).length+
             Object.keys(tabStorage[tabId].iiif.collections).length+
             Object.keys(tabStorage[tabId].iiif.images).length;
+
         chrome.runtime.sendMessage({type: 'updateIcon', number: num.toString()});
         chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
-        chrome.action.setBadgeText({text:num.toString()});
-        // chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
-        // chrome.browserAction.setBadgeText({text:num.toString()});
+
+        if(num>0)  {
+          chrome.action.setBadgeText({text:num.toString()});
+          // chrome.action.setIcon({path: { 'default_icon':'icon-34.png' } })
+        } else  {
+          chrome.action.setBadgeText({text:''});
+          // chrome.action.setIcon({path: { 'default_icon':'icon-34-white.png' } })
+        }
     }
 
     function filterURLs(url) { // returns true=block, false=accept
