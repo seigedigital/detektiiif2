@@ -26,7 +26,7 @@ class Options extends Component {
     return (
       <div>
       <header className="App-header">
-        <h2 className="App-title">H: {this.theme.title}</h2>
+        <h2 className="App-title">Options: {this.theme.title}</h2>
         <small className="version">{chrome.runtime.getManifest().version}</small>
       </header>
         <FormControlLabel
