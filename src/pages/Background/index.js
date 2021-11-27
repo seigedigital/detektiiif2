@@ -14,7 +14,8 @@
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
         switch (msg.type) {
             case 'popupInit':
-                console.log("POP INIT");
+                console.log("POP INIT")
+                console.log(tabStorage)
                 response(
                   Object.assign({},tabStorage[msg.tabId],{basket: basket})
                 );
@@ -55,6 +56,7 @@
     }
 
     function fetchHttp(url) {
+      console.log(url)
       fetchWorkStart(url,"follow");
       if(url.startsWith("http:")) {
         fetchWorkStart(url.replace(/^http\:/i,"https:"),"follow");
@@ -62,6 +64,7 @@
     }
 
     function fetchWorkStart(url,follow) {
+      console.log(url)
       if(url in cache) {
         console.log("no fetch, already cached")
         compileData(url,activeTab);
@@ -71,6 +74,7 @@
     }
 
     function fetchWorkHeader(url,follow) {
+      console.log(url)
       if(!url.startsWith('http')) {
         console.log("URL denied (HEAD), we're http(s) only.")
         return
@@ -400,13 +404,15 @@
 
     chrome.webRequest.onHeadersReceived.addListener((details) => {
         console.log("HEADERS RECVD")
+        console.log(details)
+
         var { tabId, requestId, url, timeStamp, method } = details;
 
         if(tabId==chrome.tabs.TAB_ID_NONE) {
             return;
         }
 
-        // console.log("URL: "+url);
+        console.log("URL: "+url);
 
         // tabId = fixTabId(tabId);
 
@@ -467,6 +473,8 @@
 
     chrome.webRequest.onCompleted.addListener((details) => {
         console.log("WEBREQ COMPLETED")
+        console.log(details)
+
         var { tabId, requestId, url, timeStamp, method } = details;
 
         if(tabId==chrome.tabs.TAB_ID_NONE) {
@@ -508,6 +516,9 @@
     }, networkFilters, ["responseHeaders"]);
 
     function sendMsg() {
+      console.log("aaa")
+      console.log(document)
+      console.log("ccc")
       chrome.runtime.sendMessage(
         {type: 'docLoad', doc: document.documentElement.innerHTML}
       )
@@ -517,6 +528,13 @@
         console.log("UPDATE TAB "+tabId)
 
         if(changeInfo.status === 'complete') {
+
+          console.log(changeInfo)
+
+          if(!tab.url.startsWith('http')) {
+            console.log("Ignoring non-http")
+            return
+          }
 
           chrome.scripting.executeScript({
               target: {tabId: tabId},
@@ -536,7 +554,8 @@
         }
 
         if(!changeInfo.url) {
-            console.log("NO URL INFO");
+            console.log("NO URL INFO")
+            console.log(changeInfo)
             return;
         }
 
@@ -551,6 +570,7 @@
     });
 
     chrome.tabs.onActivated.addListener((tab) => {
+        console.log({actTab:tab})
         // alert("ACTIVATE");
         if(!tab) {
             return;

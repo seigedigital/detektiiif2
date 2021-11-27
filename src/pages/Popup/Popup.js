@@ -28,7 +28,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -81,7 +81,10 @@ class Popup extends Component {
         getCurrentTab((tab) => {
             chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
                 if (response) {
-                    // console.log(JSON.stringify(response.iiif))
+                    console.log(
+                      "Data for "+tab.id+" "+
+                      JSON.stringify(response.iiif)
+                    )
                     this.setState(Object.assign({},{...response.iiif},{basket:response.basket}))
                 }
             })
@@ -173,7 +176,7 @@ class Popup extends Component {
 
         let ms = []
         if(Object.keys(this.state.manifests).length>0) {
-          ms.push(<h3>Presentation API: Manifests<a name="ancm" /></h3>)
+          ms.push(<h3 key={'TABM'}>Presentation API: Manifests<a name="ancm" /></h3>)
           for (var key in this.state.manifests) {
               ms.push(<
                   DisplayManifest
@@ -195,7 +198,7 @@ class Popup extends Component {
 
         let cs = []
         if(Object.keys(this.state.collections).length>0) {
-          cs.push(<h3>Presentation API: Collections<a name="ancc" /></h3>)
+          cs.push(<h3 key={'TABC'}>Presentation API: Collections<a name="ancc" /></h3>)
           for (var key in this.state.collections) {
               cs.push(<
                   DisplayCollection
@@ -215,7 +218,7 @@ class Popup extends Component {
 
         let is = []
         if(Object.keys(this.state.images).length>0) {
-          is.push(<h3>Image API<a name="anci" /></h3>)
+          is.push(<h3 key={'TABI'}>Image API<a name="anci" /></h3>)
           for (var key in this.state.images) {
               is.push(<
                   DisplayImage
@@ -235,7 +238,7 @@ class Popup extends Component {
 
         let bs = []
         if(Object.keys(this.state.basket).length>0) {
-          bs.push(<h3>Basket<a name="ancb" /></h3>)
+          bs.push(<h3 key={'TABB'}>Basket<a name="ancb" /></h3>)
           for (var key in this.state.basket) {
               bs.push(<
                   DisplayBasket
