@@ -176,7 +176,7 @@ class Popup extends Component {
 
         let ms = []
         if(Object.keys(this.state.manifests).length>0) {
-          ms.push(<h3 key={'TABM'}>Presentation API: Manifests<a name="ancm" /></h3>)
+          ms.push(<h3 key={'TABM'}>Available Manifests<a name="ancm" /></h3>)
           for (var key in this.state.manifests) {
               ms.push(<
                   DisplayManifest
@@ -274,15 +274,10 @@ class Popup extends Component {
 
         console.log("RENDER")
 
+        let outputAll = []
 
-        return(
-          <div className="App">
-            <header className="App-header">
-              <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
-              <small className="version">{chrome.runtime.getManifest().version}</small>
-            </header>
-            <div className="App-body">
-
+        if(this.theme.tabs===true) {
+          outputAll.push(
             <Box sx={{ width: '100%' }}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
@@ -309,7 +304,30 @@ class Popup extends Component {
                 </div>
               </div>
             </Box>
+          )
+        } else {
 
+          switch(this.theme.singleView) {
+
+            case 'MANIFESTS':
+              outputAll.push(ms)
+              break
+
+            default:
+              break
+          }
+
+        }
+
+
+        return(
+          <div className="App">
+            <header className="App-header">
+              <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
+              <small className="version">{chrome.runtime.getManifest().version}</small>
+            </header>
+            <div className="App-body">
+              {outputAll}
             </div>
           </div>
         )
