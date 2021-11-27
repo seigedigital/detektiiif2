@@ -2,6 +2,8 @@
 build/
 **/.DS_Store
 
+src/themes/detektiiif2-external*
+
 # Logs
 logs
 *.log
