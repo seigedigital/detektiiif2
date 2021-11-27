@@ -15,6 +15,10 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
+import IconButton from '@mui/material/IconButton';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import Badge from '@mui/material/Badge';
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -264,14 +268,6 @@ class Popup extends Component {
           cc.push("No IIIF content on this page.")
         }
 
-        // <div className="App">
-        //   <header className="App-header">
-        //     <h2 className="App-title">detektIIIF</h2>
-        //   </header>
-        //
-        //   </div>
-        //
-
         console.log("RENDER")
 
         let outputAll = []
@@ -319,83 +315,30 @@ class Popup extends Component {
 
         }
 
-
         return(
           <div className="App">
-            <header className="App-header">
+            <header className="App-header" key={'App-header-0'}>
               <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
               <small className="version">{chrome.runtime.getManifest().version}</small>
             </header>
-            <div className="App-body">
+            <div className="App-subheader" key={'App-subheader-0'}>
+              <div className="BasketIcon">
+                <IconButton color="primary" aria-label="upload picture" component="span">
+                  <Badge badgeContent={Object.keys(this.state.basket).length} className="BasketBadge">
+                    {this.theme.basketImage!==null ?
+                        <img src={this.theme.basketImage} className="BasketIconImage"/> :
+                        <ShoppingCartOutlinedIcon />
+                    }
+                  </Badge>
+                </IconButton>
+              </div>
+            </div>
+            <div className="App-body"  key={'App-body-0'}>
               {outputAll}
             </div>
           </div>
         )
 
-        // return (
-        //   <div className="App">
-        //     <header className="App-header" style={{backgroundColor:this.state.bgcolor}}>
-        //       <h2 className="App-title">detektIIIF</h2>
-        //       <small className="version">{chrome.runtime.getManifest().version}</small>
-        //     </header>
-        //     <div className="App-body">
-        //         <div>
-        //           <div>
-        //             <div>Manifests ({mnn})</div>
-        //             <div>Images ({inn})</div>
-        //             <div>Collections ({cnn})</div>
-        //             <div>Basket ({bnn})</div>
-        //           </div>
-        //           <div>
-        //             {ms}
-        //           </div>
-        //           <div>
-        //             {is}
-        //           </div>
-        //           <div>
-        //             {cs}
-        //           </div>
-        //           <div>
-        //           <button onClick={() => this.copyBasketCollection()}>COPY AS COLLECTION</button>&nbsp
-        //           <button onClick={() => this.openBasketCollection()}>OPEN IN M3</button>
-        //             {bs}
-        //           </div>
-        //         </div>
-        //     </div>
-        //   </div>
-        // )
-        // return (
-        //   <div className="App">
-        //     <header className="App-header" style={{backgroundColor:this.state.bgcolor}}>
-        //       <h2 className="App-title">detektIIIF</h2>
-        //       <small className="version">{chrome.runtime.getManifest().version}</small>
-        //     </header>
-        //     <div className="App-body">
-        //         <Tabs>
-        //           <TabList>
-        //             <Tab>Manifests ({mnn})</Tab>
-        //             <Tab>Images ({inn})</Tab>
-        //             <Tab>Collections ({cnn})</Tab>
-        //             <Tab>Basket ({bnn})</Tab>
-        //           </TabList>
-        //           <TabPanel>
-        //             {ms}
-        //           </TabPanel>
-        //           <TabPanel>
-        //             {is}
-        //           </TabPanel>
-        //           <TabPanel>
-        //             {cs}
-        //           </TabPanel>
-        //           <TabPanel>
-        //           <button onClick={() => this.copyBasketCollection()}>COPY AS COLLECTION</button>&nbsp
-        //           <button onClick={() => this.openBasketCollection()}>OPEN IN M3</button>
-        //             {bs}
-        //           </TabPanel>
-        //         </Tabs>
-        //     </div>
-        //   </div>
-        // )
     }
 }
 
