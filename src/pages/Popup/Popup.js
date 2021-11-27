@@ -278,7 +278,7 @@ class Popup extends Component {
         return(
           <div className="App">
             <header className="App-header">
-              <h2 className="App-title">{this.theme.title}</h2>
+              <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
               <small className="version">{chrome.runtime.getManifest().version}</small>
             </header>
             <div className="App-body">
