@@ -1,8 +1,8 @@
 import './Styles.css'
+import ThemeTemplate from '../_template/ThemeTemplate.js'
 
-class Theme {
+class Theme extends ThemeTemplate {
   title = "DetektIIIF Version 2"
-  logoImage = null
 }
 
 export default Theme

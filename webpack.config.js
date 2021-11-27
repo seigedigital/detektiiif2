@@ -103,6 +103,7 @@ var options = {
   },
   resolve: {
     alias: alias,
+    symlinks: true,
     extensions: fileExtensions
       .map((extension) => '.' + extension)
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
