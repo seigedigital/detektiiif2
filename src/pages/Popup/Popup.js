@@ -17,6 +17,7 @@ import Box from '@mui/material/Box';
 
 import IconButton from '@mui/material/IconButton';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import Badge from '@mui/material/Badge';
 
 function TabPanel(props) {
@@ -270,10 +271,10 @@ class Popup extends Component {
 
         console.log("RENDER")
 
-        let outputAll = []
+        let outputContent = []
 
         if(this.theme.tabs===true) {
-          outputAll.push(
+          outputContent.push(
             <Box sx={{ width: '100%' }}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
@@ -283,59 +284,72 @@ class Popup extends Component {
                   <Tab label="Basket" value={3} {...a11yProps(3)} />
                 </Tabs>
               </Box>
-              <div id="div2" style={{maxHeight:"100%",overflow:"auto",border:"0px solid red"}}>
-                <div id="div3" style={{border:"0px solid yellow"}}>
-                  <TabPanel value={this.state.tab} index={0}>
-                    {ms}
-                  </TabPanel>
-                  <TabPanel value={this.state.tab} index={1}>
-                    {is}
-                  </TabPanel>
-                  <TabPanel value={this.state.tab} index={2}>
-                    {cs}
-                  </TabPanel>
-                  <TabPanel value={this.state.tab} index={3}>
-                    {bs}
-                  </TabPanel>
-                </div>
-              </div>
+                <TabPanel value={this.state.tab} index={0}>
+                  {ms}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={1}>
+                  {is}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={2}>
+                  {cs}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={3}>
+                  {bs}
+                </TabPanel>
             </Box>
           )
         } else {
-
-          switch(this.theme.singleView) {
-
-            case 'MANIFESTS':
-              outputAll.push(ms)
-              break
-
-            default:
-              break
-          }
-
+          outputContent.push(
+            <Box sx={{ width: '100%' }}>
+                <TabPanel value={this.state.tab} index={0}>
+                  {ms}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={1}>
+                  {is}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={2}>
+                  {cs}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={3}>
+                  {bs}
+                </TabPanel>
+            </Box>
+          )
         }
 
         return(
           <div className="App">
+
             <header className="App-header" key={'App-header-0'}>
               <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
               <small className="version">{chrome.runtime.getManifest().version}</small>
             </header>
+
             <div className="App-subheader" key={'App-subheader-0'}>
               <div className="BasketIcon">
-                <IconButton color="primary" aria-label="upload picture" component="span">
+                <IconButton color="primary"
+                  aria-label="Basket"
+                  component="span"
+                  onClick={ () => {
+                    this.setState({tab: this.state.tab===3?0:3 })
+                  } }
+                >
                   <Badge badgeContent={Object.keys(this.state.basket).length} className="BasketBadge">
-                    {this.theme.basketImage!==null ?
-                        <img src={this.theme.basketImage} className="BasketIconImage"/> :
-                        <ShoppingCartOutlinedIcon />
+                    {
+                      this.state.tab===0 ?
+                      (this.theme.basketImage!==null ? <img src={this.theme.basketImage} className="BasketIconImage"/> : <ShoppingCartOutlinedIcon />)
+                      :
+                      (this.theme.closeBasketImage!==null ? <img src={this.theme.closeBasketImage} className="BasketIconImage"/> : <CancelOutlinedIcon />)
                     }
                   </Badge>
                 </IconButton>
               </div>
             </div>
+
             <div className="App-body"  key={'App-body-0'}>
-              {outputAll}
+              {outputContent}
             </div>
+
           </div>
         )
 
