@@ -195,6 +195,7 @@ class Popup extends Component {
                   copyUrl = {this.copyUrl.bind(this)}
                   addToBasket = {this.addToBasket.bind(this)}
                   settings = {this.state.settings}
+                  theme = {this.theme}
               />)
           }
         } else {
@@ -275,7 +276,7 @@ class Popup extends Component {
 
         if(this.theme.tabs===true) {
           outputContent.push(
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%' }} key={"TABBOX"}>
               <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
                   <Tab label="Manifests" value={0} {...a11yProps(0)} />
@@ -300,7 +301,7 @@ class Popup extends Component {
           )
         } else {
           outputContent.push(
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '100%' }} key={"SINGLEBOX"}>
                 <TabPanel value={this.state.tab} index={0}>
                   {ms}
                 </TabPanel>
@@ -334,7 +335,7 @@ class Popup extends Component {
                     this.setState({tab: this.state.tab===3?0:3 })
                   } }
                 >
-                  <Badge badgeContent={Object.keys(this.state.basket).length} className="BasketBadge">
+                  <Badge badgeContent={this.state.tab===0?Object.keys(this.state.basket).length:0} className="BasketBadge">
                     {
                       this.state.tab===0 ?
                       (this.theme.basketImage!==null ? <img src={this.theme.basketImage} className="BasketIconImage"/> : <ShoppingCartOutlinedIcon />)
@@ -346,7 +347,7 @@ class Popup extends Component {
               </div>
             </div>
 
-            <div className="App-body"  key={'App-body-0'}>
+            <div className="App-body" key={'App-body-0'}>
               {outputContent}
             </div>
 
