@@ -152,6 +152,7 @@ class Popup extends Component {
       form.appendChild(hiddenField)
       document.body.appendChild(form)
       form.submit()
+      document.body.removeChild(form)
     }
 
     removeFromBasket(key) {
@@ -365,8 +366,6 @@ class Popup extends Component {
             <div className="App-body" key={'App-body-0'}>
               {outputContent}
             </div>
-
-            {this.theme.about}
 
           </div>
         )
