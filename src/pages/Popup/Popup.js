@@ -244,7 +244,6 @@ class Popup extends Component {
 
         let bs = []
         if(Object.keys(this.state.basket).length>0) {
-          bs.push(<h3 key={'TABB'}>Basket<a name="ancb" /></h3>)
           bs.push()
           for (var key in this.state.basket) {
               bs.push(<
@@ -304,9 +303,10 @@ class Popup extends Component {
         } else {
           switch(this.state.tab) {
             case 0:
-              subHeaderContent.push(<h3 key={'TABM'}>Available Manifests</h3>)
+              subHeaderContent.push(<h3 key={'TABM'} className="SubHeaderHeading">Available Manifests</h3>)
               break
             case 3:
+              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket</h3>)
               subHeaderContent.push(<button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>)
               break
             default:
