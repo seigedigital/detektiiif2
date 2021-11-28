@@ -181,7 +181,6 @@ class Popup extends Component {
 
         let ms = []
         if(Object.keys(this.state.manifests).length>0) {
-          ms.push(<h3 key={'TABM'}>Available Manifests<a name="ancm" /></h3>)
           for (var key in this.state.manifests) {
               ms.push(<
                   DisplayManifest
@@ -245,6 +244,7 @@ class Popup extends Component {
         let bs = []
         if(Object.keys(this.state.basket).length>0) {
           bs.push(<h3 key={'TABB'}>Basket<a name="ancb" /></h3>)
+          bs.push()
           for (var key in this.state.basket) {
               bs.push(<
                   DisplayBasket
@@ -272,6 +272,7 @@ class Popup extends Component {
 
         console.log("RENDER")
 
+        let subHeaderContent = []
         let outputContent = []
 
         if(this.theme.tabs===true) {
@@ -300,6 +301,16 @@ class Popup extends Component {
             </Box>
           )
         } else {
+          switch(this.state.tab) {
+            case 0:
+              subHeaderContent.push(<h3 key={'TABM'}>Available Manifests</h3>)
+              break
+            case 3:
+              subHeaderContent.push(<button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>)
+              break
+            default:
+              break
+          }
           outputContent.push(
             <Box sx={{ width: '100%' }} key={"SINGLEBOX"}>
                 <TabPanel value={this.state.tab} index={0}>
@@ -327,6 +338,7 @@ class Popup extends Component {
             </header>
 
             <div className="App-subheader" key={'App-subheader-0'}>
+              {subHeaderContent}
               <div className="BasketIcon">
                 <IconButton color="primary"
                   aria-label="Basket"
@@ -335,7 +347,10 @@ class Popup extends Component {
                     this.setState({tab: this.state.tab===3?0:3 })
                   } }
                 >
-                  <Badge badgeContent={this.state.tab===0?Object.keys(this.state.basket).length:0} className="BasketBadge">
+                  <Badge
+                    badgeContent={this.state.tab===0?Object.keys(this.state.basket).length:0}
+                    className="BasketBadge"
+                  >
                     {
                       this.state.tab===0 ?
                       (this.theme.basketImage!==null ? <img src={this.theme.basketImage} className="BasketIconImage"/> : <ShoppingCartOutlinedIcon />)
@@ -350,6 +365,8 @@ class Popup extends Component {
             <div className="App-body" key={'App-body-0'}>
               {outputContent}
             </div>
+
+            {this.theme.about}
 
           </div>
         )

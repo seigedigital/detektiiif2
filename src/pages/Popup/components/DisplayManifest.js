@@ -34,6 +34,9 @@ export default class DisplayManifest extends Component {
           buttons.push(<button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={"ButtonAddToBasket"}>ADD TO BASKET</button>)
         }
 
+        console.log("SA "+this.props.url.startsWith("https"))
+        console.log("url "+this.props.url)
+
         return (
             <div className="box">
                 <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}}>
