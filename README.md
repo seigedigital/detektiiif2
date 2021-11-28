@@ -10,7 +10,7 @@ derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
 * clone this repo ```git clone https://github.com/seigedigital/detektiiif2```
 * ```cd detektiiif2```
 * ```npm install```
-* ```npm run build``` or ```npm start```
+* ```npm run build``` (one time production) or ```npm start``` (continuous development mode + hot reload)
 * provide build folder to Chrome (unpacked in Developer Mode or as ZIP via the Chrome Web Store)
 
 ## Build-time Theming
