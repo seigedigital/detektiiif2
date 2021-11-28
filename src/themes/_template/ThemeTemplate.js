@@ -45,14 +45,14 @@ class ThemeTemplate {
 
   openManifestLinks = [
     {
-      url: 'https://universalviewer.io/uv.html?manifest=',
+      url: 'https://universalviewer.io/uv.html?manifest=%%%URI%%%',
       label: {
         en: "Open in UV",
         de: "In UV öffnen"
       }
     },
     {
-      url: 'https://demo.tify.rocks/demo.html?manifest=',
+      url: 'https://demo.tify.rocks/demo.html?manifest=%%%URI%%%',
       label: {
         en: "Open in TIFY",
         de: "In TIFY öffnen"
@@ -66,6 +66,23 @@ class ThemeTemplate {
       }
     }
   ]
+
+  // Basket
+
+  postBasketCollectionTo = [
+    {
+      url: 'https://manducus.net/m3',
+      mode: 'wwwformdata',
+      variable: 'collection',
+      label: {
+        en: "Open Collection in M3",
+        de: "Kollektion In M3 öffnen"
+      }
+    }
+  ]
+
+
+
 }
 
 export default ThemeTemplate

@@ -431,7 +431,7 @@
         }
 
         var accepted = false;
-        var cors = 0;
+        var cors = false;
 
         for (let index = 0; index < details.responseHeaders.length; index++) {
             var item=details.responseHeaders[index];
@@ -445,7 +445,7 @@
                 item.name.toLowerCase().includes("access-control-allow-origin") &&
                 item.value.toLowerCase().includes("*".toUpperCase())
             ) {
-                cache_cors[url] = cors = 1;
+                cache_cors[url] = cors = true;
             }
             if(item.name=="Content-Length" && item.value>1000000) {
                 // console.log("discard(2) "+details.url);

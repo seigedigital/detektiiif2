@@ -76,12 +76,6 @@ class Popup extends Component {
 
     }
 
-    // const [value, setValue] = React.useState(0);
-    //
-    // const handleChange = (event, newValue) => {
-    //   setValue(newValue);
-    // };
-
     componentDidMount() {
         getCurrentTab((tab) => {
             chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
@@ -244,7 +238,6 @@ class Popup extends Component {
 
         let bs = []
         if(Object.keys(this.state.basket).length>0) {
-          bs.push()
           for (var key in this.state.basket) {
               bs.push(<
                   DisplayBasket
@@ -278,25 +271,29 @@ class Popup extends Component {
         if(this.theme.tabs===true) {
           outputContent.push(
             <Box sx={{ width: '100%' }} key={"TABBOX"}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }} key={"TABBOX2"}>
                 <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
-                  <Tab label="Manifests" value={0} {...a11yProps(0)} />
-                  <Tab label="Images" value={1} {...a11yProps(1)} />
-                  <Tab label="Collections" value={2}  {...a11yProps(2)} />
-                  <Tab label="Basket" value={3} {...a11yProps(3)} />
+                  <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
+                  <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
+                  <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
+                  <Tab label="Basket" value={3} {...a11yProps(3)} key={"TAB3"} />
+                  <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
                 </Tabs>
               </Box>
-                <TabPanel value={this.state.tab} index={0}>
+                <TabPanel value={this.state.tab} index={0} key={"TABPANEL0"}>
                   {ms}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={1}>
+                <TabPanel value={this.state.tab} index={1} key={"TABPANEL1"}>
                   {is}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={2}>
+                <TabPanel value={this.state.tab} index={2} key={"TABPANEL2"}>
                   {cs}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={3}>
+                <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
                   {bs}
+                </TabPanel>
+                <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
+                  {this.theme.about}
                 </TabPanel>
             </Box>
           )
@@ -326,6 +323,9 @@ class Popup extends Component {
                 <TabPanel value={this.state.tab} index={3}>
                   {bs}
                 </TabPanel>
+                <TabPanel value={this.state.tab} index={4}>
+                  {this.theme.about}
+                </TabPanel>
             </Box>
           )
         }
@@ -340,12 +340,12 @@ class Popup extends Component {
 
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
-              <div className="BasketIcon">
+              <div className="BasketIcon" style={{display:(this.theme.tabs===true?'none':'block')}}>
                 <IconButton color="primary"
                   aria-label="Basket"
                   component="span"
                   onClick={ () => {
-                    this.setState({tab: this.state.tab===3?0:3 })
+                    this.setState({tab: this.state.tab!==0?0:3 })
                   } }
                 >
                   <Badge
@@ -367,6 +367,11 @@ class Popup extends Component {
               {outputContent}
             </div>
 
+            <div>
+              <a href="">Option</a>
+              <button onClick={ () => { this.setState({tab:4}) } }>About</button>
+            </div>
+
           </div>
         )
 
@@ -374,77 +379,3 @@ class Popup extends Component {
 }
 
 export default Popup
-
-
-
-// WORKING DEMO
-//
-// import * as React from 'react';
-// import PropTypes from 'prop-types';
-// import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
-// import Typography from '@mui/material/Typography';
-// import Box from '@mui/material/Box';
-//
-// function TabPanel(props) {
-//   const { children, value, index, ...other } = props;
-//
-//   return (
-//     <div
-//       role="tabpanel"
-//       hidden={value !== index}
-//       id={`simple-tabpanel-${index}`}
-//       aria-labelledby={`simple-tab-${index}`}
-//       {...other}
-//     >
-//       {value === index && (
-//         <Box sx={{ p: 3 }}>
-//           <Typography>{children}</Typography>
-//         </Box>
-//       )}
-//     </div>
-//   );
-// }
-//
-// TabPanel.propTypes = {
-//   children: PropTypes.node,
-//   index: PropTypes.number.isRequired,
-//   value: PropTypes.number.isRequired,
-// };
-//
-// function a11yProps(index) {
-//   return {
-//     id: `simple-tab-${index}`,
-//     'aria-controls': `simple-tabpanel-${index}`,
-//   };
-// }
-//
-// export default function Popup() {
-//   const [value, setValue] = React.useState(0);
-//
-//   const handleChange = (event, newValue) => {
-//     setValue(newValue);
-//   };
-//
-//   return (
-//     <Box sx={{ width: '100%' }}>
-//       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-//       <h1>HIIII!!!!</h1>
-//         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-//           <Tab label="Item One" {...a11yProps(0)} />
-//           <Tab label="Item Two" {...a11yProps(1)} />
-//           <Tab label="Item Three" {...a11yProps(2)} />
-//         </Tabs>
-//       </Box>
-//       <TabPanel value={value} index={0}>
-//         Item One
-//       </TabPanel>
-//       <TabPanel value={value} index={1}>
-//         Item Two
-//       </TabPanel>
-//       <TabPanel value={value} index={2}>
-//         Item Three
-//       </TabPanel>
-//     </Box>
-//   );
-// }
