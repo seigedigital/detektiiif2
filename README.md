@@ -19,12 +19,8 @@ Duplicate one of the folders in src/themes for your own theme
 ```
 cp -r detektiiif2 myinstitution
 ```
-Modify the files in the new folder as you wish and edit ```src/themes/Selector.js``` to use the new theme:
+Modify the files in the new folder as you wish and switch the symlink `active` to the desired theme:
 ```
-// import Theme from './detektiiif2/Theme.js'
-// import Theme from './anotheruniversity/Theme.js'
-import Theme from './myinstitution/Theme.js'
-
-export default Theme
+rm active && ln -s myinstitution active
 ```
 Rebuild the extension. That's it!

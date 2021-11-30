@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import Theme from '../../themes/Selector.js'
+import Theme from '../../themes/active/Theme.js'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 

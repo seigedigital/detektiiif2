@@ -115,7 +115,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'src/manifest.json',
+          from: 'src/themes/active/manifest.json',
           to: path.join(__dirname, 'build'),
           force: true,
           transform: function (content, path) {
@@ -143,7 +143,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'src/assets/img/icon-128.png',
+          from: 'src/themes/active/images/icon-128.png',
           to: path.join(__dirname, 'build'),
           force: true,
         },
@@ -152,7 +152,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'src/assets/img/icon-34.png',
+          from: 'src/themes/active/images/icon-34.png',
           to: path.join(__dirname, 'build'),
           force: true,
         },

@@ -1,7 +1,7 @@
 /*global chrome*/
 import React, { Component } from 'react'
 
-import Theme from '../../themes/Selector.js'
+import Theme from '../../themes/active/Theme.js'
 
 import {getCurrentTab} from "./common/Utils"
 import DisplayCollection from "./components/DisplayCollection"
