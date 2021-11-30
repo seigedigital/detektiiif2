@@ -71,7 +71,7 @@ class ThemeTemplate {
 
   postBasketCollectionTo = [
     {
-      url: 'https://manducus.net/m3',
+      url: 'https://manducus.net/m3/index.php',
       mode: 'wwwformdata',
       variable: 'collection',
       label: {
