@@ -138,10 +138,10 @@ class Popup extends Component {
       var c = this.buildBasketCollection()
       var form = document.createElement("form")
       form.setAttribute("method", "post")
-      form.setAttribute("action", "https://manducus.net/m3/index.php")
+      form.setAttribute("action", this.theme.postBasketCollectionTo[0].url)
       form.setAttribute("target", "_blank")
       var hiddenField = document.createElement("input")
-      hiddenField.setAttribute("name", "collection")
+      hiddenField.setAttribute("name", this.theme.postBasketCollectionTo[0].variable)
       hiddenField.setAttribute("value", JSON.stringify(c))
       form.appendChild(hiddenField)
       document.body.appendChild(form)
@@ -290,6 +290,8 @@ class Popup extends Component {
                   {cs}
                 </TabPanel>
                 <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
+                  <h3 key={'TABB'} className="SubHeaderHeading">Basket</h3>
+                  <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
                   {bs}
                 </TabPanel>
                 <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
