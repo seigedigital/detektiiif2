@@ -42,30 +42,26 @@ body {
 
 .App-header {
   text-align: center;
-  display: grid;
   grid-row: 1;
   grid-column: 1;
   background-color: #222;
-  font-size: 1.6em;
   color: white;
   padding: 0;
   margin:0;
 }
 
 .App-subheader {
-  display: grid;
   grid-row: 2;
   grid-column: 1;
-  padding: 2px 12px;
+  padding: 0 24px;
 }
 
 .App-body {
-  display: grid;
   grid-row: 3;
   grid-column: 1;
-  padding: 1em 0em 1em 0em;
+  padding: 0;
   width:100%;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .App-footer {
@@ -75,7 +71,7 @@ body {
   grid-row: 4;
   grid-column: 1;
   font-size: 12px;
-  padding:0px 12px;
+  padding:0 24px;
 }
 
 .App-footer span {
@@ -129,23 +125,25 @@ body {
 
 .ButtonAddToBasket {
   border-radius:8px;
-  background-color: rgb(94,114,77);
+  background-color: #208020;
   color: white;
   border: none;
   padding: 4px 8px 4px 8px;
 }
 
+.ButtonClearBasket,
 .ButtonRemoveFromBasket {
   border-radius:8px;
-  background-color: rgb(255,0,0);
+  background-color: #ff2020;
   color: white;
   border: none;
   padding: 4px 8px 4px 8px;
 }
 
+.ButtonCopyBasket,
 .ButtonCopyURL {
   border-radius:8px;
-  background-color: rgb(158,132,76);
+  background-color: #ff8020;
   color: white;
   border: none;
   padding: 4px 8px 4px 8px;
@@ -220,6 +218,6 @@ button {
 /* material UI overrides */
 
 .MuiBadge-badge {
-  background-color: #4d6b8c;
+  background-color: #808080;
   color:white;
 }

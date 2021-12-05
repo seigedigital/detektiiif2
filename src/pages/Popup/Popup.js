@@ -155,7 +155,16 @@ class Popup extends Component {
       this.setState({
         basket: newbasket
       })
-      chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
+      chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
+    }
+
+    clearBasket(key) {
+      alert("CLEAR BASKET")
+      const newbasket = {}
+      this.setState({
+        basket: newbasket
+      })
+      chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
     }
 
 
@@ -270,13 +279,13 @@ class Popup extends Component {
                 <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
                 <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
                 <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
-                <Tab label="Basket" value={3} {...a11yProps(3)} key={"TAB3"} />
+                <Tab label={`Basket (${bnn})`} value={3} {...a11yProps(3)} key={"TAB3"} />
                 <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
               </Tabs>
             </div>
           )
           outputContent.push(
-            <div style={{overflow:'scroll'}}>
+            <div>
               <TabPanel value={this.state.tab} index={0} key={"TABPANEL0"}>
                 {ms}
               </TabPanel>
@@ -287,8 +296,10 @@ class Popup extends Component {
                 {cs}
               </TabPanel>
               <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
-                <h3 key={'TABB'} className="SubHeaderHeading">Basket</h3>
                 <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
+                <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
+                <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
+                <br />
                 {bs}
               </TabPanel>
               <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
@@ -302,14 +313,16 @@ class Popup extends Component {
               subHeaderContent.push(<h3 key={'TABM'} className="SubHeaderHeading">Available Manifests</h3>)
               break
             case 3:
-              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket</h3>)
+              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)
               subHeaderContent.push(<button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>)
+              subHeaderContent.push(<button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>)
+              subHeaderContent.push(<button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>)
               break
             default:
               break
           }
           outputContent.push(
-            <div style={{overflow:'scroll'}}>
+            <div>
                 <TabPanel value={this.state.tab} index={0}>
                   {ms}
                 </TabPanel>
