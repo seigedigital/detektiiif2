@@ -1,3 +1,5 @@
+// import Theme from '../../themes/active/Theme.js'
+
 (function() {
     var activeTab = chrome.tabs.TAB_ID_NONE;
     var tabStorage = {};
@@ -9,7 +11,14 @@
         urls: [
             "<all_urls>"
         ]
-    };
+    }
+
+    var theme = {
+      tabs: false,
+      singleView: 'MANIFESTS'
+    }
+
+    //new Theme()
 
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
         switch (msg.type) {
@@ -347,13 +356,41 @@
     }
 
     function updateIcon(tabId) {
+
+        console.log("ICON UPDATE")
+        console.log("ICON THEME "+JSON.stringify(theme))
+
         if(tabId==chrome.tabs.TAB_ID_NONE) {
             return;
         }
-        var num =
-            Object.keys(tabStorage[tabId].iiif.manifests).length+
-            Object.keys(tabStorage[tabId].iiif.collections).length+
-            Object.keys(tabStorage[tabId].iiif.images).length;
+
+        let num = 0
+        if(theme.tabs===true) {
+          console.log("a")
+          num = Object.keys(tabStorage[tabId].iiif.manifests).length +
+            Object.keys(tabStorage[tabId].iiif.collections).length +
+            Object.keys(tabStorage[tabId].iiif.images).length
+        } else {
+          switch(theme.singleView) {
+            case 'MANIFESTS':
+              console.log("b")
+              num = Object.keys(tabStorage[tabId].iiif.manifests).length
+              break
+            case 'COLLECTIONS':
+              console.log("c")
+              num = Object.keys(tabStorage[tabId].iiif.collections).length
+              break
+            case 'IMAGES':
+              console.log("d")
+              num = Object.keys(tabStorage[tabId].iiif.images).length
+              break
+            default:
+              console.log("e")
+              break
+          }
+        }
+
+        console.log("ICON NUM "+num)
 
         chrome.runtime.sendMessage({type: 'updateIcon', number: num.toString()});
         chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
@@ -472,8 +509,8 @@
 
 
     chrome.webRequest.onCompleted.addListener((details) => {
-        console.log("WEBREQ COMPLETED")
-        console.log(details)
+        // console.log("WEBREQ COMPLETED")
+        // console.log(details)
 
         var { tabId, requestId, url, timeStamp, method } = details;
 
@@ -489,7 +526,7 @@
             return;
         }
 
-        console.debug("DETEKTIIIF CHECKING "+url);
+        // console.debug("DETEKTIIIF CHECKING "+url);
 
         var request = tabStorage[tabId].requests[requestId];
 
@@ -516,9 +553,9 @@
     }, networkFilters, ["responseHeaders"]);
 
     function sendMsg() {
-      console.log("aaa")
-      console.log(document)
-      console.log("ccc")
+      // console.log("aaa")
+      // console.log(document)
+      // console.log("ccc")
       chrome.runtime.sendMessage(
         {type: 'docLoad', doc: document.documentElement.innerHTML}
       )
@@ -529,10 +566,10 @@
 
         if(changeInfo.status === 'complete') {
 
-          console.log(changeInfo)
+          // console.log(changeInfo)
 
           if(!tab.url.startsWith('http')) {
-            console.log("Ignoring non-http")
+            // console.log("Ignoring non-http")
             return
           }
 
