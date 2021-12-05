@@ -29,7 +29,7 @@ export default class QualityChips extends Component {
       let msg = (this.props.cors===true?"CORS OK, ":"CORS NOT OK, ")+(this.props.https===true?"HTTPS OK":"NO HTTPS")
       chips.push(
         <Tooltip title={msg} key={`combinedchiptt-${hashedurl}`}>
-          <img src={status ? this.props.theme.greenDotImage : this.props.theme.redDotImage} className="iconSize" key={`combinedchip-${hashedurl}`} />
+          <img src={status ? this.props.theme.greenDotImage : this.props.theme.redDotImage} className={`iconSize Quality-Chip`} key={`combinedchip-${hashedurl}`} />
         </Tooltip>
       )
     }
