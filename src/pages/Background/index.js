@@ -186,7 +186,7 @@
               } else {
                 item.label = data.label[0]['@value'];
               }
-              item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['service']['@id']+'/full/100,/0/default.jpg';
+              item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['service']['@id']+'/full/,100/0/default.jpg';
             } catch(err) {
               item.error = 1;
               item.label = url;

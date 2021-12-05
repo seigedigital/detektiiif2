@@ -34,7 +34,8 @@ class ThemeTemplate {
 
   generalButtons = {
     copyURL: true,
-    addToBasket: true
+    addToBasket: true,
+    removeFromBasket: true
   }
 
   qualityChips = {

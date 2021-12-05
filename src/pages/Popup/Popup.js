@@ -167,13 +167,6 @@ class Popup extends Component {
         var inn = Object.keys(this.state.images).length
         var bnn = Object.keys(this.state.basket).length
 
-        let stat =
-        <div className="App-status">
-          <a href="#ancc">collections: {cnn}</a> |
-          <a href="#ancm">manifests: {mnn}</a> |
-          <a href="#anci">images: {inn}</a>
-        </div>
-
         let ms = []
         if(Object.keys(this.state.manifests).length>0) {
           for (var key in this.state.manifests) {
@@ -250,6 +243,8 @@ class Popup extends Component {
                   error = { this.state.basket[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
                   removeFromBasket = {this.removeFromBasket.bind(this)}
+                  settings = {this.state.settings}
+                  theme = {this.theme}
               />)
           }
         } else {
@@ -270,34 +265,36 @@ class Popup extends Component {
 
         if(this.theme.tabs===true) {
           outputContent.push(
-            <Box sx={{ width: '100%' }} key={"TABBOX"}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }} key={"TABBOX2"}>
-                <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
-                  <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
-                  <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
-                  <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
-                  <Tab label="Basket" value={3} {...a11yProps(3)} key={"TAB3"} />
-                  <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
-                </Tabs>
-              </Box>
-                <TabPanel value={this.state.tab} index={0} key={"TABPANEL0"}>
-                  {ms}
-                </TabPanel>
-                <TabPanel value={this.state.tab} index={1} key={"TABPANEL1"}>
-                  {is}
-                </TabPanel>
-                <TabPanel value={this.state.tab} index={2} key={"TABPANEL2"}>
-                  {cs}
-                </TabPanel>
-                <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
-                  <h3 key={'TABB'} className="SubHeaderHeading">Basket</h3>
-                  <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
-                  {bs}
-                </TabPanel>
-                <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
-                  {this.theme.about}
-                </TabPanel>
-            </Box>
+            <div key={"TABBOX2"}>
+              <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
+                <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
+                <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
+                <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
+                <Tab label="Basket" value={3} {...a11yProps(3)} key={"TAB3"} />
+                <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
+              </Tabs>
+            </div>
+          )
+          outputContent.push(
+            <div style={{overflow:'scroll'}}>
+              <TabPanel value={this.state.tab} index={0} key={"TABPANEL0"}>
+                {ms}
+              </TabPanel>
+              <TabPanel value={this.state.tab} index={1} key={"TABPANEL1"}>
+                {is}
+              </TabPanel>
+              <TabPanel value={this.state.tab} index={2} key={"TABPANEL2"}>
+                {cs}
+              </TabPanel>
+              <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
+                <h3 key={'TABB'} className="SubHeaderHeading">Basket</h3>
+                <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
+                {bs}
+              </TabPanel>
+              <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
+                {this.theme.about}
+              </TabPanel>
+            </div>
           )
         } else {
           switch(this.state.tab) {
@@ -312,7 +309,7 @@ class Popup extends Component {
               break
           }
           outputContent.push(
-            <Box sx={{ width: '100%' }} key={"SINGLEBOX"}>
+            <div style={{overflow:'scroll'}}>
                 <TabPanel value={this.state.tab} index={0}>
                   {ms}
                 </TabPanel>
@@ -328,17 +325,17 @@ class Popup extends Component {
                 <TabPanel value={this.state.tab} index={4}>
                   {this.theme.about}
                 </TabPanel>
-            </Box>
+            </div>
           )
         }
 
         return(
           <div className="App">
 
-            <header className="App-header" key={'App-header-0'}>
+            <div className="App-header" key={'App-header-0'}>
               <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
               <small className="version">{chrome.runtime.getManifest().version}</small>
-            </header>
+            </div>
 
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
@@ -369,9 +366,12 @@ class Popup extends Component {
               {outputContent}
             </div>
 
-            <div>
-              <a href="">Option</a>
-              <button onClick={ () => { this.setState({tab:4}) } }>About</button>
+            <div className="App-footer" key={'Aoo-footer-0'}>
+              <span>
+                <a href="#" onClick={ () => { this.setState({tab:4}) } }>About</a>
+                &nbsp;|&nbsp;
+                <a href="#">Options</a>
+              </span>
             </div>
 
           </div>

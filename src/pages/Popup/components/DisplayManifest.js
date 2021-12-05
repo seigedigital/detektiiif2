@@ -11,18 +11,12 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
 export default class DisplayManifest extends Component {
     constructor(props) {
-        console.log("CONS DM")
         super(props);
     }
 
     render() {
 
-        const MY_NAMESPACE = '1b671a63-40d3-4913-99b3-da01ff1f3343'
-        let hashedurl=v5(this.props.url, MY_NAMESPACE)
-
-        var errorflag={};
-        errorflag[0] = "";
-        errorflag[1] = <div className="error_block">no images</div>;
+        let hashedurl=v5(this.props.url, '1b671a64-40d5-491e-99b0-d37347111f20')
 
         let showUrl = null
         if(this.props.settings.showUrl===true) {
@@ -46,24 +40,21 @@ export default class DisplayManifest extends Component {
         console.log("SA "+this.props.url.startsWith("https"))
         console.log("url "+this.props.url)
 
-        // <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}} key={`errorflag-div`}>
-        //   {errorflag[this.props.error]}
-        // </div>
-
         return (
-            <div className="box" key={v4()}>
-                <LazyLoadImage
-                  src={this.props.thumb}
-                  placeholder=<HourglassEmptyIcon />
-                />
-                <div className="box_text" key={`box-text-div`}>
-                    {this.props.label}<br />
-                    {showUrl}<QualityChips theme={this.props.theme} cors={this.props.cors} hashedurl={hashedurl} https={this.props.url.startsWith("https")} key={`quality-chips`}/><br />
-                    {buttons}
-                    {links}
-                    <br />
-                </div>
+          <div className="ListItem" key={`listitem-${hashedurl}`}>
+            <div className="ListItem-image" key={`listitem-image-${hashedurl}`}>
+              <LazyLoadImage
+                src={this.props.thumb}
+                placeholder=<HourglassEmptyIcon sx={{color:'white'}} />
+              />
             </div>
+            <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
+                {this.props.label}<br />
+                {showUrl}<QualityChips theme={this.props.theme} cors={this.props.cors} hashedurl={hashedurl} https={this.props.url.startsWith("https")} key={`quality-chips-${hashedurl}`} /><br />
+                {buttons}<br />
+                {links}<br />
+            </div>
+          </div>
         )
     }
 }

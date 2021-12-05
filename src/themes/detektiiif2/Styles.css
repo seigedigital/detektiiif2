@@ -1,29 +1,95 @@
 body {
   margin:0;
+  padding:0;
   width:600px;
-  min-height:400px;
-  overflow:auto;
+  height: 600px;
+}
+
+.App-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin:0;
+  padding:0;
+  width:600px;
+  height: 600px;
 }
 
 .App {
+  margin:0;
+  padding:0;
+  display: grid;
+  grid-template-columns: 100vw;
+  grid-template-rows: 80px 40px 1fr 20px;
+  width:100vw;
+  height:100vh;
+}
+
+.App-header {
   text-align: center;
-  display:inline-block;
+  display: grid;
+  grid-row: 1;
+  grid-column: 1;
+  background-color: #282c34;
+  font-size: 1.6em;
+  color: white;
+  padding: 0;
+  margin:0;
+}
+
+.App-subheader {
+  display: grid;
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.App-body {
+  display: grid;
+  grid-row: 3;
+  grid-column: 1;
+  padding: 1em 0em 1em 0em;
   width:100%;
+  overflow: hidden;
+}
+
+.App-footer {
+  background-color: #282c34;
+  color: white;
+  display: grid;
+  grid-row: 4;
+  grid-column: 1;
+  font-size: 12px;
+  padding:0px 12px;
+}
+
+.App-footer span {
+  align-self: center;
+}
+
+.App-footer span a {
+  color: white;
+  text-decoration: none;
+}
+
+.App-title {
+    margin-block-start: 0.2em;
+    margin-block-end: 0.2em;
+    align-self: center;
 }
 
 .App-logo {
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.Logo-image {
 }
 
 .BasketIcon {
   display: inline-block;
   float: right;
+}
+
+.BasketIconImage {
 }
 
 .ButtonOpenManifest {
@@ -34,46 +100,24 @@ body {
   padding: 4px 8px 4px 8px;
 }
 
+.ButtonAddToBasket {
+  border-radius:8px;
+  background-color: #336;
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+}
+
+.ButtonCopyURL {
+  border-radius:8px;
+  background-color: #363;
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+}
+
 .qualityChip {
   width:12px;
-}
-
-.App-title {
-    margin-block-start: 0.2em;
-    margin-block-end: 0.2em;
-}
-
-.App-header {
-  background-color: #282c34;
-  /* min-height: 100vh; */
-  display: flex;
-  flex-direction: column;
-  /* align-items: center; */
-  /* justify-content: center; */
-  font-size: 1.6em;
-  color: white;
-  padding: 0;
-  margin:0;
-}
-
-.App-body {
-  padding: 1em 0em 1em 0em;
-  width:100%;
-}
-
-.App-status {
-  padding: .2em .8em .2em .2em;
-  color: #ccc;
-  text-align: right;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-.App-status a {
-  color:#282c34;
-  text-decoration: none;
 }
 
 .version {
@@ -82,87 +126,6 @@ body {
   position: absolute;
   top:4px;
   right:4px;
-}
-
-/* old css index  */
-
-.box {
-    display: grid;
-    grid-template-columns: 100px 400px 50px 50px;
-    grid-template-rows: 100px;
-    height:100px;
-    margin:5px;
-    font-size: 10pt;
-}
-
-.box_icon {
-    grid-column: 1;
-    height:100px;
-    background-color: transparent;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.box_text {
-    grid-column: 2;
-    height:100px;
-    text-align: left;
-    padding:5px;
-}
-
-.box_info {
-    grid-column: 3;
-    height:100px;
-}
-
-.box_copy {
-    grid-column: 4;
-    height:100px;
-}
-
-.red_block {
-    color: #fff;
-    background-color: red;
-    font-weight: bold;
-    font-size: 8pt;
-    display:inline-block;
-    padding: 4px;
-    margin:3px 3px 0px 0px;
-    border-radius: 4px;
-}
-
-.green_block {
-    color: #fff;
-    background-color: green;
-    font-weight: bold;
-    font-size: 8pt;
-    display:inline-block;
-    padding: 4px;
-    margin:3px 3px 0px 0px;
-    border-radius: 4px;
-}
-
-.grey_block {
-    color: #fff;
-    background-color: grey;
-    font-weight: bold;
-    font-size: 8pt;
-    display:inline-block;
-    padding: 4px;
-    margin:3px 3px 0px 0px;
-    border-radius: 4px;
-}
-
-.error_block {
-    color: #000;
-    background-color: transparent;
-    font-weight: normal;
-    font-size: 10pt;
-    line-height: 20pt;
-    display: inline-block;
-    color:red;
-    margin-top: 25px;
-
 }
 
 button {
