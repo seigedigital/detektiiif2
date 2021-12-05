@@ -26,7 +26,7 @@ export default class DisplayManifest extends Component {
         }
 
         let links = this.props.theme.openManifestLinks.map(link =>
-          <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link}-${hashedurl}`}  />
+          <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  />
         )
 
         let buttons = []

@@ -1,8 +1,23 @@
+/*
+
+In this file:
+
+1. layouts
+2. certain items
+3. generic elements
+4. material UI overrides
+
+*/
+
+
+/* layout */
+
 body {
   margin:0;
   padding:0;
   width:600px;
   height: 600px;
+  font-size: 14px;
 }
 
 .App-container {
@@ -20,7 +35,7 @@ body {
   padding:0;
   display: grid;
   grid-template-columns: 100vw;
-  grid-template-rows: 80px 40px 1fr 20px;
+  grid-template-rows: 80px 0px 1fr 20px;
   width:100vw;
   height:100vh;
 }
@@ -30,7 +45,7 @@ body {
   display: grid;
   grid-row: 1;
   grid-column: 1;
-  background-color: #282c34;
+  background-color: #222;
   font-size: 1.6em;
   color: white;
   padding: 0;
@@ -41,6 +56,7 @@ body {
   display: grid;
   grid-row: 2;
   grid-column: 1;
+  padding: 2px 12px;
 }
 
 .App-body {
@@ -53,7 +69,7 @@ body {
 }
 
 .App-footer {
-  background-color: #282c34;
+  background-color: #222;
   color: white;
   display: grid;
   grid-row: 4;
@@ -71,6 +87,8 @@ body {
   text-decoration: none;
 }
 
+/* certain items */
+
 .App-title {
     margin-block-start: 0.2em;
     margin-block-end: 0.2em;
@@ -82,14 +100,18 @@ body {
 }
 
 .Logo-image {
+  height:20pt;
+  margin-bottom:10pt;
 }
 
 .BasketIcon {
-  display: inline-block;
-  float: right;
+  position: absolute;
+  right: 12px;
+  top: 94px;
 }
 
 .BasketIconImage {
+  width:20pt;
 }
 
 .ButtonOpenManifest {
@@ -102,7 +124,15 @@ body {
 
 .ButtonAddToBasket {
   border-radius:8px;
-  background-color: #336;
+  background-color: rgb(94,114,77);
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+}
+
+.ButtonRemoveFromBasket {
+  border-radius:8px;
+  background-color: rgb(255,0,0);
   color: white;
   border: none;
   padding: 4px 8px 4px 8px;
@@ -110,14 +140,14 @@ body {
 
 .ButtonCopyURL {
   border-radius:8px;
-  background-color: #363;
+  background-color: rgb(158,132,76);
   color: white;
   border: none;
   padding: 4px 8px 4px 8px;
 }
 
-.qualityChip {
-  width:12px;
+.iconSize {
+  width:16px;
 }
 
 .version {
@@ -127,6 +157,40 @@ body {
   top:4px;
   right:4px;
 }
+
+.ListItem {
+  width:100%;
+  padding:0;
+  display: grid;
+  grid-template-rows: 100px;
+  grid-template-columns: 100px 1fr;
+  margin-bottom: 12px;
+}
+
+.ListItem-image {
+  grid-row: 1;
+  grid-column: 1;
+  width:100px;
+  background-color: #eee;
+  border:0px solid #ccc;
+  display: grid;
+}
+
+.ListItem-image * {
+  max-height:100px;
+  max-width:100px;
+  align-self: center;
+  margin: auto;
+}
+
+.ListItem-info {
+  padding-left: 12px;
+  grid-row: 1;
+  grid-column: 2;
+  height:100px;
+}
+
+/* generic elements */
 
 button {
   color: #888;
@@ -139,4 +203,11 @@ button {
   border-radius: 4px;
   border:1px solid #ccc;
   clear: none;
+}
+
+/* material UI overrides */
+
+.MuiBadge-badge {
+  background-color: #4d6b8c;
+  color:white;
 }

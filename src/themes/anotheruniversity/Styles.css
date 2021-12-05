@@ -1,67 +1,162 @@
+/*
+
+In this file:
+
+1. layouts
+2. certain items
+3. generic elements
+4. material UI overrides
+
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap');
+
+/* layout */
+
 body {
   margin:0;
+  padding:0;
   width:600px;
-  /* height:600px; */
-  overflow:auto;
+  height: 600px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 14px;
+}
+
+.App-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin:0;
+  padding:0;
+  width:600px;
+  height: 600px;
 }
 
 .App {
-  text-align: center;
-  display:inline-block;
-  width:100%;
-}
-
-.App-logo {
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.BasketIcon {
-  display: inline-block;
-  float: right;
-}
-
-.App-title {
-    margin-block-start: 0.2em;
-    margin-block-end: 0.2em;
+  margin:0;
+  padding:0;
+  display: grid;
+  grid-template-columns: 100vw;
+  grid-template-rows: 80px 40px 1fr 20px;
+  width:100vw;
+  height:100vh;
 }
 
 .App-header {
-  background-color: orange;
-  /* min-height: 100vh; */
-  display: flex;
-  flex-direction: column;
-  /* align-items: center; */
-  /* justify-content: center; */
+  text-align: center;
+  display: grid;
+  grid-row: 1;
+  grid-column: 1;
+  background-color: #000080;
   font-size: 1.6em;
   color: white;
   padding: 0;
   margin:0;
 }
 
+.App-subheader {
+  display: grid;
+  grid-row: 2;
+  grid-column: 1;
+  padding: 2px 24px;
+}
+
 .App-body {
+  display: grid;
+  grid-row: 3;
+  grid-column: 1;
   padding: 1em 0em 1em 0em;
   width:100%;
+  overflow: hidden;
 }
 
-.App-status {
-  padding: .2em .8em .2em .2em;
-  color: #ccc;
-  text-align: right;
+.App-footer {
+  background-color: #000080;
+  color: white;
+  display: grid;
+  grid-row: 4;
+  grid-column: 1;
+  font-size: 12px;
+  padding:0px 12px;
 }
 
-.App-link {
-  color: #61dafb;
+.App-footer span {
+  align-self: center;
 }
 
-.App-status a {
-  color:#282c34;
+.App-footer span a {
+  color: white;
   text-decoration: none;
+}
+
+/* certain items */
+
+.App-title {
+    margin-block-start: 0.2em;
+    margin-block-end: 0.2em;
+    align-self: center;
+    font-family: 'PT Serif', serif;
+}
+
+.App-logo {
+  pointer-events: none;
+}
+
+.Logo-image {
+  height:20pt;
+  margin-bottom:10pt;
+}
+
+.BasketIcon {
+  position: absolute;
+  right: 12px;
+  top: 94px;
+}
+
+.BasketIconImage {
+  width:20pt;
+}
+
+.ButtonOpenManifest {
+  border-radius:8px;
+  background-color: #606060;
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+  margin: 2px 2px 0px 0px ;
+  display:inline-block;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 8pt;
+}
+
+.ButtonAddToBasket {
+  border-radius:8px;
+  background-color: #ff8020;
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+}
+
+.ButtonRemoveFromBasket {
+  border-radius:8px;
+  background-color: #802020;
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+}
+
+.ButtonCopyURL {
+  border-radius:8px;
+  background-color: #ff4040;
+  color: white;
+  border: none;
+  padding: 4px 8px 4px 8px;
+}
+
+.iconSize {
+  width:16px;
 }
 
 .version {
@@ -72,86 +167,39 @@ body {
   right:4px;
 }
 
-/* old css index  */
-
-.box {
-    display: grid;
-    grid-template-columns: 100px 400px 50px 50px;
-    grid-template-rows: 100px;
-    height:100px;
-    margin:5px;
-    font-size: 10pt;
+.ListItem {
+  width:100%;
+  padding:0;
+  display: grid;
+  grid-template-rows: 100px;
+  grid-template-columns: 100px 1fr;
+  margin-bottom: 12px;
 }
 
-.box_icon {
-    grid-column: 1;
-    height:100px;
-    background-color: transparent;
-    background-position: center;
-    background-repeat: no-repeat;
+.ListItem-image {
+  grid-row: 1;
+  grid-column: 1;
+  width:100px;
+  background-color: #eee;
+  border:0px solid #ccc;
+  display: grid;
 }
 
-.box_text {
-    grid-column: 2;
-    height:100px;
-    text-align: left;
-    padding:5px;
+.ListItem-image * {
+  max-height:100px;
+  max-width:100px;
+  align-self: center;
+  margin: auto;
 }
 
-.box_info {
-    grid-column: 3;
-    height:100px;
+.ListItem-info {
+  padding-left: 12px;
+  grid-row: 1;
+  grid-column: 2;
+  height:100px;
 }
 
-.box_copy {
-    grid-column: 4;
-    height:100px;
-}
-
-.red_block {
-    color: #fff;
-    background-color: red;
-    font-weight: bold;
-    font-size: 8pt;
-    display:inline-block;
-    padding: 4px;
-    margin:3px 3px 0px 0px;
-    border-radius: 4px;
-}
-
-.green_block {
-    color: #fff;
-    background-color: green;
-    font-weight: bold;
-    font-size: 8pt;
-    display:inline-block;
-    padding: 4px;
-    margin:3px 3px 0px 0px;
-    border-radius: 4px;
-}
-
-.grey_block {
-    color: #fff;
-    background-color: grey;
-    font-weight: bold;
-    font-size: 8pt;
-    display:inline-block;
-    padding: 4px;
-    margin:3px 3px 0px 0px;
-    border-radius: 4px;
-}
-
-.error_block {
-    color: #000;
-    background-color: transparent;
-    font-weight: normal;
-    font-size: 10pt;
-    line-height: 20pt;
-    display: inline-block;
-    color:red;
-    margin-top: 25px;
-
-}
+/* generic elements */
 
 button {
   color: #888;
@@ -164,4 +212,11 @@ button {
   border-radius: 4px;
   border:1px solid #ccc;
   clear: none;
+}
+
+/* material UI overrides */
+
+.MuiBadge-badge {
+  background-color: #ff8020;
+  color:white;
 }
