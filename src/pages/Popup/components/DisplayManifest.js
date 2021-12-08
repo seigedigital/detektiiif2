@@ -21,7 +21,7 @@ export default class DisplayManifest extends Component {
         let showUrl = null
         if(this.props.settings.showUrl===true) {
           showUrl = <a href={this.props.url} className="URL" target="_blank" key={`showurl-${hashedurl}`}>
-            {`showurl-${hashedurl}`} {this.props.url.length>50?this.props.url.substring(0,50)+'...':this.props.url}
+            {this.props.url.length>50?this.props.url.substring(0,50)+'...':this.props.url}
           </a>
         }
 
