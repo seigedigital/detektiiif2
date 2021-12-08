@@ -19,7 +19,6 @@ export default class LinkButton extends Component {
         className="ButtonOpenManifest"
         key={`innerlinkbutton-${hashedlabel}-${hashedurl}`}
       >
-      {`innerlinkbutton-${hashedlabel}-${hashedurl}`}
       { (this.props.lang in this.props.link.label) ? this.props.link.label[this.props.lang] : this.props.link.label['en'] }
       </a>
     )

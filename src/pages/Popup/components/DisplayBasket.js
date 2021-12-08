@@ -27,7 +27,7 @@ export default class DisplayBasket extends Component {
         }
 
         let links = this.props.theme.openManifestLinks.map(link =>
-          <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
+          <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link.url,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
         )
 
         let buttons = []

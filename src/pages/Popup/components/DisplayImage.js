@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import manifesto from 'manifesto.js';
+
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+
+import { v5 } from 'uuid'
 
 
 export default class DisplayImage extends Component {
@@ -10,6 +14,9 @@ export default class DisplayImage extends Component {
     }
 
     render() {
+
+      let hashedurl=v5(this.props.url, '1b671a64-40d5-491e-99b0-d37347111f20')
+
         var corsflag={};
         corsflag[true.toString()] = <span className="green_block">CORS</span>
         corsflag["1"] = <span className="green_block">CORS</span>
@@ -43,6 +50,7 @@ export default class DisplayImage extends Component {
                 <LazyLoadImage
                   height={"100"}
                   src={this.props.thumb}
+                  placeholder=<HourglassEmptyIcon sx={{color:'white'}} key={`listitem-lazyimage-${hashedurl}`} />
                 />
                 <div className="box_text">
                     {this.props.label}<br />
