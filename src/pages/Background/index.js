@@ -440,8 +440,8 @@
 
 
     chrome.webRequest.onHeadersReceived.addListener((details) => {
-        console.log("HEADERS RECVD")
-        console.log(details)
+        // console.log("HEADERS RECVD")
+        // console.log(details)
 
         var { tabId, requestId, url, timeStamp, method } = details;
 
@@ -607,8 +607,9 @@
     });
 
     chrome.tabs.onActivated.addListener((tab) => {
+        console.log("tabs.Activated")
         console.log({actTab:tab})
-        // alert("ACTIVATE");
+
         if(!tab) {
             return;
         }

@@ -20,8 +20,8 @@ export default class DisplayManifest extends Component {
 
         let showUrl = null
         if(this.props.settings.showUrl===true) {
-          showUrl = <a href={this.props.url} target="_blank" key={`showurl-${hashedurl}`}>
-            {this.props.url.length>20?this.props.url.substring(0,30)+'...':this.props.url}
+          showUrl = <a href={this.props.url} className="URL" target="_blank" key={`showurl-${hashedurl}`}>
+            {`showurl-${hashedurl}`} {this.props.url.length>50?this.props.url.substring(0,50)+'...':this.props.url}
           </a>
         }
 
@@ -37,15 +37,12 @@ export default class DisplayManifest extends Component {
           buttons.push(<button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >ADD TO BASKET</button>)
         }
 
-        console.log("SA "+this.props.url.startsWith("https"))
-        console.log("url "+this.props.url)
-
         return (
           <div className="ListItem" key={`listitem-${hashedurl}`}>
             <div className="ListItem-image" key={`listitem-image-${hashedurl}`}>
               <LazyLoadImage
                 src={this.props.thumb}
-                placeholder=<HourglassEmptyIcon sx={{color:'white'}} />
+                placeholder=<HourglassEmptyIcon sx={{color:'white'}} key={`listitem-lazyimage-${hashedurl}`} />
               />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>

@@ -35,9 +35,9 @@ export default class QualityChips extends Component {
     }
 
     return(
-      <Stack direction="row" spacing={1} component="span" style={{display:'inline'}} key={v4()}>
+      <span style={{display:'inline'}} key={`span-${hashedurl}`}>
         {chips}
-      </Stack>
+      </span>
     )
   }
 

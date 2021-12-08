@@ -27,7 +27,7 @@ export default class DisplayBasket extends Component {
         }
 
         let links = this.props.theme.openManifestLinks.map(link =>
-          <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link}-${hashedurl}`}  />
+          <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
         )
 
         let buttons = []
@@ -37,7 +37,7 @@ export default class DisplayBasket extends Component {
         // }
 
         if(this.props.theme.generalButtons.removeFromBasket!==false) {
-          buttons.push(<br />)
+          buttons.push(<br key={v4()} />)
           buttons.push(
             this.props.theme.generalButtons===true ?
               (
@@ -62,17 +62,35 @@ export default class DisplayBasket extends Component {
             <div className="ListItem-image" key={`listitem-image-${hashedurl}`}>
               <LazyLoadImage
                 src={this.props.thumb}
-                placeholder=<HourglassEmptyIcon sx={{color:'white'}} />
+                placeholder=<HourglassEmptyIcon sx={{color:'white'}}
+                key={`listitem-lazyimage-${hashedurl}`} />
               />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
-                {this.props.label}<br />
+                {this.props.label}<br key={v4()}/>
                 {showUrl}
-                {buttons}<br />
-                {links}<br />
+                {buttons}<br key={v4()}/>
+                {links}<br key={v4()}/>
             </div>
           </div>
         )
+        // return (
+        //   <div className="ListItem" key={`listitem-${hashedurl}`}>
+        //     <div className="ListItem-image" key={`listitem-image-${hashedurl}`}>
+        //       <LazyLoadImage
+        //         src={this.props.thumb}
+        //         placeholder=<HourglassEmptyIcon sx={{color:'white'}}
+        //         key={`listitem-lazyimage-${hashedurl}`} />
+        //       />
+        //     </div>
+        //     <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
+        //         {this.props.label}<br key={v4()}/>
+        //         {showUrl}
+        //         {buttons}<br key={v4()}/>
+        //         {links}<br key={v4()}/>
+        //     </div>
+        //   </div>
+        // )
     }
 
     // render() {

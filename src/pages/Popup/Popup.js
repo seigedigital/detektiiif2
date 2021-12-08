@@ -20,6 +20,9 @@ import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import Badge from '@mui/material/Badge';
 
+import { v4 } from 'uuid'
+import { v5 } from 'uuid'
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -77,6 +80,7 @@ class Popup extends Component {
     }
 
     componentDidMount() {
+
         getCurrentTab((tab) => {
             chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
                 if (response) {
@@ -170,6 +174,10 @@ class Popup extends Component {
 
 
     render() {
+
+      chrome.storage.sync.get(['myCat'], function(result) {
+        console.log('Value currently is ' + result.key);
+      });
 
         var cnn = Object.keys(this.state.collections).length
         var mnn = Object.keys(this.state.manifests).length
@@ -285,7 +293,7 @@ class Popup extends Component {
             </div>
           )
           outputContent.push(
-            <div>
+            <div key={"TABBOX3"}>
               <TabPanel value={this.state.tab} index={0} key={"TABPANEL0"}>
                 {ms}
               </TabPanel>
@@ -299,7 +307,7 @@ class Popup extends Component {
                 <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
                 <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
                 <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
-                <br />
+                <br key={v4()}/>
                 {bs}
               </TabPanel>
               <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
@@ -322,20 +330,20 @@ class Popup extends Component {
               break
           }
           outputContent.push(
-            <div>
-                <TabPanel value={this.state.tab} index={0}>
+            <div key={'TABBOX0'}>
+                <TabPanel value={this.state.tab} index={0} key={"TABPANEL0"}>
                   {ms}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={1}>
+                <TabPanel value={this.state.tab} index={1} key={"TABPANEL1"}>
                   {is}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={2}>
+                <TabPanel value={this.state.tab} index={2} key={"TABPANEL2"}>
                   {cs}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={3}>
+                <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
                   {bs}
                 </TabPanel>
-                <TabPanel value={this.state.tab} index={4}>
+                <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
                   {this.theme.about}
                 </TabPanel>
             </div>
@@ -343,16 +351,16 @@ class Popup extends Component {
         }
 
         return(
-          <div className="App">
+          <div className="App" key={"App"}>
 
             <div className="App-header" key={'App-header-0'}>
-              <h2 className="App-title">{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
-              <small className="version">{chrome.runtime.getManifest().version}</small>
+              <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
+              <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
             </div>
 
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
-              <div className="BasketIcon" style={{display:(this.theme.tabs===true?'none':'block')}}>
+              <div className="BasketIcon" style={{display:(this.theme.tabs===true?'none':'block')}} key={v4()}  >
                 <IconButton color="primary"
                   aria-label="Basket"
                   component="span"
@@ -379,11 +387,11 @@ class Popup extends Component {
               {outputContent}
             </div>
 
-            <div className="App-footer" key={'Aoo-footer-0'}>
+            <div className="App-footer" key={'App-footer-0'}>
               <span>
-                <a href="#" onClick={ () => { this.setState({tab:4}) } }>About</a>
+                <a href="#" onClick={ () => { this.setState({tab:4}) } } key={"FOOTERABOUT"}>About</a>
                 &nbsp;|&nbsp;
-                <a href="#">Options</a>
+                <a href="#" key={"FOOTEROPTIONS"}>Options</a>
               </span>
             </div>
 
