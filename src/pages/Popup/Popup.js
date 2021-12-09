@@ -320,6 +320,9 @@ class Popup extends Component {
             case 0:
               subHeaderContent.push(<h3 key={'TABM'} className="SubHeaderHeading">Available Manifests</h3>)
               break
+            case 4:
+              subHeaderContent.push(<h3 key={'TABA'} className="SubHeaderHeading">About</h3>)
+              break
             case 3:
               subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)
               subHeaderContent.push(<button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>)
