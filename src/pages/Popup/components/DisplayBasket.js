@@ -21,8 +21,8 @@ export default class DisplayBasket extends Component {
 
         let showUrl = null
         if(this.props.settings.showUrl===true) {
-          showUrl = <a href={this.props.url} target="_blank" key={`showurl-${hashedurl}`}>
-            {this.props.url.length>20?this.props.url.substring(0,30)+'...':this.props.url}
+          showUrl = <a href={this.props.url} target="_blank" className="URL" key={`showurl-${hashedurl}`}>
+            {this.props.url.length>20?this.props.url.substring(0,60)+'...':this.props.url}
           </a>
         }
 

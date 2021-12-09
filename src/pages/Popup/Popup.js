@@ -319,9 +319,11 @@ class Popup extends Component {
           switch(this.state.tab) {
             case 0:
               subHeaderContent.push(<h3 key={'TABM'} className="SubHeaderHeading">Available Manifests</h3>)
+              subHeaderContent.push(<div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}></div>)
               break
             case 4:
               subHeaderContent.push(<h3 key={'TABA'} className="SubHeaderHeading">About</h3>)
+              subHeaderContent.push(<div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}></div>)
               break
             case 3:
               subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)

@@ -21,7 +21,7 @@ export default class DisplayManifest extends Component {
         let showUrl = null
         if(this.props.settings.showUrl===true) {
           showUrl = <a href={this.props.url} className="URL" target="_blank" key={`showurl-${hashedurl}`}>
-            {this.props.url.length>50?this.props.url.substring(0,50)+'...':this.props.url}
+            {this.props.url.length>50?this.props.url.substring(0,60)+'...':this.props.url}
           </a>
         }
 
@@ -30,11 +30,11 @@ export default class DisplayManifest extends Component {
         )
 
         let buttons = []
-        if(this.props.theme.generalButtons.copyURL) {
-          buttons.push(<button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >COPY URL</button>)
-        }
         if(this.props.theme.generalButtons.addToBasket) {
           buttons.push(<button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >ADD TO BASKET</button>)
+        }
+        if(this.props.theme.generalButtons.copyURL) {
+          buttons.push(<button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >COPY URL</button>)
         }
 
         return (
