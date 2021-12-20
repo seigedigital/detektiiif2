@@ -15,12 +15,29 @@ class ThemeTemplate {
             <p>On Github: <a href="https://github.com/seigedigital/detektiiif2" target="_blank">https://github.com/seigedigital/detektiiif2</a></p>
           </span>
 
+  // Options
+  optionsDescription= <p>This is the DetektIIIF Options page.</p>
+
+  optionsSwitches = {
+    viewManifestUrls: true,
+  }
+
+  optionsLists = {
+    openManifestLinks: true,
+    excludeWebsites: true
+  }
+
+  optionsLogoImage = null
+
+  optionsPunchline = <span>Options</span>
+
   // Images
   basketImage = null
   closeBasketImage = null
   greenDotImage = null
   infoImage = null
   logoImage = null
+  logoImageBig = null
   redDotImage = null
   trashcanImage= null
 

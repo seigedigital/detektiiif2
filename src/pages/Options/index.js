@@ -2,4 +2,4 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Options from './Options';
 
-ReactDOM.render(<Options />, document.getElementById('app-container'));
+ReactDOM.render(<Options />, document.getElementById('Options-Container'));

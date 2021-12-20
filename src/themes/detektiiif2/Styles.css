@@ -12,11 +12,17 @@ In this file:
 
 /* layout */
 
-body {
+.PopupBody {
   margin:0;
   padding:0;
   width:600px;
   height: 600px;
+  font-size: 14px;
+}
+
+.OptionsBody {
+  margin:0;
+  padding:0;
   font-size: 14px;
 }
 
@@ -198,6 +204,11 @@ body {
   grid-row: 1;
   grid-column: 2;
   height:100px;
+}
+
+.Options-Container {
+  width:600px;
+  margin:auto;
 }
 
 /* generic elements */

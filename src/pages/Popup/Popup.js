@@ -8,6 +8,7 @@ import DisplayCollection from "./components/DisplayCollection"
 import DisplayManifest from "./components/DisplayManifest"
 import DisplayImage from "./components/DisplayImage"
 import DisplayBasket from "./components/DisplayBasket"
+import PostButton from "./components/PostButton"
 
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
@@ -71,7 +72,6 @@ class Popup extends Component {
             tab: 0 // 0=Manifests 1=Images 2=Collections 3=Basket
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
-        this.openBasketCollection = this.openBasketCollection.bind(this)
 
         chrome.storage.sync.get('showUrl', (data) => {
           this.setState({settings:Object.assign({},this.state.settings,data)})
@@ -84,10 +84,10 @@ class Popup extends Component {
         getCurrentTab((tab) => {
             chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
                 if (response) {
-                    console.log(
-                      "Data for "+tab.id+" "+
-                      JSON.stringify(response.iiif)
-                    )
+                    // console.log(
+                    //   "Data for "+tab.id+" "+
+                    //   JSON.stringify(response.iiif)
+                    // )
                     this.setState(Object.assign({},{...response.iiif},{basket:response.basket}))
                 }
             })
@@ -111,7 +111,7 @@ class Popup extends Component {
       chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
     }
 
-    buildBasketCollection() {
+    buildBasketCollection(basket) {
       var c = {
             "@context": "http://iiif.io/api/presentation/2/context.json",
             "@id": "https://detektiiif.manducus.net/invalid",
@@ -119,38 +119,23 @@ class Popup extends Component {
             "label": "custom detektIIIF collection",
             "manifests": []
       }
-      for (var key in this.state.basket) {
+      for (var key in basket) {
         c.manifests.push({
-            "@id": this.state.basket[key].id,
+            "@id": basket[key].id,
             "@type": "sc:Manifest",
-            "label": this.state.basket[key].label
+            "label": basket[key].label
         })
       }
       return c
     }
 
     copyBasketCollection() {
-      var c = this.buildBasketCollection()
+      var c = this.buildBasketCollection(this.state.basket)
       navigator.clipboard.writeText(JSON.stringify(c)).then(function() {
         alert("Collection copied.")
       }, function() {
         alert("Copying Collection failed.")
       })
-    }
-
-    openBasketCollection() {
-      var c = this.buildBasketCollection()
-      var form = document.createElement("form")
-      form.setAttribute("method", "post")
-      form.setAttribute("action", this.theme.postBasketCollectionTo[0].url)
-      form.setAttribute("target", "_blank")
-      var hiddenField = document.createElement("input")
-      hiddenField.setAttribute("name", this.theme.postBasketCollectionTo[0].variable)
-      hiddenField.setAttribute("value", JSON.stringify(c))
-      form.appendChild(hiddenField)
-      document.body.appendChild(form)
-      form.submit()
-      document.body.removeChild(form)
     }
 
     removeFromBasket(key) {
@@ -329,9 +314,18 @@ class Popup extends Component {
               subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)
               subHeaderContent.push(
                 <div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}>
-                  <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
-                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
-                  <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
+                  {this.theme.postBasketCollectionTo.map( (link,idx) =>
+                    <PostButton
+                      lang="en"
+                      link={link}
+                      theme={this.props.theme}
+                      key={`postbutton-${v5(link.url+idx,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
+                      basket={this.state.basket}
+                      buildBasketCollection={this.buildBasketCollection}
+                    />
+                  )}
+                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
+                  <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove all</button>
                 </div>
               )
               break
@@ -359,14 +353,22 @@ class Popup extends Component {
           )
         }
 
+        let header = null
+        if(this.theme.logoImageBig) {
+          header= <div className="App-header" key={'App-header-0'}>
+                    <img src={this.theme.logoImageBig} className="Logo-image-Big" />
+                    <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                  </div>
+        } else {
+          header= <div className="App-header" key={'App-header-0'}>
+                    <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
+                    <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                  </div>
+        }
+
         return(
           <div className="App" key={"App"}>
-
-            <div className="App-header" key={'App-header-0'}>
-              <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
-              <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
-            </div>
-
+            {header}
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
               <div className="BasketIcon" style={{display:(this.theme.tabs===true?'none':'block')}} key={v4()}  >
