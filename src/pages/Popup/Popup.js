@@ -402,7 +402,7 @@ class Popup extends Component {
               <span>
                 <a href="#" onClick={ () => { this.setState({tab:4}) } } key={"FOOTERABOUT"}>About</a>
                 &nbsp;|&nbsp;
-                <a href="#" key={"FOOTEROPTIONS"}>Options</a>
+                <a href="#" onClick={ () => { chrome.runtime.openOptionsPage() } } key={"FOOTEROPTIONS"}>Options</a>
               </span>
             </div>
 

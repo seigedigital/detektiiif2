@@ -576,9 +576,6 @@ import Defaults from '../../themes/active/Defaults.js'
     }, networkFilters, ["responseHeaders"]);
 
     function sendMsg() {
-      // console.log("aaa")
-      // console.log(document)
-      // console.log("ccc")
       chrome.runtime.sendMessage(
         {type: 'docLoad', doc: document.documentElement.innerHTML}
       )

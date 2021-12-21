@@ -197,6 +197,33 @@ body {
   height:100px;
 }
 
+.URL {
+  text-decoration: none;
+}
+
+#Options-Container {
+  width:600px;
+  margin:auto;
+}
+
+.optionsLogoImage {
+  width:200px;
+  border:none;
+}
+
+.optionsHeader {
+  padding: 40px 0;
+}
+
+.optionsEntry {
+  width:100%;
+  padding: 12px 0;
+}
+
+.optionsFloatRight {
+  margin-left: auto;
+}
+
 /* generic elements */
 
 button {
