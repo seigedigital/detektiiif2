@@ -1,4 +1,4 @@
-// import Theme from '../../themes/active/Theme.js'
+import Defaults from '../../themes/active/Defaults.js'
 
 (function() {
     var activeTab = chrome.tabs.TAB_ID_NONE;
@@ -404,6 +404,19 @@
         }
     }
 
+    // function getObjectFromSyncStorage(key) {
+    //   return new Promise((resolve, reject) => {
+    //     try {
+    //       chrome.storage.sync.get(key, function(value) {
+    //         resolve(value[key])
+    //       })
+    //     } catch (ex) {
+    //       console.log({EX:ex})
+    //       reject(false)
+    //     }
+    //   })
+    // }
+
     function filterURLs(url) { // returns true=block, false=accept
         if(cache[url]===false) {
             // console.log("IGNORED BY CACHE RULE: "+url);
@@ -412,15 +425,25 @@
             // console.log("ALLOWING URL BY CACHE: "+url);
             return false;
         }
-        // console.log("ANALYZING HOSTNAME: "+url);
-        const filter = [
-            "google.com", "googleusercontent.com", "gstatic.com", "google.de",
-            "twitter.com", "linkedin.com", "paypal.com", "ebay.de",
-            "ebay.com", "ebaystatic.com", "ebayimg.com", "googletagservices.com",
-            "amazon.de", "amazon.com", "amazon.co.uk", "reddit.com", "facebook.com",
-            "yahoo.com", "yahoo.de", "fbcdn.net", "youtube.com", "netflix.com",
-            "instagram.com", "twitch.tv", "twimg.com"
-        ]
+
+        let globalDefaults = new Defaults()
+        let filter = globalDefaults.ignoreDomains
+        //
+        // console.log("GETTING")
+        // let syncFilter = await getObjectFromSyncStorage('ignoreDomains')
+        // console.log({SYNCFILTER:syncFilter})
+        //
+        // console.log({filter:filter})
+
+        // const filter = [
+        //     "google.com", "googleusercontent.com", "gstatic.com", "google.de",
+        //     "twitter.com", "linkedin.com", "paypal.com", "ebay.de",
+        //     "ebay.com", "ebaystatic.com", "ebayimg.com", "googletagservices.com",
+        //     "amazon.de", "amazon.com", "amazon.co.uk", "reddit.com", "facebook.com",
+        //     "yahoo.com", "yahoo.de", "fbcdn.net", "youtube.com", "netflix.com",
+        //     "instagram.com", "twitch.tv", "twimg.com"
+        // ]
+
         // console.log("matching "+url)
         var hostname = url.match(/^(https?\:)\/\/([^:\/]*)(.*)$/);
         if(!hostname) {
@@ -430,7 +453,7 @@
         hostname = hostname[2].split('.');
         hostname = hostname[hostname.length-2]+"."+hostname[hostname.length-1];
         if(filter.includes(hostname)) {
-            // console.log("IGNORED BY HOSTNAME, SETTING CACHE RULE: "+url);
+            console.log("IGNORED BY HOSTNAME ("+hostname+"), SETTING CACHE RULE: "+url);
             cache[url]=false;
             return true;
         }

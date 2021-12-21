@@ -99,8 +99,6 @@ class ThemeTemplate {
     }
   ]
 
-
-
 }
 
 export default ThemeTemplate
