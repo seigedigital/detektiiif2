@@ -1,14 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "AU-DetektIIIF 2",
+  "name": "AU DetektIIIF",
   "version": "0.0.3",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "permissions": [
     "webRequest",
     "tabs",
-    "storage",
-    "scripting"
+    "storage"
   ],
   "host_permissions": [
     "http://*/*",

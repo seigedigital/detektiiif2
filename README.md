@@ -24,3 +24,9 @@ Modify the files in the new folder as you wish and switch the symlink `active` t
 rm active && ln -s myinstitution active
 ```
 Rebuild the extension. That's it!
+
+## Packaging for the Chrome Web Store
+
+ ```NODE_ENV=production npm run build```
+
+ ```zip -r {output folder}/detektiiif2-build-$(date +%s).zip build/ ```
