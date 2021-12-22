@@ -61,29 +61,29 @@ class ThemeTemplate {
     combined: false
   }
 
-  openManifestLinks = [
-    {
+  openManifestLinks = {
+    uv: {
       url: 'https://universalviewer.io/uv.html?manifest=%%%URI%%%',
       label: {
         en: "Open in UV",
         de: "In UV öffnen"
       }
     },
-    {
+    tify: {
       url: 'https://demo.tify.rocks/demo.html?manifest=%%%URI%%%',
       label: {
         en: "Open in TIFY",
         de: "In TIFY öffnen"
       }
     },
-    {
+    m3: {
       url: 'https://manducus.net/m3?manifest=%%%URI%%%',
       label: {
         en: "Open in M3",
         de: "In M3 öffnen"
       }
     }
-  ]
+  }
 
   // Basket
 

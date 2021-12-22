@@ -67,15 +67,38 @@ class Popup extends Component {
             images: {},
             basket: {},
             settings: {
-              showUrl: true
+              showUrl: true,
+              openManifestLinks: this.theme.openManifestLinks
             },
-            tab: 0 // 0=Manifests 1=Images 2=Collections 3=Basket
+            tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
 
-        chrome.storage.sync.get('showUrl', (data) => {
-          this.setState({settings:Object.assign({},this.state.settings,data)})
-        })
+        // chrome.storage.sync.get('showUrl', (data) => {
+        //   this.setState({settings:Object.assign({},this.state.settings,data)})
+        // })
+        //
+        // chrome.storage.sync.get('openManifestLinks', (data) => {
+        //   this.setState({openManifestLinks:data})
+        // })
+
+        chrome.storage.onChanged.addListener( (changes, namespace) => {
+          for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+
+            if(namespace==="sync" &&  key==="showUrls") {
+              this.setState({settings:Object.assign({},this.state.settings,{showUrl:newValue})})
+            }
+
+            if(namespace==="sync" &&  key==="openManifestLinks") {
+              this.setState({settings:Object.assign({},this.state.settings,{openManifestLinks:newValue})})
+            }
+
+            console.log(
+              `Storage key "${key}" in namespace "${namespace}" changed.`,
+              `Old value was "${oldValue}", new value is "${newValue}".`
+            );
+          }
+        });
 
     }
 
@@ -160,9 +183,7 @@ class Popup extends Component {
 
     render() {
 
-      chrome.storage.sync.get(['myCat'], function(result) {
-        console.log('Value currently is ' + result.key);
-      });
+        console.log({renderWithState:this.state})
 
         var cnn = Object.keys(this.state.collections).length
         var mnn = Object.keys(this.state.manifests).length
