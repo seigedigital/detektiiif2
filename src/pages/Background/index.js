@@ -184,13 +184,25 @@ import Defaults from '../../themes/active/Defaults.js'
         item.error = 0;
         if(iiif.api=="presentation" && iiif.type=="manifest") {
             try {
+
               if (typeof data.label === 'string' || data.label instanceof String) {
                 item.label = data.label;
               } else {
                 item.label = data.label[0]['@value'];
               }
-              item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['service']['@id']+'/full/,100/0/default.jpg';
+
+              if('thumbnail' in data) {
+                item.thumb =  data['thumbnail']
+              } else if('thumbnail' in data['sequences'][0]['canvases'][0] && '@id' in data['sequences'][0]['canvases'][0]) {
+                item.thumb = data['sequences'][0]['canvases'][0]['@id']
+              } else if('service' in data['sequences'][0]['canvases'][0]['images'][0]['resource']) {
+                item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['service']['@id']+'/full/,100/0/default.jpg';
+              } else {
+                item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['@id'];
+              }
+
             } catch(err) {
+              console.error(err)
               item.error = 1;
               item.label = url;
               item.thumb = "logo-small-grey.png";
