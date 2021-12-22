@@ -11,6 +11,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import Button from '@mui/material/Button';
+
 import Theme from '../../themes/active/Theme.js'
 import Defaults from '../../themes/active/Defaults.js'
 
@@ -24,12 +26,27 @@ class Options extends Component {
 
     this.upd = this.upd.bind(this)
     this.data={
-      showUrl: true
+      showUrl: true,
+      ignoreDomains: this.defaults.ignoreDomains
     }
-    this.upd()
+
+    this.state = {
+      ignoreDomains: []
+    }
+
+    chrome.storage.sync.get('ignoreDomains', (data) => {
+      if(data.ignoreDomains!==undefined) {
+        this.setState({ignoreDomains:data.ignoreDomains})
+      } else {
+        this.setState({ignoreDomains:this.defaults.ignoreDomains})
+      }
+    })
+
   }
 
   upd() {
+    this.data = Object.assign({},this.data,this.state)
+    console.log({DATA:this.data, STATE:this.state})
     chrome.storage.sync.set(this.data)
   }
 
@@ -92,10 +109,17 @@ class Options extends Component {
             multiline
             maxRows={10}
             variant="outlined"
-            defaultValue={this.defaults.ignoreDomains.join('\n')}
+            defaultValue={this.state.ignoreDomains.join('\n')}
             style={{marginLeft:0,width:"90%"}}
-            onChange={(e)=>{ this.data.ignoreDomains=e.target.value.split('\n'); this.upd(); }}
+            onChange={(e)=>{ this.setState({ignoreDomains:e.target.value.split('\n')}, this.upd) }}
           />
+          <br />
+          <br />
+          <Button variant="outlined" size="small" color="error"
+            onClick={() => { this.setState({ignoreDomains:this.defaults.ignoreDomains}), this.upd }}
+          >
+            Reset Defaults
+          </Button>
         </AccordionDetails>
       </Accordion>
 
@@ -106,5 +130,8 @@ class Options extends Component {
   }
 
 }
+
+//             onChange={(e)=>{ this.data.ignoreDomains=e.target.value.split('\n'); this.upd(); }}
+
 
 export default Options

@@ -1,11 +1,14 @@
 import Defaults from '../../themes/active/Defaults.js'
 
 (function() {
+    var globalDefaults = new Defaults()
+
     var activeTab = chrome.tabs.TAB_ID_NONE;
     var tabStorage = {};
     var cache = {};
     var cache_cors = {};
     var basket = {};
+    var ignoreDomains = [];
 
     const networkFilters = {
         urls: [
@@ -408,6 +411,7 @@ import Defaults from '../../themes/active/Defaults.js'
     //   return new Promise((resolve, reject) => {
     //     try {
     //       chrome.storage.sync.get(key, function(value) {
+    //         console.log({GOT:value[key]})
     //         resolve(value[key])
     //       })
     //     } catch (ex) {
@@ -426,11 +430,13 @@ import Defaults from '../../themes/active/Defaults.js'
             return false;
         }
 
-        let globalDefaults = new Defaults()
-        let filter = globalDefaults.ignoreDomains
+        let filter = ignoreDomains
+
+        console.log({FILTERAGAINST:filter})
+
         //
         // console.log("GETTING")
-        // let syncFilter = await getObjectFromSyncStorage('ignoreDomains')
+        // let syncFilter = getObjectFromSyncStorage('ignoreDomains')
         // console.log({SYNCFILTER:syncFilter})
         //
         // console.log({filter:filter})
@@ -452,6 +458,7 @@ import Defaults from '../../themes/active/Defaults.js'
         }
         hostname = hostname[2].split('.');
         hostname = hostname[hostname.length-2]+"."+hostname[hostname.length-1];
+        console.log({HOSTNAME:hostname})
         if(filter.includes(hostname)) {
             console.log("IGNORED BY HOSTNAME ("+hostname+"), SETTING CACHE RULE: "+url);
             cache[url]=false;
@@ -659,6 +666,25 @@ import Defaults from '../../themes/active/Defaults.js'
         }
         delete tabStorage[tabId];
     });
+
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+      for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+
+        if(namespace==="sync" &&  key==="ignoreDomains") {
+          ignoreDomains=newValue
+        }
+
+        console.log(
+          `Storage key "${key}" in namespace "${namespace}" changed.`,
+          `Old value was "${oldValue}", new value is "${newValue}".`
+        );
+      }
+    });
+
+    ignoreDomains = globalDefaults.ignoreDomains
+    chrome.storage.sync.get('ignoreDomains', function(data) {
+      console.log({GOT:data})
+    })
 
 
 }());
