@@ -1,4 +1,5 @@
 import Defaults from '../../themes/active/Defaults.js'
+import v2GetManifestThumbnail from './tools/iiif'
 
 (function() {
     var globalDefaults = new Defaults()
@@ -47,6 +48,7 @@ import Defaults from '../../themes/active/Defaults.js'
     });
 
     function initTabStorage(tabId) {
+        console.log("RESETTING "+tabId)
         // if(tabStorage[tabId]) {
         //     delete tabStorage[tabId].requests;
         //     delete tabStorage[tabId].iiif.manifests;
@@ -86,7 +88,6 @@ import Defaults from '../../themes/active/Defaults.js'
     }
 
     function fetchWorkHeader(url,follow) {
-      console.log(url)
       if(!url.startsWith('http')) {
         console.log("URL denied (HEAD), we're http(s) only.")
         return
@@ -99,7 +100,7 @@ import Defaults from '../../themes/active/Defaults.js'
         .then((response) => {
             var c = response.headers.get("access-control-allow-origin");
             console.log("CORS: "+c+" for "+url);
-            if( c=="*") {
+            if( c==="*") {
               cache_cors[url]=true;
             } else {
               cache_cors[url]=false;
@@ -191,15 +192,7 @@ import Defaults from '../../themes/active/Defaults.js'
                 item.label = data.label[0]['@value'];
               }
 
-              if('thumbnail' in data) {
-                item.thumb =  data['thumbnail']
-              } else if('thumbnail' in data['sequences'][0]['canvases'][0] && '@id' in data['sequences'][0]['canvases'][0]) {
-                item.thumb = data['sequences'][0]['canvases'][0]['@id']
-              } else if('service' in data['sequences'][0]['canvases'][0]['images'][0]['resource']) {
-                item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['service']['@id']+'/full/,100/0/default.jpg';
-              } else {
-                item.thumb = data['sequences'][0]['canvases'][0]['images'][0]['resource']['@id'];
-              }
+              item.thumb = v2GetManifestThumbnail(data)
 
             } catch(err) {
               console.error(err)
@@ -381,26 +374,21 @@ import Defaults from '../../themes/active/Defaults.js'
 
         let num = 0
         if(theme.tabs===true) {
-          console.log("a")
           num = Object.keys(tabStorage[tabId].iiif.manifests).length +
             Object.keys(tabStorage[tabId].iiif.collections).length +
             Object.keys(tabStorage[tabId].iiif.images).length
         } else {
           switch(theme.singleView) {
             case 'MANIFESTS':
-              console.log("b")
               num = Object.keys(tabStorage[tabId].iiif.manifests).length
               break
             case 'COLLECTIONS':
-              console.log("c")
               num = Object.keys(tabStorage[tabId].iiif.collections).length
               break
             case 'IMAGES':
-              console.log("d")
               num = Object.keys(tabStorage[tabId].iiif.images).length
               break
             default:
-              console.log("e")
               break
           }
         }
@@ -419,20 +407,6 @@ import Defaults from '../../themes/active/Defaults.js'
         }
     }
 
-    // function getObjectFromSyncStorage(key) {
-    //   return new Promise((resolve, reject) => {
-    //     try {
-    //       chrome.storage.sync.get(key, function(value) {
-    //         console.log({GOT:value[key]})
-    //         resolve(value[key])
-    //       })
-    //     } catch (ex) {
-    //       console.log({EX:ex})
-    //       reject(false)
-    //     }
-    //   })
-    // }
-
     function filterURLs(url) { // returns true=block, false=accept
         if(cache[url]===false) {
             // console.log("IGNORED BY CACHE RULE: "+url);
@@ -445,22 +419,6 @@ import Defaults from '../../themes/active/Defaults.js'
         let filter = ignoreDomains
 
         console.log({FILTERAGAINST:filter})
-
-        //
-        // console.log("GETTING")
-        // let syncFilter = getObjectFromSyncStorage('ignoreDomains')
-        // console.log({SYNCFILTER:syncFilter})
-        //
-        // console.log({filter:filter})
-
-        // const filter = [
-        //     "google.com", "googleusercontent.com", "gstatic.com", "google.de",
-        //     "twitter.com", "linkedin.com", "paypal.com", "ebay.de",
-        //     "ebay.com", "ebaystatic.com", "ebayimg.com", "googletagservices.com",
-        //     "amazon.de", "amazon.com", "amazon.co.uk", "reddit.com", "facebook.com",
-        //     "yahoo.com", "yahoo.de", "fbcdn.net", "youtube.com", "netflix.com",
-        //     "instagram.com", "twitch.tv", "twimg.com"
-        // ]
 
         // console.log("matching "+url)
         var hostname = url.match(/^(https?\:)\/\/([^:\/]*)(.*)$/);
@@ -645,24 +603,35 @@ import Defaults from '../../themes/active/Defaults.js'
         updateIcon(tabId);
     });
 
-    chrome.tabs.onActivated.addListener((tab) => {
+    chrome.tabs.onActivated.addListener((tabInfo) => {
         console.log("tabs.Activated")
-        console.log({actTab:tab})
+        console.log({actTab:tabInfo})
 
-        if(!tab) {
-            return;
+        if(!tabInfo) {
+          console.log("No tab, returning.")
+          return;
         }
 
-        const tabId = tab.tabId;
-        if(tabId==chrome.tabs.TAB_ID_NONE) {
+        const tabId = tabInfo.tabId;
+        if(tabId===chrome.tabs.TAB_ID_NONE) {
+            console.log("TAB_ID_NONE, returning.")
             return;
         }
-        console.log("ACTIVE TAB "+tabId)
+        console.log("ACTIVE TAB is"+tabId)
         activeTab=tabId;
         if (!tabStorage.hasOwnProperty(tabId)) {
+            console.log("NO INFO about "+tabId+" resetting tabStorage")
             initTabStorage(tabId);
         }
         updateIcon(tabId);
+
+        console.log("GETTING TAB "+tabId)
+        chrome.tabs.get(tabId).then((tab) => {
+          console.log({tab:tab})
+          // just give it a try
+          fetchHttp(tab.url)
+        })
+
     });
 
     chrome.tabs.onRemoved.addListener((tab) => {
