@@ -17,28 +17,27 @@ import v2GetManifestThumbnail from './tools/iiif'
         ]
     }
 
-    var theme = {
-      tabs: false,
-      singleView: 'MANIFESTS'
-    }
+    // var theme = {
+    //   tabs: false,
+    //   singleView: 'MANIFESTS'
+    // }
 
-    //new Theme()
 
+    //  get Messages from the Popup
     chrome.runtime.onMessage.addListener((msg, sender, response) => {
         switch (msg.type) {
             case 'popupInit':
-                console.log("POP INIT")
+                console.log("POPUP INIT")
                 console.log(tabStorage)
-                response(
-                  Object.assign({},tabStorage[msg.tabId],{basket: basket})
-                );
+                //  send Info on current Tab
+                response(Object.assign({},tabStorage[msg.tabId],{basket: basket}))
                 break;
             case 'docLoad':
-                console.log("DOC RCVD");
+                console.log("DOC RECIEVED");
                 analyzeHTMLBody(msg.doc);
                 break;
             case 'basketUpd':
-                console.log("BASKET UPD");
+                console.log("BASKET WAS UPDATED");
                 basket = msg.basket;
                 break;
             default:
@@ -46,6 +45,7 @@ import v2GetManifestThumbnail from './tools/iiif'
                 break;
         }
     });
+
 
     function initTabStorage(tabId) {
         console.log("RESETTING "+tabId)
@@ -69,22 +69,28 @@ import v2GetManifestThumbnail from './tools/iiif'
         };
     }
 
+    // ENTRY POINT
     function fetchHttp(url) {
-      console.log(url)
-      fetchWorkStart(url,"follow");
+
+      // let's go
+      fetchWorkStart(url,"follow")
+
+      // we always try https too
       if(url.startsWith("http:")) {
         fetchWorkStart(url.replace(/^http\:/i,"https:"),"follow");
       }
+
     }
 
     function fetchWorkStart(url,follow) {
-      console.log(url)
+      // check Cache
       if(url in cache) {
-        console.log("no fetch, already cached")
-        compileData(url,activeTab);
-        return;
+        // known already? jusr recompile data
+        compileData(url,activeTab)
+        return
       }
-      fetchWorkHeader(url,follow);
+      // go check it out
+      fetchWorkHeader(url,follow)
     }
 
     function fetchWorkHeader(url,follow) {
@@ -98,15 +104,15 @@ import v2GetManifestThumbnail from './tools/iiif'
       // Upd: ran into troubles, switch back to force-cache, ignoring dynamic cors cases
       fetch(url, {method: 'HEAD', cache: 'force-cache', follow: 'follow', referrerPolicy: 'no-referrer'})
         .then((response) => {
-            var c = response.headers.get("access-control-allow-origin");
+            let c = response.headers.get("access-control-allow-origin");
             console.log("CORS: "+c+" for "+url);
             if( c==="*") {
               cache_cors[url]=true;
             } else {
               cache_cors[url]=false;
             }
-            var t = response.headers.get("content-type");
-            var s = response.headers.get("content-length");
+            let t = response.headers.get("content-type");
+            let s = response.headers.get("content-length");
             console.log(t+" "+s+" "+url);
             console.log(response.status);
             if( ( t && t.match(tregex)) || response.status!=200) { // bad implementations crash if you send them HEAD
@@ -131,27 +137,18 @@ import v2GetManifestThumbnail from './tools/iiif'
         console.log("URL denied (BODY), we're http(s) only.")
         return
       }
+
+      let cm='no-store'
       if(cache_cors[url]===true) {
-        var cm='force-cache';
-      } else {
-        var cm='no-store';
+        let cm='force-cache';
       }
+
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       fetch(url, {method: 'GET', cache: 'no-store', follow: 'follow', referrerPolicy: 'no-referrer'})
           .then(res => res.json())
           .then((data) => {
-              // console.log(data);
-              // console.log(url);
-              // console.log(activeTab);
               cache[url] = data;
-              // var c = res.headers.get("access-control-allow-origin");
-              // if( c=="*") {
-              //   cache_cors[url]=true;
-              // } else {
-              //   cache_cors[url]=false;
-              // }
               compileData(url,activeTab);
-              // console.log("TAB: "+tabStorage[activeTab]);
           })
           .catch((error) => {
               cache[url] = false;
@@ -160,13 +157,14 @@ import v2GetManifestThumbnail from './tools/iiif'
     }
 
     function compileData(url,tabId) {
-        var data = cache[url]
+        let data = cache[url]
 
-        var iiif = analyzeJSONBody(data,url);
+        let iiif = analyzeJSONBody(data,url);
         if(!iiif) {
             console.log("NO for "+url);
             return;
         }
+
         console.log("OK for "+url);
         if (!tabStorage.hasOwnProperty(tabId)) {
             initTabStorage(tabId);
@@ -178,22 +176,24 @@ import v2GetManifestThumbnail from './tools/iiif'
           // console.log("MANIFESTO: "+manifesto.LanguageMap.getValue(m.getLabel(), 'en-gb'));
         // });
 
-        var item = {}
-        item.id = data['@id'];
-        item.url = url;
-        item.cors = cache_cors[url];
-        item.error = 0;
+        let item = {}
+        if('@id' in data) {
+          item.id = data['@id']
+        } else {
+          item.id = data['id']
+        }
+        item.url = url
+        item.cors = cache_cors[url]
+        item.error = 0
+
         if(iiif.api=="presentation" && iiif.type=="manifest") {
             try {
-
               if (typeof data.label === 'string' || data.label instanceof String) {
                 item.label = data.label;
               } else {
                 item.label = data.label[0]['@value'];
               }
-
               item.thumb = v2GetManifestThumbnail(data)
-
             } catch(err) {
               console.error(err)
               item.error = 1;
@@ -237,15 +237,15 @@ import v2GetManifestThumbnail from './tools/iiif'
         console.log(tabs[0].id+" / "+tabs[0]+url);
 
         // Europeana – SMK
-        var regex_epa = /https\:\/\/www\.europeana\.eu\/..\/item\/([^\/]+)\/([^\?\"]+).*/i;
-        var params = url.match(regex_epa);
+        let regex_epa = /https\:\/\/www\.europeana\.eu\/..\/item\/([^\/]+)\/([^\?\"]+).*/i;
+        let params = url.match(regex_epa)
+        let murl=false
         if(params && params.length>2) {
           switch(params[1]) {
             case '2020903':
-              var murl = "https://api.smk.dk/api/v1/iiif/manifest/?id="+params[2];
+              murl = "https://api.smk.dk/api/v1/iiif/manifest/?id="+params[2];
               break;
             default:
-              var murl=false
               break;
           }
           if(murl) {
@@ -255,18 +255,18 @@ import v2GetManifestThumbnail from './tools/iiif'
         }
 
         // Nationalmuseum SE
-        var regex_nationalmuseumse1 = /https\:\/\/nationalmuseumse\.iiifhosting\.com\/iiif\/[^\/]+\//i;
-        var params = url.match(regex_nationalmuseumse1);
+        let regex_nationalmuseumse1 = /https\:\/\/nationalmuseumse\.iiifhosting\.com\/iiif\/[^\/]+\//i;
+        params = url.match(regex_nationalmuseumse1);
         if(params) {
           fetchHttp(url+"manifest.json");
         }
 
         // Generic, for relative Links (Yes, some people do This)
-        var regex_generic = /\"(\/[^\"]*(iiif|manifest)[^\"]*)\"/gi;
-        var params = [...doc.matchAll(regex_generic)];
+        let regex_generic1 = /\"(\/[^\"]*(iiif|manifest)[^\"]*)\"/gi;
+        params = [...doc.matchAll(regex_generic1)];
         if(params) {
-          var base = url.split('/')
-          var base = base[0]+'//'+base[2]
+          let base = url.split('/')
+          base = base[0]+'//'+base[2]
           params.forEach((hit, i) => {
             if(hit.length>1) {
               console.log("check guess: "+base+hit[1]);
@@ -278,11 +278,11 @@ import v2GetManifestThumbnail from './tools/iiif'
       });
 
       // Document Content: NGA
-      var regex_nga = /https\:\/\/www\.nga\.gov\/api\/v1\/iiif\/presentation\/manifest\.json\?cultObj\:id\=[0-9]+/i;
-      var params = doc.match(regex_nga);
+      let regex_nga = /https\:\/\/www\.nga\.gov\/api\/v1\/iiif\/presentation\/manifest\.json\?cultObj\:id\=[0-9]+/i;
+      let params = doc.match(regex_nga);
       if(params) {
         params.forEach((inurl, i) => {
-          var url = inurl.replace("cultObj:id","cultObj%3Aid");
+          let url = inurl.replace("cultObj:id","cultObj%3Aid");
           url = url.replace("/content/ngaweb","");
           console.log(url);
           fetchHttp(url);
@@ -290,8 +290,8 @@ import v2GetManifestThumbnail from './tools/iiif'
       }
 
       // Generic 1, should match e.g. National Museum Sweden
-      var regex_generic = /\"(https\:\/\/[^\"]*(iiif|manifest)[^\"]*)\"/gi;
-      var params = [...doc.matchAll(regex_generic)];
+      let regex_generic1 = /\"(https\:\/\/[^\"]*(iiif|manifest)[^\"]*)\"/gi;
+      params = [...doc.matchAll(regex_generic1)];
       if(params.length>100) {
         // FIXME do nice status in tab header, dont alert
         // alert("detektIIIF: limiting huge number of matches (case 1)");
@@ -307,8 +307,8 @@ import v2GetManifestThumbnail from './tools/iiif'
       }
 
       // Generic 2, intra-Link
-      var regex_generic = /\"https[\"]*=(https\:\/\/[^\"\&]*(iiif|manifest)[^\"\&]*)[\"\&]/gi;
-      var params = [...doc.matchAll(regex_generic)];
+      let regex_generic2 = /\"https[\"]*=(https\:\/\/[^\"\&]*(iiif|manifest)[^\"\&]*)[\"\&]/gi;
+      params = [...doc.matchAll(regex_generic2)];
       if(params.length>20) {
         alert("detektIIIF: limiting huge number of matches (case 2)"); // FIXME do nice status in tab header, dont alert
         params=params.slice(0,20);
@@ -366,19 +366,19 @@ import v2GetManifestThumbnail from './tools/iiif'
     function updateIcon(tabId) {
 
         console.log("ICON UPDATE")
-        console.log("ICON THEME "+JSON.stringify(theme))
+        console.log("ICON globalDefaults "+JSON.stringify(globalDefaults))
 
         if(tabId==chrome.tabs.TAB_ID_NONE) {
             return;
         }
 
         let num = 0
-        if(theme.tabs===true) {
+        if(globalDefaults.tabs===true) {
           num = Object.keys(tabStorage[tabId].iiif.manifests).length +
             Object.keys(tabStorage[tabId].iiif.collections).length +
             Object.keys(tabStorage[tabId].iiif.images).length
         } else {
-          switch(theme.singleView) {
+          switch(globalDefaults.singleView) {
             case 'MANIFESTS':
               num = Object.keys(tabStorage[tabId].iiif.manifests).length
               break
@@ -553,6 +553,10 @@ import v2GetManifestThumbnail from './tools/iiif'
     }, networkFilters, ["responseHeaders"]);
 
     function sendMsg() {
+      if(document===undefined) {
+        console.error("NO DOCUMENT DEFINED")
+        return
+      }
       chrome.runtime.sendMessage(
         {type: 'docLoad', doc: document.documentElement.innerHTML}
       )

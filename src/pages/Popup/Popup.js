@@ -2,6 +2,7 @@
 import React, { Component } from 'react'
 
 import Theme from '../../themes/active/Theme.js'
+import Defaults from '../../themes/active/Defaults.js'
 
 import {getCurrentTab} from "./common/Utils"
 import DisplayCollection from "./components/DisplayCollection"
@@ -61,6 +62,7 @@ class Popup extends Component {
     constructor(props) {
         super(props)
         this.theme = new Theme()
+        this.defaults = new Defaults()
         this.state = {
             manifests: {},
             collections: {},
@@ -286,7 +288,7 @@ class Popup extends Component {
         let subHeaderContent = []
         let outputContent = []
 
-        if(this.theme.tabs===true) {
+        if(this.defaults.tabs===true) {
           outputContent.push(
             <div key={"TABBOX2"}>
               <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
@@ -392,7 +394,7 @@ class Popup extends Component {
             {header}
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
-              <div className="BasketIcon" style={{display:(this.theme.tabs===true?'none':'block')}} key={v4()}  >
+              <div className="BasketIcon" style={{display:(this.defaults.tabs===true?'none':'block')}} key={v4()}  >
                 <IconButton color="primary"
                   aria-label="Basket"
                   component="span"

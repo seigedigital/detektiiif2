@@ -11,10 +11,6 @@ class Theme extends ThemeTemplate {
             <p>On Github: <a href="https://github.com/seigedigital/detektiiif2" target="_blank">https://github.com/seigedigital/detektiiif2</a></p>
           </span>
 
-  tabs = false
-  singleView = 'MANIFESTS'
-  separateBasket = true
-
   qualityChips = {
     cors: false,
     https: false,

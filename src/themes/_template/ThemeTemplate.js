@@ -41,12 +41,6 @@ class ThemeTemplate {
   redDotImage = null
   trashcanImage= null
 
-  // Navigation
-  tabs = true
-  showTabs = ['MANIFESTS','IMAGES','COLLECTIONS','BASKET']
-  singleView = 'MANIFESTS'
-  separateBasket = false
-
   // List Items
 
   generalButtons = {
