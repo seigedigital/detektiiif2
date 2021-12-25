@@ -84,6 +84,8 @@ class Popup extends Component {
         //   this.setState({openManifestLinks:data})
         // })
 
+        this.loadBasket()
+
         chrome.storage.onChanged.addListener( (changes, namespace) => {
           for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
@@ -109,14 +111,13 @@ class Popup extends Component {
         getCurrentTab((tab) => {
             chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
                 if (response) {
-                    // console.log(
-                    //   "Data for "+tab.id+" "+
-                    //   JSON.stringify(response.iiif)
-                    // )
-                    this.setState(Object.assign({},{...response.iiif},{basket:response.basket}))
+                    this.setState(Object.assign({},{...response.iiif})) //,{basket:response.basket}))
                 }
             })
         })
+
+        this.loadBasket()
+
     }
 
     copyUrl(url) {
@@ -127,13 +128,43 @@ class Popup extends Component {
       })
     }
 
-    addToBasket(key) {
-      const newbasket = Object.assign(this.state.basket)
-      newbasket[key] = this.state.manifests[key]
-      this.setState({
-        basket: newbasket
+    loadBasket() {
+      console.log("loading basket "+this.defaults.storeBasket)
+      const s = this.defaults.storeBasket==='sync' ? chrome.storage.sync : chrome.storage.local
+      s.get('basket', (data) => {
+        if('basket' in data) {
+          this.setState(data)
+        }
       })
-      chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
+    }
+
+    saveBasket(data) {
+      console.log("saving basket "+this.defaults.storeBasket)
+      const s = this.defaults.storeBasket==='sync' ? chrome.storage.sync : chrome.storage.local
+      s.set({basket:data}, () => {
+        console.log({BSaved:data})
+        this.setState({basket:data})
+      })
+    }
+
+    addToBasket(key) {
+      let newbasket = Object.assign(this.state.basket)
+      newbasket[key] = this.state.manifests[key]
+      this.saveBasket(newbasket)
+      // chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
+    }
+
+    removeFromBasket(key) {
+      let newbasket = Object.assign(this.state.basket)
+      delete newbasket[key]
+      this.saveBasket(newbasket)
+      // chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
+    }
+
+    clearBasket(key) {
+      let newbasket = {}
+      this.saveBasket(newbasket)
+      // chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
     }
 
     buildBasketCollection(basket) {
@@ -162,26 +193,6 @@ class Popup extends Component {
         alert("Copying Collection failed.")
       })
     }
-
-    removeFromBasket(key) {
-      const newbasket = Object.assign(this.state.basket)
-      delete newbasket[key]
-      this.setState({
-        basket: newbasket
-      })
-      chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
-    }
-
-    clearBasket(key) {
-      alert("CLEAR BASKET")
-      const newbasket = {}
-      this.setState({
-        basket: newbasket
-      })
-      chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
-    }
-
-
 
     render() {
 
@@ -253,6 +264,8 @@ class Popup extends Component {
         } else {
           is = "No IIIF images detected."
         }
+
+        console.log({basket:this.state.basket})
 
         let bs = []
         if(Object.keys(this.state.basket).length>0) {

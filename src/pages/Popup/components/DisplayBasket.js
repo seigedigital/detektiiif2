@@ -17,7 +17,11 @@ export default class DisplayBasket extends Component {
 
     render() {
 
+      console.log(this.props)
+
         let hashedurl=v5(this.props.url, '1b671a64-40d5-491e-99b0-d37347111f20')
+
+        console.log({hashedurl:hashedurl})
 
         let showUrl = null
         if(this.props.settings.showUrl===true) {
@@ -43,18 +47,14 @@ export default class DisplayBasket extends Component {
         if(this.props.theme.generalButtons.removeFromBasket!==false) {
           buttons.push(<br key={v4()} />)
           buttons.push(
-            this.props.theme.generalButtons===true ?
-              (
+            this.props.theme.trashcanImage ?
+                <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
+                  <img src={this.props.theme.trashcanImage}  className="iconSize" />
+                </IconButton>
+                :
                 <button onClick={() => this.props.removeFromBasket(this.props.url)} className="ButtonRemoveFromBasket" key={`rembutton-${hashedurl}`} >
                   REMOVE FROM BASKET
                 </button>
-              )
-              :
-              (
-                <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
-                  <img src={this.props.theme.generalButtons.removeFromBasket} className="iconSize" />
-                </IconButton>
-              )
           )
         }
 

@@ -6,6 +6,8 @@ class DefaultsTemplate {
   singleView = 'MANIFESTS'
   separateBasket = false
 
+  storeBasket = "local" // or sync
+
   ignoreDomains = [
     "google.com", "googleusercontent.com", "gstatic.com", "google.de",
     "twitter.com", "linkedin.com", "paypal.com", "ebay.de",
@@ -14,6 +16,7 @@ class DefaultsTemplate {
     "yahoo.com", "yahoo.de", "fbcdn.net", "youtube.com", "netflix.com",
     "instagram.com", "twitch.tv", "twimg.com"
   ]
+
 
 }
 

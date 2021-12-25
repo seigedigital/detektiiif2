@@ -8,7 +8,7 @@ import v2GetManifestThumbnail from './tools/iiif'
     var tabStorage = {};
     var cache = {};
     var cache_cors = {};
-    var basket = {};
+    // var basket = {};
     var ignoreDomains = [];
 
     const networkFilters = {
@@ -30,16 +30,16 @@ import v2GetManifestThumbnail from './tools/iiif'
                 console.log("POPUP INIT")
                 console.log(tabStorage)
                 //  send Info on current Tab
-                response(Object.assign({},tabStorage[msg.tabId],{basket: basket}))
+                response(Object.assign({},tabStorage[msg.tabId])) // ,{basket: basket}))
                 break;
             case 'docLoad':
                 console.log("DOC RECIEVED");
                 analyzeHTMLBody(msg.doc,msg.tabId);
                 break;
-            case 'basketUpd':
-                console.log("BASKET WAS UPDATED");
-                basket = msg.basket;
-                break;
+            // case 'basketUpd':
+            //     console.log("BASKET WAS UPDATED");
+            //     basket = msg.basket;
+            //     break;
             default:
                 response('unknown request');
                 break;
