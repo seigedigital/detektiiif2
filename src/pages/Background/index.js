@@ -331,7 +331,7 @@ import v2GetManifestThumbnail from './tools/iiif'
         chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
 
         if(num>0)  {
-          chrome.action.setBadgeText({text:num.toString()});
+          chrome.action.setBadgeText({text:num.toString(),tabId:tab.id});
         } else  {
           chrome.action.setBadgeText({text:''});
         }

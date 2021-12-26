@@ -70,27 +70,24 @@ class Popup extends Component {
             basket: {},
             settings: {
               showUrl: true,
-              openManifestLinks: this.theme.openManifestLinks
+              postBasketCollectionTo: Object.assign({},this.theme.postBasketCollectionTo),
+              openManifestLinks: Object.assign({},this.theme.openManifestLinks)
             },
             tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
-
-        // chrome.storage.sync.get('showUrl', (data) => {
-        //   this.setState({settings:Object.assign({},this.state.settings,data)})
-        // })
-        //
-        // chrome.storage.sync.get('openManifestLinks', (data) => {
-        //   this.setState({openManifestLinks:data})
-        // })
 
         this.loadBasket()
 
         chrome.storage.onChanged.addListener( (changes, namespace) => {
           for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
-            if(namespace==="sync" &&  key==="showUrls") {
+            if(namespace==="sync" &&  key==="showUrl") {
               this.setState({settings:Object.assign({},this.state.settings,{showUrl:newValue})})
+            }
+
+            if(namespace==="sync" &&  key==="postBasketCollectionTo") {
+              this.setState({settings:Object.assign({},this.state.settings,{postBasketCollectionTo:newValue})})
             }
 
             if(namespace==="sync" &&  key==="openManifestLinks") {
@@ -117,6 +114,7 @@ class Popup extends Component {
         })
 
         this.loadBasket()
+        this.loadSettings()
 
     }
 
@@ -126,6 +124,18 @@ class Popup extends Component {
       }, function() {
         alert("Copying URL failed.")
       })
+    }
+
+    loadSettings() {
+        chrome.storage.local.get('postBasketCollectionTo', (data) => {
+          if('postBasketCollectionTo' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
+        })
+        chrome.storage.local.get('openManifestLinks', (data) => {
+          if('openManifestLinks' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
+        })
+        chrome.storage.local.get('showUrl', (data) => {
+          if('showUrl' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
+        })
     }
 
     loadBasket() {
@@ -205,7 +215,7 @@ class Popup extends Component {
 
         let ms = []
         if(Object.keys(this.state.manifests).length>0) {
-          for (var key in this.state.manifests) {
+          for (let key in this.state.manifests) {
               ms.push(<
                   DisplayManifest
                   key = { `item-${this.state.manifests[key].id}` }
@@ -228,7 +238,7 @@ class Popup extends Component {
         let cs = []
         if(Object.keys(this.state.collections).length>0) {
           cs.push(<h3 key={'TABC'}>Presentation API: Collections<a name="ancc" /></h3>)
-          for (var key in this.state.collections) {
+          for (let key in this.state.collections) {
               cs.push(<
                   DisplayCollection
                   key = { `item-${this.state.collections[key].id}` }
@@ -248,7 +258,7 @@ class Popup extends Component {
         let is = []
         if(Object.keys(this.state.images).length>0) {
           is.push(<h3 key={'TABI'}>Image API<a name="anci" /></h3>)
-          for (var key in this.state.images) {
+          for (let key in this.state.images) {
               is.push(<
                   DisplayImage
                   key = { `item-${this.state.images[key].id}` }
@@ -269,7 +279,7 @@ class Popup extends Component {
 
         let bs = []
         if(Object.keys(this.state.basket).length>0) {
-          for (var key in this.state.basket) {
+          for (let key in this.state.basket) {
               bs.push(<
                   DisplayBasket
                   key = { `item-${this.state.basket[key].id}` }
@@ -325,7 +335,16 @@ class Popup extends Component {
                 {cs}
               </TabPanel>
               <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
-                <button onClick={() => this.openBasketCollection()} className="ButtonAddToBasket" key={"OPENBASKETCOLLECTION"}>OPEN IN M3</button>
+                {Object.keys(this.state.settings.postBasketCollectionTo).map(key =>
+                  <PostButton
+                    lang="en"
+                    link={this.state.settings.postBasketCollectionTo[key]}
+                    theme={this.props.theme}
+                    key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
+                    basket={this.state.basket}
+                    buildBasketCollection={this.buildBasketCollection}
+                  />
+                )}
                 <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
                 <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
                 <br key={v4()}/>
@@ -350,12 +369,12 @@ class Popup extends Component {
               subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)
               subHeaderContent.push(
                 <div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}>
-                  {this.theme.postBasketCollectionTo.map( (link,idx) =>
+                  {Object.keys(this.state.settings.postBasketCollectionTo).map(key =>
                     <PostButton
                       lang="en"
-                      link={link}
+                      link={this.state.settings.postBasketCollectionTo[key]}
                       theme={this.props.theme}
-                      key={`postbutton-${v5(link.url+idx,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
+                      key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+idx,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                       basket={this.state.basket}
                       buildBasketCollection={this.buildBasketCollection}
                     />

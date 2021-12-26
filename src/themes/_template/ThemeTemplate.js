@@ -58,6 +58,8 @@ class ThemeTemplate {
   openManifestLinks = {
     uv: {
       url: 'https://universalviewer.io/uv.html?manifest=%%%URI%%%',
+      tabBasket: false,
+      tabManifests: false,
       label: {
         en: "Open in UV",
         de: "In UV öffnen"
@@ -65,13 +67,17 @@ class ThemeTemplate {
     },
     tify: {
       url: 'https://demo.tify.rocks/demo.html?manifest=%%%URI%%%',
+      tabBasket: false,
+      tabManifests: false,
       label: {
         en: "Open in TIFY",
         de: "In TIFY öffnen"
       }
     },
-    m3: {
+    manducus: {
       url: 'https://manducus.net/m3?manifest=%%%URI%%%',
+      tabBasket: false,
+      tabManifests: false,
       label: {
         en: "Open in M3",
         de: "In M3 öffnen"
@@ -81,8 +87,8 @@ class ThemeTemplate {
 
   // Basket
 
-  postBasketCollectionTo = [
-    {
+  postBasketCollectionTo = {
+    manducus: {
       url: 'https://manducus.net/m3/index.php',
       mode: 'wwwformdata',
       variable: 'collection',
@@ -91,7 +97,8 @@ class ThemeTemplate {
         de: "Kollektion In M3 öffnen"
       }
     }
-  ]
+
+  }
 
 }
 
