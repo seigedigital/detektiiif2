@@ -207,7 +207,7 @@ class CollectionViewers extends Component {
 
 
       <Dialog open={this.state.dialogOpen} onClose={() => this.setState({dialogOpen:false})}>
-        <DialogTitle>Add</DialogTitle>
+        <DialogTitle>Add Collection Viewer</DialogTitle>
         <DialogContent>
           <DialogContentText></DialogContentText>
           <TextField
