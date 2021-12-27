@@ -30,9 +30,11 @@ export default class DisplayManifest extends Component {
         //   let link = this.props.theme.openManifestLinks[key]
         for(let key in this.props.settings.openManifestLinks) {
           let link = this.props.settings.openManifestLinks[key]
-          links.push(
-            <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  />
-          )
+          if(link.tabManifests) {
+            links.push(
+              <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  />
+            )
+          }
         }
 
         let buttons = []

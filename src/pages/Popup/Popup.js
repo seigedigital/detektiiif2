@@ -128,12 +128,15 @@ class Popup extends Component {
 
     loadSettings() {
         chrome.storage.local.get('postBasketCollectionTo', (data) => {
+          console.log({LocSetB:data})
           if('postBasketCollectionTo' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
         })
         chrome.storage.local.get('openManifestLinks', (data) => {
+          console.log({LocSetM:data})
           if('openManifestLinks' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
         })
         chrome.storage.local.get('showUrl', (data) => {
+          console.log({LocSetS:data})          
           if('showUrl' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
         })
     }

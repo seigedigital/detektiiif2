@@ -90,8 +90,10 @@ class ThemeTemplate {
   postBasketCollectionTo = {
     manducus: {
       url: 'https://manducus.net/m3/index.php',
-      mode: 'wwwformdata',
-      variable: 'collection',
+      mode: 'x-www-form-urlencoded', // or json
+      variable: 'collection', // for x-www-form-urlencoded only
+      tabBasket: true,
+      tabCollections: true,
       label: {
         en: "Open Collection in M3",
         de: "Kollektion In M3 öffnen"

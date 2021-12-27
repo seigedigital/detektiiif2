@@ -82,7 +82,7 @@ class Options extends Component {
 
         <Divider />
 
-        <Accordion style={{border:'0',boxShadow:'none'}} disableGutters={true}>
+        <Accordion style={{border:'0',boxShadow:'none'}} disableGutters={true} defaultExpanded={true}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} style={{backgroundColor:'#fff',padding:'0 0',border:'0'}} >
             <h2>Options</h2>
           </AccordionSummary>

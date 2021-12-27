@@ -33,9 +33,11 @@ export default class DisplayBasket extends Component {
         let links = []
         for(let key in this.props.settings.openManifestLinks) {
           let link = this.props.settings.openManifestLinks[key]
-          links.push(
-            <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link.url,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
-          )
+          if(link.tabBasket) {
+            links.push(
+              <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link.url,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
+            )
+          }
         }
 
         let buttons = []
