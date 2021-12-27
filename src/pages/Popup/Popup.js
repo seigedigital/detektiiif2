@@ -136,7 +136,7 @@ class Popup extends Component {
           if('openManifestLinks' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
         })
         chrome.storage.local.get('showUrl', (data) => {
-          console.log({LocSetS:data})          
+          console.log({LocSetS:data})
           if('showUrl' in data) { this.setState({settings:Object.assign({},this.state.settings,data)}) }
         })
     }
@@ -339,6 +339,7 @@ class Popup extends Component {
               </TabPanel>
               <TabPanel value={this.state.tab} index={3} key={"TABPANEL3"}>
                 {Object.keys(this.state.settings.postBasketCollectionTo).map(key =>
+                  this.state.settings.postBasketCollectionTo[key].tabBasket===true ?
                   <PostButton
                     lang="en"
                     link={this.state.settings.postBasketCollectionTo[key]}
@@ -346,7 +347,7 @@ class Popup extends Component {
                     key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                     basket={this.state.basket}
                     buildBasketCollection={this.buildBasketCollection}
-                  />
+                  /> : null
                 )}
                 <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
                 <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
