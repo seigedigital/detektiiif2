@@ -102,6 +102,7 @@ var options = {
     ],
   },
   resolve: {
+    symlinks: false,
     alias: alias,
     extensions: fileExtensions
       .map((extension) => '.' + extension)
@@ -114,7 +115,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'src/themes/active/manifest.json',
+          from: 'src/themes/manifest.json',
           to: path.join(__dirname, 'build'),
           force: true,
           transform: function (content, path) {
@@ -137,6 +138,16 @@ var options = {
           to: path.join(__dirname, 'build'),
           force: true,
         },
+        {
+          from: 'src/themes/active/images/icon-34.png',
+          to: './',
+          force: true
+        },
+        {
+          from: 'src/themes/active/images/icon-128.png',
+          to: './',
+          force: true
+        }
       ],
     }),
     new HtmlWebpackPlugin({

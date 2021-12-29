@@ -330,17 +330,29 @@ import v2GetManifestThumbnail from './tools/iiif'
 
         console.log("ICON NUM "+num)
 
-        // V3
-        // chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
-        // V2
-        chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+        let mv = chrome.runtime.getManifest().manifest_version
 
-        if(num>0)  {
-          // chrome.action.setBadgeText({text:num.toString(),tabId:tab.id});
-          chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
-        } else  {
-          // chrome.action.setBadgeText({text:''});
-          chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
+        if(mv===3) {
+          chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tab.id });
+          if(typeof chrome.action.setBadgeTextColor === 'function' ) {
+            chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tab.id });
+          }
+          if(num>0)  {
+            chrome.action.setBadgeText({text:num.toString(),tabId:tab.id});
+          } else  {
+            chrome.action.setBadgeText({text:'',tabId:tab.id});
+          }
+
+        } else {
+          chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tab.id });
+          if(typeof chrome.browserAction.setBadgeTextColor === 'function' ) {
+            chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tab.id });
+          }
+          if(num>0)  {
+            chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
+          } else  {
+            chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
+          }
         }
 
       })
@@ -510,24 +522,27 @@ import v2GetManifestThumbnail from './tools/iiif'
             return
           }
 
-// V3
-          // chrome.scripting.executeScript({
-          //     target: {tabId: tabId},
-          //     func: sendMsg,
-          //     args: [tabId]
-          //   },null
-          // )
+          let mv = chrome.runtime.getManifest().manifest_version
 
-// V2
-          chrome.tabs.executeScript({
-            code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML, tabId:"+tabId+"});" // or 'file: "getPagesSource.js"'
-          }, function(result) {
-            if (chrome.runtime.lastError) {
-              // console.error(chrome.runtime.lastError.message);
-            } else {
-              console.log(result)
-            }
-          })
+          if(mv===3) {
+            chrome.scripting.executeScript({
+                target: {tabId: tabId},
+                func: sendMsg,
+                args: [tabId]
+              },null
+            )
+          } else {
+              chrome.tabs.executeScript({
+                code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML, tabId:"+tabId+"});" // or 'file: "getPagesSource.js"'
+              }, function(result) {
+                if (chrome.runtime.lastError) {
+                  // console.error(chrome.runtime.lastError.message);
+                } else {
+                  console.log(result)
+                }
+              })
+          }
+
         }
 
         if(!changeInfo.url) {

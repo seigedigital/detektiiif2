@@ -5,6 +5,6 @@ if [[ -z "${1}" ]]; then
 else
   rm -rf build/*
   NODE_ENV=production
-  npm run build
+  npm run buildv3
   zip -r $1/detektiiif2-build-$(date +%s).zip build/
 fi

@@ -7,26 +7,37 @@ derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
 
 ## Usage
 
+### Install basics:
 * clone this repo ```git clone https://github.com/seigedigital/detektiiif2```
 * ```cd detektiiif2```
 * ```npm install```
-* ```npm run build``` (one time build for production) or ```npm start``` (continuous development mode + hot reload)
-* provide build folder to Chrome (unpacked in Developer Mode or as ZIP via the Chrome Web Store)
 
-## Build-time Theming
+### Configure repository
+
+* Configure theme:
+* ```cd src/themes```
+* ```./settheme.sh <themefolder> <manifestversion>```
+* e.g. ```./settheme.sh detektiiif2 v2```
+
+* Run development server or build for production (version MUST match manifest version of the theme)
+* ```npm run buildv3``` (one time build for production, manifest version 3)
+* ```npm run buildv2``` (one time build for production, manifest version 2)
+* ```npm startv3``` (continuous development mode + hot reload, manifest version 3)
+* ```npm startv2``` (continuous development mode + hot reload, manifest version 2)
+
+
+## Create your own theme
 
 Duplicate one of the folders in src/themes for your own theme
 ```
 cp -r detektiiif2 myinstitution
 ```
-Modify the files in the new folder as you wish and switch the symlink `active` to the desired theme:
-```
-rm active && ln -s myinstitution active
-```
-Rebuild the extension. That's it!
+Modify the files in the new folder as you wish and continue as described in section "Configure repository"
 
 ## Packaging for the Chrome Web Store
 
- ```NODE_ENV=production npm run build```
+* switch to version 3 and execute the shellscript ```./pack4cws.sh```
 
- ```zip -r {output folder}/detektiiif2-build-$(date +%s).zip build/ ```
+## Packaging for the Mozilla Firefox AMO
+
+* switch to version 3 and execute the shellscript ```./pack4amo.sh```

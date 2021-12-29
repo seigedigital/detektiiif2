@@ -102,6 +102,7 @@ var options = {
     ],
   },
   resolve: {
+    symlinks: false,
     alias: alias,
     symlinks: false,
     extensions: fileExtensions
@@ -115,7 +116,7 @@ var options = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'src/themes/active/manifest.json',
+          from: 'src/themes/manifest.json',
           to: path.join(__dirname, 'build'),
           force: true,
           transform: function (content, path) {

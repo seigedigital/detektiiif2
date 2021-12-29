@@ -8,8 +8,10 @@
     "url": "https://github.com/seigedigital/detektiiif2.git"
   },
   "scripts": {
-    "build": "node utils/build.js",
-    "start": "node utils/webserver.js",
+    "buildv2": "node utils/build-v2.js",
+    "buildv3": "node utils/build-v3.js",
+    "startv2": "node utils/webserver-v2.js",
+    "startv3": "node utils/webserver-v3.js",
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
   },
   "dependencies": {
