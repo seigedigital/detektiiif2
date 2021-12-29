@@ -378,7 +378,7 @@ class Popup extends Component {
                       lang="en"
                       link={this.state.settings.postBasketCollectionTo[key]}
                       theme={this.props.theme}
-                      key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+idx,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
+                      key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                       basket={this.state.basket}
                       buildBasketCollection={this.buildBasketCollection}
                     />
