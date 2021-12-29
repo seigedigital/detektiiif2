@@ -227,7 +227,7 @@ import v2GetManifestThumbnail from './tools/iiif'
       console.log("ANALYZE HTML of Tab "+tabId)
 
       // Generic 1, should match e.g. National Museum Sweden
-      let regex_generic1 = /(https\:\/\/[^\"]*(iiif|manifest)[^\"]*)\"/gi;
+      let regex_generic1 = /(https\:\/\/[^\"]*(iiif|manifest)[^\"<]*)\"/gi;
       let params = [...doc.matchAll(regex_generic1)];
       if(params.length>100) {
         // FIXME do nice status in tab header, dont alert
@@ -244,7 +244,7 @@ import v2GetManifestThumbnail from './tools/iiif'
       }
 
       // Generic 2, intra-Link
-      let regex_generic2 = /\"https[\"]*=(https\:\/\/[^\"\&]*(iiif|manifest)[^\"\&]*)[\"\&]/gi;
+      let regex_generic2 = /\"https[\"]*=(https\:\/\/[^\"\&]*(iiif|manifest)[^\"\&<]*)/gi;
       params = [...doc.matchAll(regex_generic2)];
       if(params.length>20) {
         alert("detektIIIF: limiting huge number of matches (case 2)"); // FIXME do nice status in tab header, dont alert
@@ -327,13 +327,20 @@ import v2GetManifestThumbnail from './tools/iiif'
               break
           }
         }
+
         console.log("ICON NUM "+num)
-        chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+
+        // V3
+        // chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+        // V2
+        chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
 
         if(num>0)  {
-          chrome.action.setBadgeText({text:num.toString(),tabId:tab.id});
+          // chrome.action.setBadgeText({text:num.toString(),tabId:tab.id});
+          chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
         } else  {
-          chrome.action.setBadgeText({text:''});
+          // chrome.action.setBadgeText({text:''});
+          chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
         }
 
       })
@@ -503,22 +510,24 @@ import v2GetManifestThumbnail from './tools/iiif'
             return
           }
 
-          chrome.scripting.executeScript({
-              target: {tabId: tabId},
-              func: sendMsg,
-              args: [tabId]
-            },null
-          )
+// V3
+          // chrome.scripting.executeScript({
+          //     target: {tabId: tabId},
+          //     func: sendMsg,
+          //     args: [tabId]
+          //   },null
+          // )
 
-          // chrome.tabs.executeScript({
-          //   code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML});" // or 'file: "getPagesSource.js"'
-          // }, function(result) {
-          //   if (chrome.runtime.lastError) {
-          //     // console.error(chrome.runtime.lastError.message);
-          //   } else {
-          //     console.log(result)
-          //   }
-          // })
+// V2
+          chrome.tabs.executeScript({
+            code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML, tabId:"+tabId+"});" // or 'file: "getPagesSource.js"'
+          }, function(result) {
+            if (chrome.runtime.lastError) {
+              // console.error(chrome.runtime.lastError.message);
+            } else {
+              console.log(result)
+            }
+          })
         }
 
         if(!changeInfo.url) {
@@ -560,7 +569,8 @@ import v2GetManifestThumbnail from './tools/iiif'
         updateIcon()
 
         console.log("GETTING TAB "+tabId)
-        chrome.tabs.get(tabId).then((tab) => {
+        // chrome.tabs.get(tabId).then((tab) => {
+        chrome.tabs.get(tabId, (tab) => {
           console.log({tab:tab})
           // just give it a try
           fetchHttp(tab.url,tab.id)
