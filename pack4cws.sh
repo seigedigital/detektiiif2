@@ -6,5 +6,5 @@ else
   rm -rf build/*
   NODE_ENV=production
   npm run buildv3
-  zip -r $1/detektiiif2-build-$(date +%s).zip build/
+  zip -r $1/detektiiif2-build-$(jq -r .version build/manifest.json)-$(date +%s).zip build/
 fi
