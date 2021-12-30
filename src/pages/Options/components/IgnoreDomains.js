@@ -31,7 +31,7 @@ class IgnoreDomains extends Component {
       ignoreDomains: []
     }
 
-    chrome.storage.sync.get('ignoreDomains', (data) => {
+    chrome.storage.local.get('ignoreDomains', (data) => {
       if(data.ignoreDomains!==undefined) {
         this.setState({ignoreDomains:data.ignoreDomains})
       } else {
@@ -42,7 +42,7 @@ class IgnoreDomains extends Component {
     chrome.storage.onChanged.addListener( (changes, namespace) => {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
-        if(namespace==="sync" &&  key==="ignoreDomains") {
+        if(namespace==="local" &&  key==="ignoreDomains") {
           this.setState({ignoreDomains:newValue})
         }
 
@@ -57,7 +57,7 @@ class IgnoreDomains extends Component {
 
   upd() {
     this.data = Object.assign({},this.data,this.state)
-    chrome.storage.sync.set(this.data)
+    chrome.storage.local.set(this.data)
   }
 
   render() {

@@ -82,7 +82,7 @@ class CollectionViewers extends Component {
   }
 
   getOpenCollectionLinks() {
-    chrome.storage.sync.get('postBasketCollectionTo', (data) => {
+    chrome.storage.local.get('postBasketCollectionTo', (data) => {
       if('postBasketCollectionTo' in data) {
         this.setState({postBasketCollectionTo:data.postBasketCollectionTo})
       }
@@ -116,7 +116,7 @@ class CollectionViewers extends Component {
   }
 
   upd() {
-    chrome.storage.sync.set({postBasketCollectionTo:this.state.postBasketCollectionTo})
+    chrome.storage.local.set({postBasketCollectionTo:this.state.postBasketCollectionTo})
   }
 
   render() {

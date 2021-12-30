@@ -82,15 +82,15 @@ class Popup extends Component {
         chrome.storage.onChanged.addListener( (changes, namespace) => {
           for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
-            if(namespace==="sync" &&  key==="showUrl") {
+            if(namespace==="local" &&  key==="showUrl") {
               this.setState({settings:Object.assign({},this.state.settings,{showUrl:newValue})})
             }
 
-            if(namespace==="sync" &&  key==="postBasketCollectionTo") {
+            if(namespace==="local" &&  key==="postBasketCollectionTo") {
               this.setState({settings:Object.assign({},this.state.settings,{postBasketCollectionTo:newValue})})
             }
 
-            if(namespace==="sync" &&  key==="openManifestLinks") {
+            if(namespace==="local" &&  key==="openManifestLinks") {
               this.setState({settings:Object.assign({},this.state.settings,{openManifestLinks:newValue})})
             }
 
@@ -141,9 +141,11 @@ class Popup extends Component {
         })
     }
 
+    // FIXME use sync if it was asked for
+
     loadBasket() {
       console.log("loading basket "+this.defaults.storeBasket)
-      const s = this.defaults.storeBasket==='sync' ? chrome.storage.sync : chrome.storage.local
+      const s = this.defaults.storeBasket==='sync' ? chrome.storage.local : chrome.storage.local
       s.get('basket', (data) => {
         if('basket' in data) {
           this.setState(data)
@@ -153,7 +155,7 @@ class Popup extends Component {
 
     saveBasket(data) {
       console.log("saving basket "+this.defaults.storeBasket)
-      const s = this.defaults.storeBasket==='sync' ? chrome.storage.sync : chrome.storage.local
+      const s = this.defaults.storeBasket==='sync' ? chrome.storage.local : chrome.storage.local
       s.set({basket:data}, () => {
         console.log({BSaved:data})
         this.setState({basket:data})

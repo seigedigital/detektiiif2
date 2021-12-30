@@ -626,7 +626,7 @@ import v2GetManifestThumbnail from './tools/iiif'
     chrome.storage.onChanged.addListener(function (changes, namespace) {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
-        if(namespace==="sync" &&  key==="ignoreDomains") {
+        if(namespace==="" &&  key==="ignoreDomains") {
           ignoreDomains=newValue
         }
 
@@ -638,7 +638,7 @@ import v2GetManifestThumbnail from './tools/iiif'
     });
 
     ignoreDomains = globalDefaults.ignoreDomains
-    chrome.storage.sync.get('ignoreDomains', function(data) {
+    chrome.storage.local.get('ignoreDomains', function(data) {
       console.log({GOT:data})
     })
 

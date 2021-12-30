@@ -72,7 +72,7 @@ class ManifestViewers extends Component {
   }
 
   getOpenManifestLinks() {
-    chrome.storage.sync.get('openManifestLinks', (data) => {
+    chrome.storage.local.get('openManifestLinks', (data) => {
       if('openManifestLinks' in data) {
         this.setState({openManifestLinks:data.openManifestLinks})
       }
@@ -112,7 +112,7 @@ class ManifestViewers extends Component {
   }
 
   upd() {
-    chrome.storage.sync.set({openManifestLinks:this.state.openManifestLinks})
+    chrome.storage.local.set({openManifestLinks:this.state.openManifestLinks})
   }
 
   render() {

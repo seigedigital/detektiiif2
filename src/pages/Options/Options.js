@@ -39,7 +39,7 @@ class Options extends Component {
     chrome.storage.onChanged.addListener( (changes, namespace) => {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
-        if(namespace==="sync" &&  key==="showUrl") {
+        if(namespace==="local" &&  key==="showUrl") {
           this.setState({showUrl:newValue})
         }
 
@@ -54,7 +54,7 @@ class Options extends Component {
 
   upd() {
     this.data = Object.assign({},this.data,this.state)
-    chrome.storage.sync.set(this.data)
+    chrome.storage.local.set(this.data)
   }
 
   render() {
