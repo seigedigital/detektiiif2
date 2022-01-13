@@ -19,11 +19,33 @@ derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
 * ```./settheme.sh <themefolder> <manifestversion>```
 * e.g. ```./settheme.sh detektiiif2 v2```
 
-* Run development server or build for production (version MUST match manifest version of the theme)
-* ```npm run buildv3``` (one time build for production, manifest version 3)
-* ```npm run buildv2``` (one time build for production, manifest version 2)
+### Run development server (version MUST match manifest version of the theme)
+
 * ```npm startv3``` (continuous development mode + hot reload, manifest version 3)
+
+OR
+
 * ```npm startv2``` (continuous development mode + hot reload, manifest version 2)
+
+__Load in Firefox (most likely v2):__
+* open `about:debugging`
+* click "This Firefox"
+* click "Load temporary Add-on" and select your `build` folder
+
+__Load in Chrome (likely v3):__
+* open `chrome://extensions`
+* turn the switch `Developer mode` on
+* click Button `Load unpacked`
+* select your `build` folder
+
+
+### Build for production (version MUST match manifest version of the theme)
+
+* ```npm run buildv3``` (one time build for production, manifest version 3)
+
+OR
+
+* ```npm run buildv2``` (one time build for production, manifest version 2)
 
 
 ## Create your own theme

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "DetektIIIF 2",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true

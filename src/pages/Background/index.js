@@ -227,8 +227,9 @@ import v2GetManifestThumbnail from './tools/iiif'
       console.log("ANALYZE HTML of Tab "+tabId)
 
       // Generic 1, should match e.g. National Museum Sweden
-      let regex_generic1 = /(https\:\/\/[^\"]*(iiif|manifest)[^\"<]*)\"/gi;
+      let regex_generic1 = /(https\:\/\/[^\"<\ ]*(iiif|i3f|manifest)[^\"<\ ]*)/gi;
       let params = [...doc.matchAll(regex_generic1)];
+      console.log({guesses1:params})
       if(params.length>100) {
         // FIXME do nice status in tab header, dont alert
         // alert("detektIIIF: limiting huge number of matches (case 1)");
@@ -244,8 +245,9 @@ import v2GetManifestThumbnail from './tools/iiif'
       }
 
       // Generic 2, intra-Link
-      let regex_generic2 = /\"https[\"]*=(https\:\/\/[^\"\&]*(iiif|manifest)[^\"\&<]*)/gi;
+      let regex_generic2 = /http[^\"<\ ]*=(https\:\/\/[^\"\&]*(iiif|i3f|manifest)[^\"\&<]*)/gi;
       params = [...doc.matchAll(regex_generic2)];
+      console.log({guesses2:params})
       if(params.length>20) {
         alert("detektIIIF: limiting huge number of matches (case 2)"); // FIXME do nice status in tab header, dont alert
         params=params.slice(0,10);
