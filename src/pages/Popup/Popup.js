@@ -419,11 +419,13 @@ class Popup extends Component {
           header= <div className="App-header" key={'App-header-0'}>
                     <img src={this.theme.logoImageBig} className="Logo-image-Big" />
                     <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                    { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         } else {
           header= <div className="App-header" key={'App-header-0'}>
                     <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
                     <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                    { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         }
 

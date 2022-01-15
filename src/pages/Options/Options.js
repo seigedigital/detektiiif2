@@ -67,12 +67,13 @@ class Options extends Component {
         <div className="optionsHeader">
           { this.theme.optionsLogoImage ?
             <span>
-              <img src={this.theme.optionsLogoImage} alt={this.theme.title} className="optionsLogoImage" />
+              <img src={this.theme.optionsLogoImage} alt={this.theme.title} className="optionsLogoImage" /><br />
               {this.theme.optionsPunchline}
             </span>
             :
             <h2 className="App-title">Options: {this.theme.title}</h2>
           }
+          { this.theme.optionsSecondaryLogoImage ? <img src={this.theme.optionsSecondaryLogoImage} alt={this.theme.title} className="optionsSecondaryLogoImage" /> : null }
         </div>
         <p>Version: {chrome.runtime.getManifest().version}</p>
 

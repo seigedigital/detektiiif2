@@ -28,6 +28,7 @@ class ThemeTemplate {
   }
 
   optionsLogoImage = null
+  optionsSecondaryLogoImage = null
 
   optionsPunchline = <span>Options</span>
 
@@ -38,6 +39,7 @@ class ThemeTemplate {
   infoImage = null
   logoImage = null
   logoImageBig = null
+  logoSecondaryImageBig = null
   redDotImage = null
   trashcanImage= null
 
