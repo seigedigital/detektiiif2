@@ -9,6 +9,7 @@ import { v5 } from 'uuid'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 export default class DisplayBasket extends Component {
     constructor(props) {
@@ -34,8 +35,9 @@ export default class DisplayBasket extends Component {
         for(let key in this.props.settings.openManifestLinks) {
           let link = this.props.settings.openManifestLinks[key]
           if(link.tabBasket) {
+            let bgcolor = link.backgroundColor===undefined?false:link.backgroundColor
             links.push(
-              <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link.url,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
+              <LinkButton lang="en" bgcolor={bgcolor} link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link.url,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
             )
           }
         }
@@ -49,14 +51,16 @@ export default class DisplayBasket extends Component {
         if(this.props.theme.generalButtons.removeFromBasket!==false) {
           buttons.push(<br key={v4()} />)
           buttons.push(
-            this.props.theme.trashcanImage ?
-                <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
-                  <img src={this.props.theme.trashcanImage}  className="iconSize" />
-                </IconButton>
-                :
-                <button onClick={() => this.props.removeFromBasket(this.props.url)} className="ButtonRemoveFromBasket" key={`rembutton-${hashedurl}`} >
-                  REMOVE FROM BASKET
-                </button>
+            <Tooltip title="Remove">{
+              this.props.theme.trashcanImage ?
+                    <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
+                      <img src={this.props.theme.trashcanImage}  className="iconSize" />
+                    </IconButton>
+                  :
+                  <button onClick={() => this.props.removeFromBasket(this.props.url)} className="ButtonRemoveFromBasket" key={`rembutton-${hashedurl}`} >
+                    REMOVE FROM BASKET
+                  </button>}
+            </Tooltip>
           )
         }
 
@@ -74,9 +78,9 @@ export default class DisplayBasket extends Component {
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
                 {this.props.label}<br key={v4()}/>
-                {showUrl}
-                {buttons}<br key={v4()}/>
+                {showUrl}<br key={v4()}/>
                 {links}<br key={v4()}/>
+                {buttons}<br key={v4()}/>
             </div>
           </div>
         )

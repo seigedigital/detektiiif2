@@ -21,6 +21,7 @@ import IconButton from '@mui/material/IconButton';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import Badge from '@mui/material/Badge';
+import Tooltip from '@mui/material/Tooltip';
 
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
@@ -386,7 +387,9 @@ class Popup extends Component {
                     />
                   )}
                   <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
-                  <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove all</button>
+                  <Tooltip title="Remove All">
+                    <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove All</button>
+                  </Tooltip>
                 </div>
               )
               break

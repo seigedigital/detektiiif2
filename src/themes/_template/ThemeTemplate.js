@@ -62,6 +62,7 @@ class ThemeTemplate {
       url: 'https://universalviewer.io/uv.html?manifest=%%%URI%%%',
       tabBasket: false,
       tabManifests: false,
+      backgroundColor: "#5e724d",
       label: {
         en: "Open in UV",
         de: "In UV öffnen"
@@ -71,6 +72,7 @@ class ThemeTemplate {
       url: 'https://demo.tify.rocks/demo.html?manifest=%%%URI%%%',
       tabBasket: false,
       tabManifests: false,
+      backgroundColor: "#5e724d",
       label: {
         en: "Open in TIFY",
         de: "In TIFY öffnen"
@@ -80,6 +82,7 @@ class ThemeTemplate {
       url: 'https://manducus.net/m3?manifest=%%%URI%%%',
       tabBasket: false,
       tabManifests: false,
+      backgroundColor: "#5e724d",
       label: {
         en: "Open in M3",
         de: "In M3 öffnen"
