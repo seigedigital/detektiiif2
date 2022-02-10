@@ -117,6 +117,10 @@ class ManifestViewers extends Component {
 
   render() {
 
+    if(this.theme.optionsLists.openManifestLinks===false) {
+      return null
+    }
+
     console.log({render_ManViews_with_state:this.state})
 
     let manifestViewers = []
