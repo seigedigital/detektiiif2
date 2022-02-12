@@ -41,18 +41,18 @@ In this file:
   padding:0;
   display: grid;
   grid-template-columns: 100vw;
-  grid-template-rows: 80px 0px 1fr 20px;
+  grid-template-rows: 120px 0px 1fr 20px;
   width:100vw;
   height:100vh;
 }
 
 .App-header {
-  text-align: center;
+  text-align: left;
   grid-row: 1;
   grid-column: 1;
   background-color: #222;
   color: white;
-  padding: 0;
+  padding:20px;
   margin:0;
 }
 
