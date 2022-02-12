@@ -45,6 +45,10 @@ class ThemeTemplate {
   redDotImage = null
   trashcanImage= null
 
+  texts = {
+    manifestInfoIcon: "This is a manifest."
+  }
+
   // List Items
 
   generalButtons = {
@@ -101,6 +105,7 @@ class ThemeTemplate {
       variable: 'collection', // for x-www-form-urlencoded only
       tabBasket: true,
       tabCollections: true,
+      tooltip: "Open your collection in Mirador.",
       options: {
         hidden: false
       },

@@ -9,6 +9,8 @@ import { v5 } from 'uuid'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 
+import Tooltip from '@mui/material/Tooltip';
+
 export default class DisplayManifest extends Component {
     constructor(props) {
         super(props);
@@ -56,8 +58,12 @@ export default class DisplayManifest extends Component {
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
                 {this.props.label}<br />
                 {showUrl}<QualityChips theme={this.props.theme} cors={this.props.cors} hashedurl={hashedurl} https={this.props.url.startsWith("https")} key={`quality-chips-${hashedurl}`} /><br />
-                {buttons}<br />
-                {links}<br />
+                {buttons}
+                {links}
+                <br />
+                <Tooltip title={this.props.theme.texts.manifestInfoIcon}>
+                  <img src={this.props.theme.infoImage} className="iconSize" />
+                </Tooltip>
             </div>
           </div>
         )

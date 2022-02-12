@@ -465,6 +465,7 @@ class Popup extends Component {
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
               <div className="BasketIcon" style={{display:(this.defaults.tabs===true?'none':'block')}} key={v4()}  >
+                <Tooltip title={this.state.tab===0 ? "Click to open basket." : "Close basket."}>
                 <IconButton color="primary"
                   aria-label="Basket"
                   component="span"
@@ -484,6 +485,7 @@ class Popup extends Component {
                     }
                   </Badge>
                 </IconButton>
+                </Tooltip>
               </div>
             </div>
 

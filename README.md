@@ -30,7 +30,7 @@ OR
 __Load in Firefox (most likely v2):__
 * open `about:debugging`
 * click "This Firefox"
-* click "Load temporary Add-on" and select your `build` folder
+* click "Load temporary Add-on" and select your `build` folder (or the manifest.json file in it)
 
 __Load in Chrome (likely v3):__
 * open `chrome://extensions`

@@ -50,7 +50,7 @@ export default class DisplayBasket extends Component {
 
         if(this.props.theme.generalButtons.removeFromBasket!==false) {
           buttons.push(
-            <Tooltip title="Remove" key={v4()} >{
+            <Tooltip title="Remove Manifest" key={v4()} >{
               this.props.theme.trashcanImage ?
                     <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
                       <img src={this.props.theme.trashcanImage}  className="iconSize" />
