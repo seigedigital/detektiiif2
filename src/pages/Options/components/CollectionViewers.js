@@ -121,14 +121,22 @@ class CollectionViewers extends Component {
 
   render() {
 
+    if(this.theme.optionsLists.openCollectionLinks===false) {
+      return null
+    }
+
     console.log({render_ManViews_with_state:this.state})
 
     let collectionViewers = []
     for(let key of Object.keys(this.state.postBasketCollectionTo).sort() ) {
       let link = this.state.postBasketCollectionTo[key]
+      let cardsx = {margin:'16px 0'}
+      if('options' in link && 'hidden' in link.options && link.options.hidden===true) {
+        cardsx = {margin:'16px 0',display:'none'}
+      }
       let hashkey = v5(link.url,'1b671a63-40d3-4913-99b3-da01ff1f3343')
       collectionViewers.push(
-        <Card key={`manifestViewer-${hashkey}`} sx={{margin:'16px 0'}}>
+        <Card key={`manifestViewer-${hashkey}`} sx={cardsx}>
           <CardContent>
             <TextField label="Label" value={link.label['en']} size="small" fullWidth style={{margin:"12px 0"}}
               onChange={ (e) => this.setOpenCollectionLinkLang(key,e.target.value,'en') }

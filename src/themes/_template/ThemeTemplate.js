@@ -24,6 +24,7 @@ class ThemeTemplate {
 
   optionsLists = {
     openManifestLinks: true,
+    openCollectionLinks: true,
     excludeWebsites: true
   }
 
@@ -34,6 +35,7 @@ class ThemeTemplate {
 
   // Images
   basketImage = null
+  removeAllBasketImage = null
   closeBasketImage = null
   greenDotImage = null
   infoImage = null
@@ -99,6 +101,9 @@ class ThemeTemplate {
       variable: 'collection', // for x-www-form-urlencoded only
       tabBasket: true,
       tabCollections: true,
+      options: {
+        hidden: false
+      },
       label: {
         en: "Open Collection in M3",
         de: "Kollektion In M3 öffnen"

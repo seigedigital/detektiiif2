@@ -33,11 +33,11 @@ export default class DisplayBasket extends Component {
 
         let links = []
         for(let key in this.props.settings.openManifestLinks) {
-          let link = this.props.settings.openManifestLinks[key]
+          let link = Object.assign({},this.props.settings.openManifestLinks[key])
           if(link.tabBasket) {
             let bgcolor = link.backgroundColor===undefined?false:link.backgroundColor
             links.push(
-              <LinkButton lang="en" bgcolor={bgcolor} link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(link.url,'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
+              <LinkButton lang="en" bgcolor={bgcolor} link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(JSON.stringify(link),'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
             )
           }
         }
@@ -49,9 +49,8 @@ export default class DisplayBasket extends Component {
         // }
 
         if(this.props.theme.generalButtons.removeFromBasket!==false) {
-          buttons.push(<br key={v4()} />)
           buttons.push(
-            <Tooltip title="Remove">{
+            <Tooltip title="Remove" key={v4()} >{
               this.props.theme.trashcanImage ?
                     <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
                       <img src={this.props.theme.trashcanImage}  className="iconSize" />
@@ -63,9 +62,6 @@ export default class DisplayBasket extends Component {
             </Tooltip>
           )
         }
-
-        console.log("SA "+this.props.url.startsWith("https"))
-        console.log("url "+this.props.url)
 
         return (
           <div className="ListItem" key={`listitem-${hashedurl}`}>

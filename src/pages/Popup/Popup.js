@@ -23,6 +23,13 @@ import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import Badge from '@mui/material/Badge';
 import Tooltip from '@mui/material/Tooltip';
 
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
 
@@ -75,8 +82,13 @@ class Popup extends Component {
               openManifestLinks: Object.assign({},this.theme.openManifestLinks)
             },
             tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
+            remDialog: false,
+            remKey: null
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
+        this.closeDialog = this.closeDialog.bind(this)
+        this.openDialog = this.openDialog.bind(this)
+        this.removeOperation = this.removeOperation.bind(this)
 
         this.loadBasket()
 
@@ -170,16 +182,23 @@ class Popup extends Component {
       // chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
     }
 
-    removeFromBasket(key) {
-      let newbasket = Object.assign(this.state.basket)
-      delete newbasket[key]
-      this.saveBasket(newbasket)
-      // chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
+    openDialog(key) {
+      this.setState({remDialog:true,remKey:key})
     }
 
-    clearBasket(key) {
+    closeDialog(key) {
+      this.setState({remDialog:false,remKey:null})
+    }
+
+    removeOperation() {
       let newbasket = {}
+      if(this.state.remKey!==null) {
+        console.log("removing from basket: "+this.state.remKey)
+        newbasket = Object.assign(this.state.basket)
+        delete newbasket[this.state.remKey]
+      }
       this.saveBasket(newbasket)
+      this.closeDialog()
       // chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
     }
 
@@ -296,7 +315,7 @@ class Popup extends Component {
                   cors = { this.state.basket[key].cors }
                   error = { this.state.basket[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
-                  removeFromBasket = {this.removeFromBasket.bind(this)}
+                  removeFromBasket = {this.openDialog.bind(this)}
                   settings = {this.state.settings}
                   theme = {this.theme}
               />)
@@ -388,7 +407,15 @@ class Popup extends Component {
                   )}
                   <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
                   <Tooltip title="Remove All">
-                    <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove All</button>
+                    {
+                      this.theme.removeAllBasketImage===null ?
+                      <button onClick={() => this.openDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove All</button>
+                      :
+                      <IconButton color="primary" onClick={() => this.openDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>
+                        <img src={this.theme.removeAllBasketImage}  className="iconSize" />
+                      </IconButton>
+                    }
+
                   </Tooltip>
                 </div>
               )
@@ -471,6 +498,25 @@ class Popup extends Component {
                 <a href="#" onClick={ () => { chrome.runtime.openOptionsPage() } } key={"FOOTEROPTIONS"}>Options</a>
               </span>
             </div>
+
+            <Dialog open={this.state.remDialog}>
+              <DialogTitle id="alert-dialog-title">
+                {
+                  this.state.remKey===null?
+                  "Remove all items from basket?"
+                  :
+                  "Remove this item from the basket?"
+                }
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.closeDialog}>No</Button>
+                <Button onClick={this.removeOperation} autoFocus>Yes</Button>
+              </DialogActions>
+            </Dialog>
 
           </div>
         )
