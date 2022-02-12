@@ -62,8 +62,6 @@ class IgnoreDomains extends Component {
 
   render() {
 
-    console.log({render_opts_with_state:this.state})
-
     return (
 
         <span>

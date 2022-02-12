@@ -56,6 +56,8 @@ cp -r detektiiif2 myinstitution
 ```
 Modify the files in the new folder as you wish and continue as described in section "Configure repository"
 
+Don't forget to keep v2 and v3 manifest files both up to date, e.g. the version number.
+
 ## Packaging for the Chrome Web Store
 
 * switch to version 3 and execute the shellscript ```./pack4cws.sh```
