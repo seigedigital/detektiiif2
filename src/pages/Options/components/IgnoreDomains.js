@@ -81,7 +81,7 @@ class IgnoreDomains extends Component {
           <br />
           <br />
           <Button variant="outlined" size="small" color="error"
-            onClick={() => { this.setState({ignoreDomains:this.defaults.ignoreDomains}), this.upd }}
+            onClick={() => { this.setState({ignoreDomains:this.defaults.ignoreDomains}, this.upd) }}
           >
             Reset Defaults
           </Button>
