@@ -372,7 +372,7 @@ class Popup extends Component {
                   /> : null
                 )}
                 <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
-                <button onClick={() => this.clearBasket()} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
+                <button onClick={() => this.openDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
                 <br key={v4()}/>
                 {bs}
               </TabPanel>
