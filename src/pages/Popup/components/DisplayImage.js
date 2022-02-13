@@ -46,20 +46,22 @@ export default class DisplayImage extends Component {
         </div>
 
         return (
-            <div className="box">
-                <LazyLoadImage
-                  height={"100"}
-                  src={this.props.thumb}
-                  placeholder=<HourglassEmptyIcon sx={{color:'white'}} key={`listitem-lazyimage-${hashedurl}`} />
-                />
-                <div className="box_text">
-                    {this.props.label}<br />
-                    <a href={this.props.url} target="_blank">{this.props.url}</a><br />
-                    {corsflag[this.props.cors.toString()]}
-                    {httpsflag[this.props.url.startsWith("https").toString()]}<br />
-                    <button onClick={() => this.props.copyUrl(this.props.url)}>COPY URL</button><br />
-                </div>
+          <div className="ListItem" key={`listitem-${hashedurl}`}>
+            <div className="ListItem-image" key={`listitem-image-${hashedurl}`}>
+            <LazyLoadImage
+              height={"100"}
+              src={this.props.thumb}
+              placeholder=<HourglassEmptyIcon sx={{color:'white'}} key={`listitem-lazyimage-${hashedurl}`} />
+            />
             </div>
+            <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
+                {this.props.label}<br />
+                <a href={this.props.url} target="_blank">{this.props.url}</a><br />
+                {corsflag[this.props.cors.toString()]}
+                {httpsflag[this.props.url.startsWith("https").toString()]}<br />
+                <button onClick={() => this.props.copyUrl(this.props.url)}>COPY URL</button><br />
+            </div>
+          </div>
         );
     }
 }

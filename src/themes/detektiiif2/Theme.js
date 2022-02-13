@@ -1,7 +1,7 @@
 import './Styles.css'
 import ThemeTemplate from '../_template/ThemeTemplate.js'
 
-import LogoImageBig from './images/logo2.svg'
+import LogoImageBig from './images/logo4.svg'
 
 class Theme extends ThemeTemplate {
 

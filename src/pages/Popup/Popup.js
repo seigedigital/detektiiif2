@@ -262,7 +262,7 @@ class Popup extends Component {
 
         let cs = []
         if(Object.keys(this.state.collections).length>0) {
-          cs.push(<h3 key={'TABC'}>Presentation API: Collections<a name="ancc" /></h3>)
+          // cs.push(<h3 key={'TABC'}>Presentation API: Collections<a name="ancc" /></h3>)
           for (let key in this.state.collections) {
               cs.push(<
                   DisplayCollection
@@ -282,7 +282,7 @@ class Popup extends Component {
 
         let is = []
         if(Object.keys(this.state.images).length>0) {
-          is.push(<h3 key={'TABI'}>Image API<a name="anci" /></h3>)
+          // is.push(<h3 key={'TABI'}>Image API<a name="anci" /></h3>)
           for (let key in this.state.images) {
               is.push(<
                   DisplayImage

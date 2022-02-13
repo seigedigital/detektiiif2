@@ -47,10 +47,10 @@ In this file:
 }
 
 .App-header {
-  text-align: left;
+  text-align: right;
   grid-row: 1;
   grid-column: 1;
-  background-color: #222;
+  background-color: #ccc;
   color: white;
   padding:20px;
   margin:0;
@@ -172,6 +172,7 @@ In this file:
   position: absolute;
   top:4px;
   right:4px;
+  color: black;
 }
 
 .ListItem {
