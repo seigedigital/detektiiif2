@@ -305,9 +305,21 @@ import v2GetManifestThumbnail from './tools/iiif'
     function updateIcon() {
 
       let queryOptions = { active: true, currentWindow: true }
+
       chrome.tabs.query(queryOptions, ([tab]) => {
-        if(tab.id==chrome.tabs.TAB_ID_NONE) {
+        if(tab===undefined) {
+          console.log("Tab is undefined. Returning.")
+          return
+        }
+        console.log({tab:tab})
+        if(tab.id === chrome.tabs.TAB_ID_NONE) {
             return
+        }
+        console.log({tabStorage:tabStorage})
+        console.log({tabID:tab.id})
+        console.log({TSotid:tabStorage[tab.id]})
+        if(tabStorage[tab.id]===undefined) {
+          return
         }
         let num = 0
         if(globalDefaults.tabs===true) {

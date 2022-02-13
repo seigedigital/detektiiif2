@@ -30,6 +30,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+import Snackbar from '@mui/material/Snackbar';
+
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
 
@@ -83,7 +85,9 @@ class Popup extends Component {
             },
             tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
             remDialog: false,
-            remKey: null
+            remKey: null,
+            snackOpen: false,
+            snackMsg: ''
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
         this.closeDialog = this.closeDialog.bind(this)
@@ -132,10 +136,17 @@ class Popup extends Component {
     }
 
     copyUrl(url) {
-      navigator.clipboard.writeText(url).then(function() {
-        alert("URL copied.")
-      }, function() {
-        alert("Copying URL failed.")
+      navigator.clipboard.writeText(url).then( () => {
+        this.setState({
+          snackOpen:true,
+          snackMsg:'URL was copied to clipboard.'
+
+        })
+      }, () => {
+        this.setState({
+          snackOpen:true,
+          snackMsg:'Failed to copy URL to clipboard.'
+        })
       })
     }
 
@@ -519,6 +530,15 @@ class Popup extends Component {
                 <Button onClick={this.removeOperation} autoFocus>Yes</Button>
               </DialogActions>
             </Dialog>
+
+            <Snackbar
+              open={this.state.snackOpen}
+              onClose={() => this.setState({snackOpen:false})}
+              autoHideDuration={1000}
+              anchorOrigin={{vertical:'top',horizontal:'center'}}
+              message={this.state.snackMsg}
+              key={`snack-${this.state.snackMsg}`}
+            />
 
           </div>
         )

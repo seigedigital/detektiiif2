@@ -9,11 +9,7 @@ class ThemeTemplate {
 
   // Title
   title = "DetektIIIF Version 2"
-  about = <span>
-            <h2>DetektIIIF2</h2>
-            <p>developed by Leander Seige, seige.digital GbR</p>
-            <p>On Github: <a href="https://github.com/seigedigital/detektiiif2" target="_blank">https://github.com/seigedigital/detektiiif2</a></p>
-          </span>
+  about = <span>About DetektIIIF.</span>
 
   // Options
   optionsDescription= <p>This is the DetektIIIF Options page.</p>
