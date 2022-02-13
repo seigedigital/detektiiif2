@@ -233,10 +233,18 @@ class Popup extends Component {
 
     copyBasketCollection() {
       var c = this.buildBasketCollection(this.state.basket)
-      navigator.clipboard.writeText(JSON.stringify(c)).then(function() {
-        alert("Collection copied.")
-      }, function() {
-        alert("Copying Collection failed.")
+      navigator.clipboard.writeText(JSON.stringify(c)).then( () => {
+        this.setState({
+          snackOpen:true,
+          snackMsg:'JSON was copied to clipboard.'
+
+        })
+      }, () => {
+        this.setState({
+          snackOpen:true,
+          snackMsg:'Failed to copy JSON to clipboard.'
+
+        })
       })
     }
 
