@@ -90,9 +90,11 @@ class Popup extends Component {
             snackMsg: ''
         }
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
-        this.closeDialog = this.closeDialog.bind(this)
-        this.openDialog = this.openDialog.bind(this)
+        this.closeRemDialog = this.closeRemDialog.bind(this)
+        this.openRemDialog = this.openRemDialog.bind(this)
         this.removeOperation = this.removeOperation.bind(this)
+        this.getDataFromLocalStorage = this.getDataFromLocalStorage.bind(this)
+        // this.routine = this.routine.bind(this)
 
         this.loadBasket()
 
@@ -117,22 +119,61 @@ class Popup extends Component {
             );
           }
         });
-
     }
 
-    componentDidMount() {
-
+    getDataFromLocalStorage() {
         getCurrentTab((tab) => {
-            chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
-                if (response) {
-                    this.setState(Object.assign({},{...response.iiif})) //,{basket:response.basket}))
+            chrome.storage.local.get(['tabStorage'], (result) => {
+              console.log({FEresult:result})
+              if('tabStorage' in result) {
+                let tabStorage = JSON.parse(result['tabStorage'])
+                if(tabStorage[tab.id] !== undefined) {
+                  console.log("OK "+tab.id)
+                  this.setState(Object.assign({},tabStorage[tab.id]['iiif']), () => {
+                    console.log({TS:this.state})
+                  })
                 }
+              } else {
+                console.log("NOT OK1 "+tab.id)
+                this.setState({manifests:{},collections:{},images:{}})
+              }
             })
         })
+    }
 
+    // routine() {
+    //   this.getDataFromLocalStorage()
+    //   setTimeout(this.routine,1000)
+    // }
+
+    componentDidMount() {
+        // getCurrentTab((tab) => {
+        //
+        //     chrome.storage.local.get(['tabStorage'], (result) => {
+        //       console.log({FEresult:result})
+        //       if('tabStorage' in result) {
+        //         let tabStorage = JSON.parse(result['tabStorage'])
+        //         if(tabStorage[tab.id] !== undefined) {
+        //           console.log("OK "+tab.id)
+        //           this.setState(Object.assign({},tabStorage[tab.id]['iiif']), () => {
+        //             console.log({TS:this.state})
+        //           })
+        //         }
+        //       } else {
+        //         console.log("NOT OK1 "+tab.id)
+        //         this.setState({manifests:{},collections:{},images:{}})
+        //       }
+        //     })
+        //
+        //     // chrome.runtime.sendMessage({type: 'popupInit', tabId: tab.id, url: tab.url}, (response) => {
+        //     //     if (response) {
+        //     //         this.setState(Object.assign({},{...response.iiif})) //,{basket:response.basket}))
+        //     //     }
+        //     // })
+        // })
+        this.getDataFromLocalStorage()
         this.loadBasket()
         this.loadSettings()
-
     }
 
     copyUrl(url) {
@@ -193,11 +234,11 @@ class Popup extends Component {
       // chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
     }
 
-    openDialog(key) {
+    openRemDialog(key) {
       this.setState({remDialog:true,remKey:key})
     }
 
-    closeDialog(key) {
+    closeRemDialog(key) {
       this.setState({remDialog:false,remKey:null})
     }
 
@@ -209,7 +250,7 @@ class Popup extends Component {
         delete newbasket[this.state.remKey]
       }
       this.saveBasket(newbasket)
-      this.closeDialog()
+      this.closeRemDialog()
       // chrome.runtime.sendMessage({type: 'basketUpd', basket: newbasket})
     }
 
@@ -334,7 +375,7 @@ class Popup extends Component {
                   cors = { this.state.basket[key].cors }
                   error = { this.state.basket[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
-                  removeFromBasket = {this.openDialog.bind(this)}
+                  removeFromBasket = {this.openRemDialog.bind(this)}
                   settings = {this.state.settings}
                   theme = {this.theme}
               />)
@@ -391,7 +432,7 @@ class Popup extends Component {
                   /> : null
                 )}
                 <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
-                <button onClick={() => this.openDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
+                <button onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
                 <br key={v4()}/>
                 {bs}
               </TabPanel>
@@ -428,9 +469,9 @@ class Popup extends Component {
                   <Tooltip title="Remove All">
                     {
                       this.theme.removeAllBasketImage===null ?
-                      <button onClick={() => this.openDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove All</button>
+                      <button onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove All</button>
                       :
-                      <IconButton color="primary" onClick={() => this.openDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>
+                      <IconButton color="primary" onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>
                         <img src={this.theme.removeAllBasketImage}  className="iconSize" />
                       </IconButton>
                     }
@@ -534,7 +575,7 @@ class Popup extends Component {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={this.closeDialog}>No</Button>
+                <Button onClick={this.closeRemDialog}>No</Button>
                 <Button onClick={this.removeOperation} autoFocus>Yes</Button>
               </DialogActions>
             </Dialog>

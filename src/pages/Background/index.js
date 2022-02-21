@@ -1,15 +1,17 @@
 import Defaults from '../../themes/active/Defaults.js'
 import v2GetManifestThumbnail from './tools/iiif'
+import { v4 } from 'uuid'
 
 (function() {
+
     var globalDefaults = new Defaults()
 
-    // var activeTab = chrome.tabs.TAB_ID_NONE;
     var tabStorage = {};
     var cache = {};
     var cache_cors = {};
-    // var basket = {};
     var ignoreDomains = [];
+    // var animCurrentText = '';
+    // var animSequence = ['.', '..', '...'];
 
     const networkFilters = {
         urls: [
@@ -17,56 +19,99 @@ import v2GetManifestThumbnail from './tools/iiif'
         ]
     }
 
-    // var theme = {
-    //   tabs: false,
-    //   singleView: 'MANIFESTS'
-    // }
+//
+// FUNCTIONS
+//
 
+  // function getLocalTabStorage() {
+  //   return new Promise((resolve, reject) => {
+  //     resolve(localLocalStorage)
+  //   })
+  //   // return new Promise((resolve, reject) => {
+  //   //   chrome.storage.local.set({}, () => { // Trick 17 to make sure, previous write actions are finished
+  //   //     chrome.storage.local.get(['tabStorage'], (result) => {
+  //   //       if('tabStorage' in result) {
+  //   //         console.log({resolving:JSON.parse(result.tabStorage)})
+  //   //       }
+  //   //       resolve(result)
+  //   //     })
+  //   //   })
+  //   // })
+  // }
 
-    //  get Messages
-    chrome.runtime.onMessage.addListener((msg, sender, response) => {
-        switch (msg.type) {
-            case 'popupInit':
-                console.log("POPUP INIT")
-                console.log(tabStorage)
-                //  send Info on current Tab
-                response(Object.assign({},tabStorage[msg.tabId])) // ,{basket: basket}))
-                break;
-            case 'docLoad':
-                console.log("DOC RECIEVED");
-                analyzeHTMLBody(msg.doc,msg.tabId);
-                break;
-            // case 'basketUpd':
-            //     console.log("BASKET WAS UPDATED");
-            //     basket = msg.basket;
-            //     break;
-            default:
-                response('unknown request');
-                break;
-        }
-    });
+  function saveLocalTabStorage() {
+    console.log({saving:tabStorage})
+    chrome.storage.local.set({tabStorage:JSON.stringify(tabStorage)})
+  }
 
+  function loadLocalTabStorage() {
+    chrome.storage.local.get(['tabStorage'], (result) => {
+      if('tabStorage' in result) {
+        tabStorage = JSON.parse(result.tabStorage)
+      }
+    })
+  }
+
+    function getNewTabData(tabId) {
+      console.log({NEWdata:tabId})
+      return({
+        id: tabId,
+        requests: {},
+        fetch: [],
+        iiif: {
+            manifests: {},
+            images: {},
+            collections: {}
+        },
+        registerTime: new Date().getTime()
+      })
+    }
 
     function initTabStorage(tabId) {
-        console.log("RESETTING "+tabId)
-        // if(tabStorage[tabId]) {
-        //     delete tabStorage[tabId].requests;
-        //     delete tabStorage[tabId].iiif.manifests;
-        //     delete tabStorage[tabId].iiif.images;
-        //     delete tabStorage[tabId].iiif.collections;
-        //     delete tabStorage[tabId].iiif;
-            delete tabStorage[tabId];
-        // };
-        tabStorage[tabId] = {
-            id: tabId,
-            requests: {},
-            iiif: {
-                manifests: {},
-                images: {},
-                collections: {}
-            },
-            registerTime: new Date().getTime()
-        };
+      console.log("RESETTING "+tabId)
+      tabStorage[tabId] = getNewTabData(tabId)
+      saveLocalTabStorage()
+      console.log("C")
+      updateIcon(tabId)
+    }
+
+    function addToTabStorage(tabId,iiifkey,key,value) {
+      console.log({ADDING:{key:key,value:value}})
+      tabStorage[tabId]['iiif'][iiifkey][key]=value
+      saveLocalTabStorage()
+      console.log("D")
+      updateIcon(tabId)
+    }
+
+    function updateInTabStorage(tabId,key,value) {
+      console.log({UPDInTab:{key:key,value:value}})
+      if(! (tabId in tabStorage)) {
+        tabStorage[tabId] = getNewTabData(tabId)
+      }
+      switch(key) {
+        case 'updaterequest':
+          for(let tid in tabStorage) {
+            if(value.requestId in tabStorage[tid]['requests']) {
+              tabStorage[tid]['requests'][value.requestId] = Object.assign({},tabStorage[tid]['requests'][value.requestId],value)
+            }
+          }
+          break
+        case 'addfetch':
+          tabStorage[tabId]['fetch'].push(value)
+          break
+        case 'remfetch':
+          tabStorage[tabId]['fetch'] = tabStorage[tabId]['fetch'].filter(function(item) {
+            return item !== value
+          })
+          break
+        case 'addrequest':
+          tabStorage[tabId]['requests'][value.requestId]=Object.assign({},value)
+        default:
+          break
+      }
+      saveLocalTabStorage()
+      console.log("E")
+      updateIcon(tabId)
     }
 
     // ENTRY POINT
@@ -102,6 +147,8 @@ import v2GetManifestThumbnail from './tools/iiif'
       var tregex = /application\/([a-z]+\+)?json/i;
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       // Upd: ran into troubles, switch back to force-cache, ignoring dynamic cors cases
+      let fkey = v4()
+      updateInTabStorage(tabId,'addfetch',fkey)
       fetch(url, {method: 'HEAD', cache: 'force-cache', follow: 'follow', referrerPolicy: 'no-referrer'})
         .then((response) => {
             let c = response.headers.get("access-control-allow-origin");
@@ -121,8 +168,10 @@ import v2GetManifestThumbnail from './tools/iiif'
             } else {
               console.log("Rejected: "+url);
             }
+            updateInTabStorage(tabId,'remfetch',fkey)
         })
         .catch((error) => {
+            updateInTabStorage(tabId,'remfetch',fkey)
             cache[url] = false;
             console.debug('Error HEAD Req:', error);
             if(url.startsWith('http')) {
@@ -143,15 +192,19 @@ import v2GetManifestThumbnail from './tools/iiif'
         let cm='force-cache';
       }
 
+      let fkey = v4()
+      updateInTabStorage(tabId,'addfetch',fkey)
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       fetch(url, {method: 'GET', cache: 'no-store', referrerPolicy: 'no-referrer'})
           .then(res => res.json())
           .then((data) => {
               cache[url] = data;
               compileData(url,tabId);
+              updateInTabStorage(tabId,'remfetch',fkey)
           })
           .catch((error) => {
               cache[url] = false;
+              updateInTabStorage(tabId,'remfetch',fkey)
               console.debug('Error GET Req:', error);
           });
     }
@@ -166,9 +219,16 @@ import v2GetManifestThumbnail from './tools/iiif'
         }
 
         console.log("OK for "+url);
-        if (!tabStorage.hasOwnProperty(tabId)) {
-            initTabStorage(tabId);
-        }
+
+        // chrome.storage.local.get(['tabStorage'], () => {
+        //   if( (!'tabStorage' in result) || JSON.parse(result.tabStorage)[tabId]===undefined {
+        //     initTabStorage(tabId);
+        //   }
+        // })
+        // if (!tabStorage.hasOwnProperty(tabId)) {
+        //     console.log("initTabStorage from compileData")
+        //     initTabStorage(tabId);
+        // }
 
         // manifesto experiment
         // manifesto.loadManifest(url).then(function(manifest){
@@ -195,7 +255,7 @@ import v2GetManifestThumbnail from './tools/iiif'
               }
               item.thumb = v2GetManifestThumbnail(data)
             } catch(err) {
-              console.error(err)
+              console.log(err)
               item.error = 1;
               item.label = url;
               item.thumb = "logo-small-grey.png";
@@ -211,14 +271,18 @@ import v2GetManifestThumbnail from './tools/iiif'
             item.label=item.label.slice(0,36)+"...";
         }
         if(iiif.type=="manifest") {
-            tabStorage[tabId].iiif.manifests[item.id] = item;
+            // tabStorage[tabId].iiif.manifests[item.id] = item;
+            addToTabStorage(tabId,'manifests',item.id,item)
         } else if (iiif.type=="collection") {
-            tabStorage[tabId].iiif.collections[item.id] = item;
+            // tabStorage[tabId].iiif.collections[item.id] = item;
+            addToTabStorage(tabId,'collections',item.id,item)
         } else {
-            tabStorage[tabId].iiif.images[item.id] = item;
+            // tabStorage[tabId].iiif.images[item.id] = item;
+            addToTabStorage(tabId,'images',item.id,item)
         }
         // if(tabId==activeTab) {
-        updateIcon()
+        console.log("compileData")
+        updateIcon(tabId)
         // }
     }
 
@@ -261,7 +325,6 @@ import v2GetManifestThumbnail from './tools/iiif'
         });
       }
 
-
       // var offdoc = document.createElement('html');
       // offdoc.innerHTML = doc;
       // var links = offdoc.getElementsByTagName('a');
@@ -302,74 +365,83 @@ import v2GetManifestThumbnail from './tools/iiif'
         return(iiif);
     }
 
-    function updateIcon() {
+    function updateAllIcons() {
+      for(let tabId in tabStorage) {
+        updateIcon(parseInt(tabId))
+      }
+    }
 
-      let queryOptions = { active: true, currentWindow: true }
+    function updateIcon(tabId) {
 
-      chrome.tabs.query(queryOptions, ([tab]) => {
-        if(tab===undefined) {
-          console.log("Tab is undefined. Returning.")
-          return
-        }
-        console.log({tab:tab})
-        if(tab.id === chrome.tabs.TAB_ID_NONE) {
+          if(! (tabId in tabStorage)) {
+            console.log("NO tabId in result (updateIcon)")
             return
-        }
-        console.log({tabStorage:tabStorage})
-        console.log({tabID:tab.id})
-        console.log({TSotid:tabStorage[tab.id]})
-        if(tabStorage[tab.id]===undefined) {
-          return
-        }
-        let num = 0
-        if(globalDefaults.tabs===true) {
-          num = Object.keys(tabStorage[tab.id].iiif.manifests).length +
-            Object.keys(tabStorage[tab.id].iiif.collections).length +
-            Object.keys(tabStorage[tab.id].iiif.images).length
-        } else {
-          switch(globalDefaults.singleView) {
-            case 'MANIFESTS':
-              num = Object.keys(tabStorage[tab.id].iiif.manifests).length
-              break
-            case 'COLLECTIONS':
-              num = Object.keys(tabStorage[tab.id].iiif.collections).length
-              break
-            case 'IMAGES':
-              num = Object.keys(tabStorage[tab.id].iiif.images).length
-              break
-            default:
-              break
-          }
-        }
-
-        console.log("ICON NUM "+num)
-
-        let mv = chrome.runtime.getManifest().manifest_version
-
-        if(mv===3) {
-          chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tab.id });
-          if(typeof chrome.action.setBadgeTextColor === 'function' ) {
-            chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tab.id });
-          }
-          if(num>0)  {
-            chrome.action.setBadgeText({text:num.toString(),tabId:tab.id});
-          } else  {
-            chrome.action.setBadgeText({text:'',tabId:tab.id});
           }
 
-        } else {
-          chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tab.id });
-          if(typeof chrome.browserAction.setBadgeTextColor === 'function' ) {
-            chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tab.id });
+          let pending = tabStorage[tabId].fetch.length>0
+          if(!pending) {
+            for (const [key, request] of Object.entries(tabStorage[tabId].requests)) {
+              // console.log({req:request})
+              if(request.status === 'pending') {
+                pending = true
+                break
+              }
+            }
           }
-          if(num>0)  {
-            chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
-          } else  {
-            chrome.browserAction.setBadgeText({text:num.toString(),tabId:tab.id});
-          }
-        }
 
-      })
+          console.log("PENDING "+pending)
+
+          let num = 0
+
+            if(globalDefaults.tabs===true) {
+              num = Object.keys(tabStorage[tabId].iiif.manifests).length +
+                Object.keys(tabStorage[tabId].iiif.collections).length +
+                Object.keys(tabStorage[tabId].iiif.images).length
+            } else {
+              switch(globalDefaults.singleView) {
+                case 'MANIFESTS':
+                  num = Object.keys(tabStorage[tabId].iiif.manifests).length
+                  break
+                case 'COLLECTIONS':
+                  num = Object.keys(tabStorage[tabId].iiif.collections).length
+                  break
+                case 'IMAGES':
+                  num = Object.keys(tabStorage[tabId].iiif.images).length
+                  break
+                default:
+                  break
+              }
+            }
+
+          console.log("ICON NUM ("+tabId+")"+num)
+
+          // hourglass unicode: '\u231b' (ugly)
+
+          let mv = chrome.runtime.getManifest().manifest_version
+
+          if(mv===3) {
+            chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
+            if(typeof chrome.action.setBadgeTextColor === 'function' ) {
+              chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
+            }
+            if(num>0)  {
+              chrome.action.setBadgeText({text:num.toString()+(pending?'':''),tabId:tabId});
+            } else  {
+              chrome.action.setBadgeText({text:pending?'+':'',tabId:tabId});
+            }
+
+          } else {
+            chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
+            if(typeof chrome.browserAction.setBadgeTextColor === 'function' ) {
+              chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
+            }
+            if(num>0)  {
+              chrome.browserAction.setBadgeText({text:num.toString()+(pending?'':''),tabId:tabId});
+            } else  {
+              chrome.browserAction.setBadgeText({text:pending?'+':'',tabId:tabId});
+            }
+          }
+
     }
 
     function filterURLs(url) { // returns true=block, false=accept
@@ -392,13 +464,40 @@ import v2GetManifestThumbnail from './tools/iiif'
         hostname = hostname[2].split('.');
         hostname = hostname[hostname.length-2]+"."+hostname[hostname.length-1];
         if(filter.includes(hostname)) {
-            console.log("IGNORED BY HOSTNAME ("+hostname+"), SETTING CACHE RULE: "+url);
+            // console.log("IGNORED BY HOSTNAME ("+hostname+"), SETTING CACHE RULE: "+url);
             cache[url]=false;
             return true;
         }
         // console.log("GOOD: "+url);
         return false;
     }
+
+//
+//  PROGRAM STARTS HERE
+//
+
+
+  chrome.runtime.onMessage.addListener((msg, sender, response) => {
+      switch (msg.type) {
+          case 'popupInit':
+              console.log("POPUP INIT")
+              console.log(tabStorage)
+              //  send Info on current Tab
+              response(Object.assign({},tabStorage[msg.tabId])) // ,{basket: basket}))
+              break;
+          case 'docLoad':
+              console.log("DOC RECIEVED");
+              analyzeHTMLBody(msg.doc,msg.tabId);
+              break;
+          // case 'basketUpd':
+          //     console.log("BASKET WAS UPDATED");
+          //     basket = msg.basket;
+          //     break;
+          default:
+              response('unknown request');
+              break;
+      }
+  });
 
 
     chrome.webRequest.onHeadersReceived.addListener((details) => {
@@ -419,10 +518,10 @@ import v2GetManifestThumbnail from './tools/iiif'
             return;
         }
 
-        if (!tabStorage.hasOwnProperty(tabId)) {
-            console.log("init tab "+tabId);
-            initTabStorage(tabId);
-        }
+        // if (!tabStorage.hasOwnProperty(tabId)) {
+        //     console.log("init tab "+tabId+" from chrome.webRequest.onHeadersReceived.addListener");
+        //     initTabStorage(tabId);
+        // }
 
         if (method!="GET") {
             cache[url]=false;
@@ -459,45 +558,49 @@ import v2GetManifestThumbnail from './tools/iiif'
             return;
         }
 
-        tabStorage[tabId].requests[requestId] = {
+        // tabStorage[tabId].requests[requestId] = {
+        //     requestId: requestId,
+        //     url: details.url,
+        //     startTime: details.timeStamp,
+        //     cors: cors,
+        //     status: 'pending'
+        // };
+        updateInTabStorage(tabId,'addrequest',{
             requestId: requestId,
             url: details.url,
             startTime: details.timeStamp,
             cors: cors,
             status: 'pending'
-        };
+        })
+
         // console.log(tabStorage[tabId].requests[requestId]);
     }, networkFilters, ["responseHeaders"]);
 
 
     chrome.webRequest.onCompleted.addListener((details) => {
-        // console.log("WEBREQ COMPLETED")
-        // console.log(details)
 
-        var { tabId, requestId, url, timeStamp, method } = details;
+      let { tabId, requestId, url, timeStamp, method } = details
 
-        if(tabId==chrome.tabs.TAB_ID_NONE) {
-            return;
-        }
+      if(tabId==chrome.tabs.TAB_ID_NONE) {
+          return
+      }
 
-        if(filterURLs(url)) {
-            return;
-        }
+      if(filterURLs(url)) {
+          return
+      }
+
+      updateInTabStorage(tabId,'updaterequest',{
+          requestId: requestId,
+          endTime: details.timeStamp,
+          responseHeaders: JSON.stringify(details.responseHeaders),
+          status: 'complete'
+      })
 
         if (!tabStorage.hasOwnProperty(tabId) || !tabStorage[tabId].requests.hasOwnProperty(requestId)) {
             return;
         }
 
         // console.debug("DETEKTIIIF CHECKING "+url);
-
-        var request = tabStorage[tabId].requests[requestId];
-
-        Object.assign(request, {
-            endTime: details.timeStamp,
-            responseHeaders: JSON.stringify(details.responseHeaders),
-            requestDuration: details.timeStamp - request.startTime,
-            status: 'complete'
-        });
 
         if(cache.hasOwnProperty(url)) {
             console.debug("DETEKTIIIF CACHE HIT: "+url);
@@ -509,14 +612,11 @@ import v2GetManifestThumbnail from './tools/iiif'
             console.debug("DETEKTIIIF CACHE MISS: "+url);
             fetchHttp(url,tabId);
         }
-
-        // console.log(tabStorage[tabId].requests[details.requestId]);
-
     }, networkFilters, ["responseHeaders"]);
 
     function sendMsg(tabId) {
       if(document===undefined) {
-        console.error("NO DOCUMENT DEFINED")
+        console.log("NO DOCUMENT DEFINED")
         return
       }
       chrome.runtime.sendMessage(
@@ -540,7 +640,7 @@ import v2GetManifestThumbnail from './tools/iiif'
 
           if(mv===3) {
             chrome.scripting.executeScript({
-                target: {tabId: tabId},
+                target: {tabId: parseInt(tabId)},
                 func: sendMsg,
                 args: [tabId]
               },null
@@ -550,7 +650,7 @@ import v2GetManifestThumbnail from './tools/iiif'
                 code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML, tabId:"+tabId+"});" // or 'file: "getPagesSource.js"'
               }, function(result) {
                 if (chrome.runtime.lastError) {
-                  // console.error(chrome.runtime.lastError.message);
+                  console.log("tabs.executeScript: "+chrome.runtime.lastError.message);
                 } else {
                   console.log(result)
                 }
@@ -571,13 +671,15 @@ import v2GetManifestThumbnail from './tools/iiif'
         }
         // activeTab=tabId;
         // tabStorage[tabId] = null;
+        console.log("initTabStorage from chrome.tabs.onUpdated.addListener")
         initTabStorage(tabId);
-        updateIcon()
+        console.log("onUpdated")
+        console.log("A")
+        updateIcon(tabId)
     });
 
     chrome.tabs.onActivated.addListener((tabInfo) => {
-        console.log("tabs.Activated")
-        console.log({actTab:tabInfo})
+        console.log({activatedTab:tabInfo})
 
         if(!tabInfo) {
           console.log("No tab, returning.")
@@ -589,72 +691,92 @@ import v2GetManifestThumbnail from './tools/iiif'
             console.log("TAB_ID_NONE, returning.")
             return;
         }
-        console.log("ACTIVE TAB is "+tabId)
-        // activeTab=tabId;
-        if (!tabStorage.hasOwnProperty(tabId)) {
-            console.log("NO INFO about "+tabId+" resetting tabStorage")
-            initTabStorage(tabId);
-        }
-        updateIcon()
 
-        console.log("GETTING TAB "+tabId)
-        // chrome.tabs.get(tabId).then((tab) => {
-        chrome.tabs.get(tabId, (tab) => {
-          console.log({tab:tab})
-          // just give it a try
-          fetchHttp(tab.url,tab.id)
+          console.log("ACTIVE TAB is "+tabId)
+          console.log({tabStoragebytabid:tabStorage[tabId]})
 
-          let rules = {
-            europeana1: {
-              search: /https\:\/\/www\.europeana\.eu\/..\/item\/2020903\/([^\?\"]+).*/gi,
-              replace: 'https://api.smk.dk/api/v1/iiif/manifest/?id=$1'
-            },
-            nationalmuseumse1: {
-              search: /https\:\/\/nationalmuseumse\.iiifhosting\.com\/iiif\/([^\/]+)\//gi,
-              replace: 'https://nationalmuseumse.iiifhosting.com/iiif/$1/manifest.json'
-            }
+          if(! (tabId in tabStorage)) {
+              console.log("NO INFO about "+tabId+" resetting tabStorage")
+              initTabStorage(tabId);
           }
-          for(let key in rules) {
-            for(let result of tab.url.matchAll(rules[key].search)) {
-              let guess = result[0].replace(rules[key].search,rules[key].replace)
-              fetchHttp(guess,tab.id)
-            }
+          console.log("onActivated")
+          updateIcon(tabId)
+
+          console.log("GETTING TAB "+tabId)
+          // chrome.tabs.get(tabId).then((tab) => {
+          try {
+            chrome.tabs.get(parseInt(tabId), (tab) => {
+              console.log({tab:tab})
+              // just give it a try
+              fetchHttp(tab.url,tab.id)
+
+              let rules = {
+                europeana1: {
+                  search: /https\:\/\/www\.europeana\.eu\/..\/item\/2020903\/([^\?\"]+).*/gi,
+                  replace: 'https://api.smk.dk/api/v1/iiif/manifest/?id=$1'
+                },
+                nationalmuseumse1: {
+                  search: /https\:\/\/nationalmuseumse\.iiifhosting\.com\/iiif\/([^\/]+)\//gi,
+                  replace: 'https://nationalmuseumse.iiifhosting.com/iiif/$1/manifest.json'
+                }
+              }
+              for(let key in rules) {
+                for(let result of tab.url.matchAll(rules[key].search)) {
+                  let guess = result[0].replace(rules[key].search,rules[key].replace)
+                  fetchHttp(guess,tab.id)
+                }
+              }
+            })
+          } catch {
+            console.log("Couldn't get Tab "+tabId)
           }
-
-
-        })
-
     });
 
-    chrome.tabs.onRemoved.addListener((tab) => {
-        const tabId = tab.tabId;
-        if(tabId==chrome.tabs.TAB_ID_NONE) {
-            return;
-        }
-        if (!tabStorage.hasOwnProperty(tabId)) {
-            return;
-        }
-        delete tabStorage[tabId];
+    chrome.tabs.onRemoved.addListener((tabId) => {
+      console.log("REM "+tabId)
+      if(tabId==chrome.tabs.TAB_ID_NONE) {
+          console.log("NO REM 1 "+tabId)
+          return;
+      }
+
+      if (!tabStorage.hasOwnProperty(tabId)) {
+          console.log("NO REM 2 "+tabId)
+          return;
+      }
+      console.log("REMOVING "+tabId)
+      delete tabStorage[tabId]
+      saveLocalTabStorage()
     });
 
-    chrome.storage.onChanged.addListener(function (changes, namespace) {
+    chrome.storage.onChanged.addListener( (changes, namespace) => {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
         if(namespace==="" &&  key==="ignoreDomains") {
           ignoreDomains=newValue
         }
 
-        console.log(
-          `Storage key "${key}" in namespace "${namespace}" changed.`,
-          `Old value was "${oldValue}", new value is "${newValue}".`
-        );
+        if(namespace==='local') {
+          updateAllIcons()
+        }
+
+        // console.log(
+        //   `Storage key "${key}" in namespace "${namespace}" changed.`,
+        //   `Old value was "${oldValue}", new value is "${newValue}".`
+        // );
       }
     });
+
+    // function animateBadgeText() {
+    //   animCurrentText=animSequence[ Math.floor(Date.now / 1000)%animSequence.length ]
+    //   setTimeout(animateBadgeText,1000)
+    // }
 
     ignoreDomains = globalDefaults.ignoreDomains
     chrome.storage.local.get('ignoreDomains', function(data) {
       console.log({GOT:data})
     })
 
+    console.log("(RE)STARTED")
+    loadLocalTabStorage()
 
 }());
