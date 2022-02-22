@@ -166,6 +166,7 @@ import { v4 } from 'uuid'
               console.log("Accepted for GET Req: "+url);
               fetchWorkBody(url,tabId);
             } else {
+              cache[url] = false
               console.log("Rejected: "+url);
             }
             updateInTabStorage(tabId,'remfetch',fkey)
