@@ -16,6 +16,7 @@ class ThemeTemplate {
 
   optionsSwitches = {
     viewManifestUrls: true,
+    viewManifestInfo: false
   }
 
   optionsLists = {

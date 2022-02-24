@@ -368,7 +368,15 @@ import { v4 } from 'uuid'
 
     function updateAllIcons() {
       for(let tabId in tabStorage) {
-        updateIcon(parseInt(tabId))
+        chrome.tabs.get(parseInt(tabId), (tab) => {
+            if(tab && tab.id!==chrome.tabs.TAB_ID_NONE) {
+              updateIcon(parseInt(tabId))
+            } else {
+              console.log("Tab "+tabId+" not available. Deleting storage.")
+              delete tabStorage[tabId]
+              saveLocalTabStorage()
+            }
+        })
       }
     }
 
@@ -390,7 +398,7 @@ import { v4 } from 'uuid'
             }
           }
 
-          console.log("PENDING "+pending)
+          // console.log("PENDING "+pending)
 
           let num = 0
 
@@ -414,7 +422,7 @@ import { v4 } from 'uuid'
               }
             }
 
-          console.log("ICON NUM ("+tabId+")"+num)
+          // console.log("ICON NUM ("+tabId+")"+num)
 
           // hourglass unicode: '\u231b' (ugly)
 
@@ -507,7 +515,7 @@ import { v4 } from 'uuid'
 
         var { tabId, requestId, url, timeStamp, method } = details;
 
-        if(tabId==chrome.tabs.TAB_ID_NONE) {
+        if(tabId===chrome.tabs.TAB_ID_NONE) {
             return;
         }
 
@@ -647,6 +655,7 @@ import { v4 } from 'uuid'
               },null
             )
           } else {
+              console.log("chrome.tabs.executeScript")
               chrome.tabs.executeScript({
                 code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML, tabId:"+tabId+"});" // or 'file: "getPagesSource.js"'
               }, function(result) {
@@ -706,6 +715,7 @@ import { v4 } from 'uuid'
           console.log("GETTING TAB "+tabId)
           // chrome.tabs.get(tabId).then((tab) => {
           try {
+            console.log("chrome.tabs.get")
             chrome.tabs.get(parseInt(tabId), (tab) => {
               console.log({tab:tab})
               // just give it a try
@@ -731,6 +741,13 @@ import { v4 } from 'uuid'
           } catch {
             console.log("Couldn't get Tab "+tabId)
           }
+    });
+
+    chrome.tabs.onReplaced.addListener((newTabId,oldTabId) => {
+      console.log("onReplaced from:"+oldTabId+" to:"+newTabId)
+      tabStorage[newTabId] = JSON.parse(JSON.stringify(tabStorage[oldTabId]))
+      delete tabStorage[oldTabId]
+      saveLocalTabStorage()
     });
 
     chrome.tabs.onRemoved.addListener((tabId) => {

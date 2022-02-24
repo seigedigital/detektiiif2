@@ -46,6 +46,12 @@ export default class DisplayManifest extends Component {
         if(this.props.theme.generalButtons.copyURL) {
           buttons.push(<button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >COPY URL</button>)
         }
+        let info = null
+        if(this.props.theme.optionsSwitches.viewManifestInfo===true) {
+          info= <Tooltip title={this.props.theme.texts.manifestInfoIcon}>
+                  <img src={this.props.theme.infoImage} className="iconSize" />
+                </Tooltip>
+        }
 
         return (
           <div className="ListItem" key={`listitem-${hashedurl}`}>
@@ -61,9 +67,7 @@ export default class DisplayManifest extends Component {
                 {buttons}
                 {links}
                 <br />
-                <Tooltip title={this.props.theme.texts.manifestInfoIcon}>
-                  <img src={this.props.theme.infoImage} className="iconSize" />
-                </Tooltip>
+                {info}
             </div>
           </div>
         )

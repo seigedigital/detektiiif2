@@ -81,7 +81,8 @@ class Popup extends Component {
             settings: {
               showUrl: true,
               postBasketCollectionTo: Object.assign({},this.theme.postBasketCollectionTo),
-              openManifestLinks: Object.assign({},this.theme.openManifestLinks)
+              openManifestLinks: Object.assign({},this.theme.openManifestLinks),
+              viewManifestInfo: Object.assign({},this.theme.viewManifestInfo)
             },
             tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
             remDialog: false,
@@ -248,6 +249,8 @@ class Popup extends Component {
         console.log("removing from basket: "+this.state.remKey)
         newbasket = Object.assign(this.state.basket)
         delete newbasket[this.state.remKey]
+      } else {
+        console.log("NOT??? removing from basket: "+this.state.remKey)
       }
       this.saveBasket(newbasket)
       this.closeRemDialog()

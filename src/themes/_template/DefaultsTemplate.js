@@ -6,7 +6,7 @@ class DefaultsTemplate {
   singleView = 'MANIFESTS'
   separateBasket = false
 
-  storeBasket = "local" // or sync but not know because we should make sure that sync works
+  storeBasket = "local" // or sync but not now because we should make sure that sync works
 
   ignoreDomains = [
     "google.com", "googleusercontent.com", "gstatic.com", "google.de",
