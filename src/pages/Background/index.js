@@ -273,13 +273,13 @@ import { v4 } from 'uuid'
         }
         if(iiif.type=="manifest") {
             // tabStorage[tabId].iiif.manifests[item.id] = item;
-            addToTabStorage(tabId,'manifests',item.id,item)
+            addToTabStorage(tabId,'manifests',item.url,item)
         } else if (iiif.type=="collection") {
             // tabStorage[tabId].iiif.collections[item.id] = item;
-            addToTabStorage(tabId,'collections',item.id,item)
+            addToTabStorage(tabId,'collections',item.url,item)
         } else {
             // tabStorage[tabId].iiif.images[item.id] = item;
-            addToTabStorage(tabId,'images',item.id,item)
+            addToTabStorage(tabId,'images',item.url,item)
         }
         // if(tabId==activeTab) {
         console.log("compileData")

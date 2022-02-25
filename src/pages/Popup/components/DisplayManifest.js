@@ -41,7 +41,7 @@ export default class DisplayManifest extends Component {
 
         let buttons = []
         if(this.props.theme.generalButtons.addToBasket) {
-          buttons.push(<button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >ADD TO BASKET</button>)
+          buttons.push(<button onClick={() => this.props.addToBasket(this.props.url)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >ADD TO BASKET</button>)
         }
         if(this.props.theme.generalButtons.copyURL) {
           buttons.push(<button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >COPY URL</button>)

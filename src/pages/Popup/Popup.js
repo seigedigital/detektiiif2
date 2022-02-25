@@ -229,8 +229,16 @@ class Popup extends Component {
     }
 
     addToBasket(key) {
+      console.log({addKey:key})
+      console.log({addFrom:this.state.manifests})
       let newbasket = Object.assign(this.state.basket)
-      newbasket[key] = this.state.manifests[key]
+      for(let mkey in this.state.manifests) {
+        console.log(mkey+" ?== "+key)
+        if(mkey==key) {
+          console.log("YES")
+         newbasket[key] = Object.assign({},this.state.manifests[mkey])
+        }
+      }
       this.saveBasket(newbasket)
       // chrome.runtime.sendMessage({type: 'basketUpd', basket: this.state.basket})
     }
@@ -248,7 +256,9 @@ class Popup extends Component {
       if(this.state.remKey!==null) {
         console.log("removing from basket: "+this.state.remKey)
         newbasket = Object.assign(this.state.basket)
+        console.log({before:newbasket})
         delete newbasket[this.state.remKey]
+        console.log({after:newbasket})
       } else {
         console.log("NOT??? removing from basket: "+this.state.remKey)
       }
@@ -368,10 +378,11 @@ class Popup extends Component {
         let bs = []
         if(Object.keys(this.state.basket).length>0) {
           for (let key in this.state.basket) {
+            console.log({pushing:this.state.basket[key]})
               bs.push(<
                   DisplayBasket
-                  key = { `item-${this.state.basket[key].id}` }
-                  id = { this.state.basket[key].id }
+                  key = { `item-${this.state.basket[key].url}` }
+                  id = { this.state.basket[key].url }
                   label = { this.state.basket[key].label }
                   thumb = { this.state.basket[key].thumb }
                   url = { this.state.basket[key].url }
