@@ -381,6 +381,8 @@ import { v4 } from 'uuid'
     }
 
     function updateIcon(tabId) {
+      try {
+          console.log("updateIcon "+tabId)
 
           if(! (tabId in tabStorage)) {
             console.log("NO tabId in result (updateIcon)")
@@ -450,7 +452,9 @@ import { v4 } from 'uuid'
               chrome.browserAction.setBadgeText({text:pending?'+':'',tabId:tabId});
             }
           }
-
+      } catch {
+        console.log("unknown error during updateIcon()")
+      }
     }
 
     function filterURLs(url) { // returns true=block, false=accept
@@ -684,7 +688,6 @@ import { v4 } from 'uuid'
         console.log("initTabStorage from chrome.tabs.onUpdated.addListener")
         initTabStorage(tabId);
         console.log("onUpdated")
-        console.log("A")
         updateIcon(tabId)
     });
 
