@@ -12,6 +12,15 @@ export default class QualityChips extends Component {
 
   render() {
 
+    let qmessages= [
+      "HTTP and CORS present.",
+      "No CORS permission.",
+      "No SSL encryption (HTTPS).",
+      "No CORS permission nor SSL encryption (HTTPS)."
+    ]
+
+    let qcode = (this.props.cors===true?0:1) + (this.props.https===true?0:2)
+
     let hashedurl = this.props.hashedurl
 
     let chips = []
@@ -25,8 +34,8 @@ export default class QualityChips extends Component {
     }
 
     if(this.props.theme.qualityChips.combined) {
-      let status = this.props.https===true && this.props.cors===true
-      let msg = (this.props.cors===true?"":"No CORS permission.")+(this.props.https===true?"":"No SSL encryption (HTTPS).")
+      let status = (qcode===0)
+      let msg = qmessages[qcode]
       chips.push(
         <Tooltip title={msg} key={`combinedchiptt-${hashedurl}`}>
           <img src={status ? this.props.theme.greenDotImage : this.props.theme.redDotImage} className={`iconSize Quality-Chip`} key={`combinedchip-${hashedurl}`} />

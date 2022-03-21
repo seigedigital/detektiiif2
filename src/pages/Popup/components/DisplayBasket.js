@@ -27,7 +27,7 @@ export default class DisplayBasket extends Component {
         let showUrl = null
         if(this.props.settings.showUrl===true) {
           showUrl = <a href={this.props.url} target="_blank" className="URL" key={`showurl-${hashedurl}`}>
-            {this.props.url.length>20?this.props.url.substring(0,60)+'...':this.props.url}
+            {this.props.url}
           </a>
         }
 
@@ -50,14 +50,14 @@ export default class DisplayBasket extends Component {
 
         if(this.props.theme.generalButtons.removeFromBasket!==false) {
           buttons.push(
-            <Tooltip title="Remove Manifest" key={v4()} >{
+            <Tooltip title="Remove manifest" key={v4()} >{
               this.props.theme.trashcanImage ?
                     <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
                       <img src={this.props.theme.trashcanImage}  className="iconSize" />
                     </IconButton>
                   :
                   <button onClick={() => this.props.removeFromBasket(this.props.url)} className="ButtonRemoveFromBasket" key={`rembutton-${hashedurl}`} >
-                    REMOVE FROM BASKET
+                    Remove from basket
                   </button>}
             </Tooltip>
           )
@@ -73,10 +73,14 @@ export default class DisplayBasket extends Component {
               />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
-                {this.props.label}<br key={v4()}/>
-                {showUrl}<br key={v4()}/>
-                {links}<br key={v4()}/>
-                {buttons}<br key={v4()}/>
+              <span className="truncated" style={{width:"400px"}} key={`listitem-info-label-${hashedurl}`}>
+                {this.props.label}
+              </span>
+              <span className="truncated" style={{width:"400px"}} key={`listitem-info-url-${hashedurl}`}>
+                {showUrl}<br />
+              </span>
+              {links}<br />
+              {buttons}<br />
             </div>
           </div>
         )

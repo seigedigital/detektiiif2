@@ -1,5 +1,5 @@
 import Defaults from '../../themes/active/Defaults.js'
-import v2GetManifestThumbnail from './tools/iiif'
+import { v2GetManifestThumbnail, v3GetManifestThumbnail } from './tools/iiif'
 import { v4 } from 'uuid'
 
 (function() {
@@ -71,15 +71,13 @@ import { v4 } from 'uuid'
       console.log("RESETTING "+tabId)
       tabStorage[tabId] = getNewTabData(tabId)
       saveLocalTabStorage()
-      console.log("C")
       updateIcon(tabId)
     }
 
     function addToTabStorage(tabId,iiifkey,key,value) {
-      console.log({ADDING:{key:key,value:value}})
+      console.log({ADDING:{iiifkey:iiifkey,key:key,value:value}})
       tabStorage[tabId]['iiif'][iiifkey][key]=value
       saveLocalTabStorage()
-      console.log("D")
       updateIcon(tabId)
     }
 
@@ -183,6 +181,7 @@ import { v4 } from 'uuid'
     }
 
     function fetchWorkBody(url,tabId) {
+      console.log("a")
       if(!url.startsWith('http')) {
         console.log("URL denied (BODY), we're http(s) only.")
         return
@@ -192,25 +191,29 @@ import { v4 } from 'uuid'
       if(cache_cors[url]===true) {
         let cm='force-cache';
       }
+      console.log("b")
 
       let fkey = v4()
       updateInTabStorage(tabId,'addfetch',fkey)
+      console.log("c")
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       fetch(url, {method: 'GET', cache: 'no-store', referrerPolicy: 'no-referrer'})
           .then(res => res.json())
           .then((data) => {
+              console.log({got:data})
               cache[url] = data;
               compileData(url,tabId);
               updateInTabStorage(tabId,'remfetch',fkey)
           })
           .catch((error) => {
+              console.debug('Error GET Req:', error);
               cache[url] = false;
               updateInTabStorage(tabId,'remfetch',fkey)
-              console.debug('Error GET Req:', error);
           });
     }
 
     function compileData(url,tabId) {
+        console.log("compileData")
         let data = cache[url]
 
         let iiif = analyzeJSONBody(data,url);
@@ -218,6 +221,7 @@ import { v4 } from 'uuid'
             console.log("NO for "+url);
             return;
         }
+        console.log({IIIF:iiif})
 
         console.log("OK for "+url);
 
@@ -247,16 +251,41 @@ import { v4 } from 'uuid'
         item.cors = cache_cors[url]
         item.error = 0
 
-        if(iiif.api=="presentation" && iiif.type=="manifest") {
+        if(iiif.api==="presentation" && iiif.type==="manifest") {
+            console.log("is manifest")
             try {
               if (typeof data.label === 'string' || data.label instanceof String) {
                 item.label = data.label;
               } else {
-                item.label = data.label[0]['@value'];
+                if('en' in data.label) {
+                  item.label = data.label['en'][0];
+                } else if( Array.isArray(data.label) && ('@value' in data.label[0]) ){
+                  item.label = data.label[0]['@value'];
+                } else {
+                  item.label = item.id
+                }
               }
-              item.thumb = v2GetManifestThumbnail(data)
+              console.log("LABEL: "+item.label)
+              switch(iiif.version) {
+                case 2:
+                case "2":
+                  console.log("xa")
+                  item.thumb = v2GetManifestThumbnail(data)
+                  break
+                case 3:
+                case "3":
+                  console.log("xb")
+                  item.thumb = v3GetManifestThumbnail(data)
+                  break
+                default:
+                  console.log("xc")
+                  item.thumb = "logo-small-grey.png";
+                  break
+              }
+
             } catch(err) {
-              console.log(err)
+              console.log("NO NO NO")
+              console.error(err)
               item.error = 1;
               item.label = url;
               item.thumb = "logo-small-grey.png";
@@ -267,9 +296,6 @@ import { v4 } from 'uuid'
         } else {
             item.label = url;
             item.thumb = "logo-small.png";
-        }
-        if(item.label.length>40) {
-            item.label=item.label.slice(0,36)+"...";
         }
         if(iiif.type=="manifest") {
             // tabStorage[tabId].iiif.manifests[item.id] = item;
@@ -282,7 +308,7 @@ import { v4 } from 'uuid'
             addToTabStorage(tabId,'images',item.url,item)
         }
         // if(tabId==activeTab) {
-        console.log("compileData")
+        console.log("compileData-END")
         updateIcon(tabId)
         // }
     }
@@ -340,6 +366,7 @@ import { v4 } from 'uuid'
 
     function analyzeJSONBody(body,url) {
         if(!body.hasOwnProperty("@context")) {
+            console.log("NO @context")
             cache[url]=false; // that's no IIIF, block by cache rule
             return(false);
         }
@@ -348,6 +375,7 @@ import { v4 } from 'uuid'
         // alert(JSON.stringify(ctx));
 
         if(ctx[2]!=="iiif.io" || ctx[3]!=="api") {
+            console.log("NO iiif")
             cache[url]=false; // again. no IIIF, block by cache rule
             return false;
         }
@@ -360,7 +388,11 @@ import { v4 } from 'uuid'
         if(body.hasOwnProperty("@type")) {
             iiif.type=body["@type"].split(":")[1].toLowerCase();
         } else {
+          if(body.hasOwnProperty("type")) {
+              iiif.type=body["type"].toLowerCase();
+          } else {
             iiif.type=false
+          }
         }
 
         return(iiif);
@@ -382,7 +414,7 @@ import { v4 } from 'uuid'
 
     function updateIcon(tabId) {
       try {
-          console.log("updateIcon "+tabId)
+          // console.log("updateIcon "+tabId)
 
           if(! (tabId in tabStorage)) {
             console.log("NO tabId in result (updateIcon)")

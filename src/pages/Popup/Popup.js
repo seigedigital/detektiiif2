@@ -272,7 +272,7 @@ class Popup extends Component {
             "@context": "http://iiif.io/api/presentation/2/context.json",
             "@id": "https://detektiiif.manducus.net/invalid",
             "@type": "sc:Collection",
-            "label": "custom detektIIIF collection",
+            "label": "detektIIIF Collection",
             "manifests": []
       }
       for (var key in basket) {
@@ -480,7 +480,7 @@ class Popup extends Component {
                     />
                   )}
                   <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
-                  <Tooltip title="Remove All">
+                  <Tooltip title="Remove all manifests">
                     {
                       this.theme.removeAllBasketImage===null ?
                       <button onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Remove All</button>
@@ -539,7 +539,7 @@ class Popup extends Component {
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
               <div className="BasketIcon" style={{display:(this.defaults.tabs===true?'none':'block')}} key={v4()}  >
-                <Tooltip title={this.state.tab===0 ? "Click to open basket." : "Close basket."}>
+                <Tooltip title={this.state.tab===0 ? "Open basket." : "Close basket."}>
                 <IconButton color="primary"
                   aria-label="Basket"
                   component="span"

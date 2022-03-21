@@ -155,16 +155,22 @@ In this file:
   padding: 4px 8px 4px 8px;
 }
 
-.Quality-Chip {
+/* .Quality-Chip {
   display:inline-block;
   text-decoration: none;
   font-weight: bold;
   font-size: 8pt;
+} */
+
+.Quality-Chip {
+  vertical-align: middle;
+  margin:0;
+  padding-right:4px;
 }
 
 .iconSize {
   width:16px;
-}
+}^
 
 .version {
   display: block;
@@ -228,6 +234,13 @@ In this file:
 
 .optionsFloatRight {
   margin-left: auto;
+}
+
+.truncated {
+    display: block;
+    white-space: nowrap; /* forces text to single line */
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* generic elements */

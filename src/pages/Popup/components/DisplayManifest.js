@@ -23,7 +23,7 @@ export default class DisplayManifest extends Component {
         let showUrl = null
         if(this.props.settings.showUrl===true) {
           showUrl = <a href={this.props.url} className="URL" target="_blank" key={`showurl-${hashedurl}`}>
-            {this.props.url.length>50?this.props.url.substring(0,60)+'...':this.props.url}
+            {this.props.url}
           </a>
         }
 
@@ -34,23 +34,33 @@ export default class DisplayManifest extends Component {
           let link = this.props.settings.openManifestLinks[key]
           if(link.tabManifests) {
             links.push(
-              <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  />
+              <Tooltip title="Open manifest" key={`tt-${key}-${hashedurl}`}>
+                <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  />
+              </Tooltip>
             )
           }
         }
 
         let buttons = []
         if(this.props.theme.generalButtons.addToBasket) {
-          buttons.push(<button onClick={() => this.props.addToBasket(this.props.url)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >ADD TO BASKET</button>)
+          buttons.push(
+            <Tooltip title="Add manifest to basket" key={`tt-add-${hashedurl}`}>
+              <button onClick={() => this.props.addToBasket(this.props.url)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >Add to basket</button>
+            </Tooltip>
+          )
         }
         if(this.props.theme.generalButtons.copyURL) {
-          buttons.push(<button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >COPY URL</button>)
+          buttons.push(
+            <Tooltip title="Copy URL to clipboard" key={`tt-copy-${hashedurl}`}>
+              <button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >Copy URL</button>
+            </Tooltip>
+          )
         }
         let info = null
         if(this.props.theme.optionsSwitches.viewManifestInfo===true) {
-          info= <Tooltip title={this.props.theme.texts.manifestInfoIcon}>
-                  <img src={this.props.theme.infoImage} className="iconSize" />
-                </Tooltip>
+          info =  <Tooltip title={this.props.theme.texts.manifestInfoIcon}>
+                    <img src={this.props.theme.infoImage} className="iconSize" />
+                  </Tooltip>
         }
 
         return (
@@ -62,8 +72,13 @@ export default class DisplayManifest extends Component {
               />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
-                {this.props.label}<br />
-                {showUrl}<QualityChips theme={this.props.theme} cors={this.props.cors} hashedurl={hashedurl} https={this.props.url.startsWith("https")} key={`quality-chips-${hashedurl}`} /><br />
+                <span className="truncated" style={{width:"400px"}} key={`listitem-info-label-${hashedurl}`}>
+                  {this.props.label}
+                </span>
+                <span className="truncated" style={{width:"400px"}} key={`listitem-info-url-${hashedurl}`}>
+                  <QualityChips theme={this.props.theme} cors={this.props.cors} hashedurl={hashedurl} https={this.props.url.startsWith("https")} key={`quality-chips-${hashedurl}`} />
+                  {showUrl}
+                </span>
                 {buttons}
                 {links}
                 <br />
