@@ -57,6 +57,8 @@ class ThemeTemplate {
   qualityChips = {
     cors: true,
     https: true,
+    urlid: true,
+    hideok: true,
     combined: false
   }
 

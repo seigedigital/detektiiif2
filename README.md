@@ -58,6 +58,10 @@ Modify the files in the new folder as you wish and continue as described in sect
 
 Don't forget to keep v2 and v3 manifest files both up to date, e.g. the version number.
 
+## Version numbering
+
+Recommendation: set the version number in ```package.json``` as well as in all ```manifest-v*.json``` of your theme to the same value.
+
 ## Packaging for the Chrome Web Store
 
 * switch to version 3 and execute the shellscript ```./pack4cws.sh```

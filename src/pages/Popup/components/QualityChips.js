@@ -13,24 +13,45 @@ export default class QualityChips extends Component {
   render() {
 
     let qmessages= [
-      "HTTP and CORS present.",
+      "No problems found.",
       "No CORS permission.",
       "No SSL encryption (HTTPS).",
-      "No CORS permission nor SSL encryption (HTTPS)."
+      "No CORS permission nor SSL encryption (HTTPS).",
+      "URL and ID not identical.",
+      "URL and ID not identical and no CORS permission.",
+      "URL and ID not identical and no SSL encryption (HTTPS).",
+      "URL and ID not identical and no CORS permission nor SSL encryption (HTTPS)"
     ]
 
-    let qcode = (this.props.cors===true?0:1) + (this.props.https===true?0:2)
+    let qcode = (this.props.cors===true?0:1) + (this.props.https===true?0:2) + (this.props.urlid===true?0:4)
 
     let hashedurl = this.props.hashedurl
 
     let chips = []
 
-    if(this.props.theme.qualityChips.cors) {
-      chips.push(<Chip label="CORS" size="small" color={this.props.cors?'success':'error'} key={`corschip-${hashedurl}`} />)
+    if(this.props.theme.qualityChips.cors
+      && !( this.props.cors && this.props.theme.qualityChips.hideok )) {
+      chips.push(
+        <Tooltip title={this.props.cors?"OK":qmessages[1]} key={`combinedchiptt-${hashedurl}`}>
+          <Chip label="C" size="small" color={this.props.cors?'success':'error'} key={`corschip-${hashedurl}`} />
+        </Tooltip>
+      )
     }
 
-    if(this.props.theme.qualityChips.https) {
-      chips.push(<Chip label="HTTPS" size="small" color={this.props.https?'success':'error'} key={`httpschip-${hashedurl}`} />)
+    if(this.props.theme.qualityChips.https
+      && !( this.props.https && this.props.theme.qualityChips.hideok )) {
+      chips.push(
+        <Tooltip title={this.props.https?"OK":qmessages[2]} key={`combinedchiptt-${hashedurl}`}>
+          <Chip label="S" size="small" color={this.props.https?'success':'error'} key={`httpschip-${hashedurl}`} />
+        </Tooltip>)
+    }
+
+    if(this.props.theme.qualityChips.urlid
+      && !( this.props.urlid && this.props.theme.qualityChips.hideok )) {
+      chips.push(
+        <Tooltip title={this.props.urlid?"OK":qmessages[4]} key={`combinedchiptt-${hashedurl}`}>
+          <Chip label="ID" size="small" color={this.props.urlid?'success':'error'} key={`urlidchip-${hashedurl}`} />
+        </Tooltip>)
     }
 
     if(this.props.theme.qualityChips.combined) {

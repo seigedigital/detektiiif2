@@ -76,7 +76,14 @@ export default class DisplayManifest extends Component {
                   {this.props.label}
                 </span>
                 <span className="truncated" style={{width:"400px"}} key={`listitem-info-url-${hashedurl}`}>
-                  <QualityChips theme={this.props.theme} cors={this.props.cors} hashedurl={hashedurl} https={this.props.url.startsWith("https")} key={`quality-chips-${hashedurl}`} />
+                  <QualityChips
+                    theme={this.props.theme}
+                    cors={this.props.cors}
+                    hashedurl={hashedurl}
+                    https={this.props.url.startsWith("https")}
+                    urlid={this.props.url===this.props.id}
+                    key={`quality-chips-${hashedurl}`}
+                  />
                   {showUrl}
                 </span>
                 {buttons}

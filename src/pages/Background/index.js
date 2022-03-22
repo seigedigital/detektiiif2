@@ -285,7 +285,7 @@ import { v4 } from 'uuid'
 
             } catch(err) {
               console.log("NO NO NO")
-              console.error(err)
+              console.log(err)
               item.error = 1;
               item.label = url;
               item.thumb = "logo-small-grey.png";
@@ -299,13 +299,13 @@ import { v4 } from 'uuid'
         }
         if(iiif.type=="manifest") {
             // tabStorage[tabId].iiif.manifests[item.id] = item;
-            addToTabStorage(tabId,'manifests',item.url,item)
+            addToTabStorage(tabId,'manifests',item.id,item)
         } else if (iiif.type=="collection") {
             // tabStorage[tabId].iiif.collections[item.id] = item;
-            addToTabStorage(tabId,'collections',item.url,item)
+            addToTabStorage(tabId,'collections',item.id,item)
         } else {
             // tabStorage[tabId].iiif.images[item.id] = item;
-            addToTabStorage(tabId,'images',item.url,item)
+            addToTabStorage(tabId,'images',item.id,item)
         }
         // if(tabId==activeTab) {
         console.log("compileData-END")
