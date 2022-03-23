@@ -37,7 +37,7 @@ export default class DisplayBasket extends Component {
           if(link.tabBasket) {
             let bgcolor = link.backgroundColor===undefined?false:link.backgroundColor
             links.push(
-              <LinkButton lang="en" bgcolor={bgcolor} link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(JSON.stringify(link),'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
+                <LinkButton tooltiptitle="Open Manifest" lang="en" bgcolor={bgcolor} link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${v5(JSON.stringify(link),'1b671a64-40d5-491e-99b0-d37347111f20')}-${hashedurl}`}  />
             )
           }
         }
@@ -73,10 +73,10 @@ export default class DisplayBasket extends Component {
               />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
-              <span className="truncated" style={{width:"400px"}} key={`listitem-info-label-${hashedurl}`}>
+              <span className="truncated" key={`listitem-info-label-${hashedurl}`}>
                 {this.props.label}
               </span>
-              <span className="truncated" style={{width:"400px"}} key={`listitem-info-url-${hashedurl}`}>
+              <span className="truncated" key={`listitem-info-url-${hashedurl}`}>
                 {showUrl}<br />
               </span>
               {links}<br />

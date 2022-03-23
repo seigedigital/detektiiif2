@@ -277,7 +277,7 @@ class Popup extends Component {
       }
       for (var key in basket) {
         c.manifests.push({
-            "@id": basket[key].id,
+            "@id": basket[key].url, // shoud be .id -- Yes, this is for you, guys, providing other URLs than IDs!
             "@type": "sc:Manifest",
             "label": basket[key].label
         })

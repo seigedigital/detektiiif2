@@ -45,7 +45,7 @@ export default class DisplayManifest extends Component {
         if(this.props.theme.generalButtons.addToBasket) {
           buttons.push(
             <Tooltip title="Add manifest to basket" key={`tt-add-${hashedurl}`}>
-              <button onClick={() => this.props.addToBasket(this.props.url)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >Add to basket</button>
+              <button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >Add to basket</button>
             </Tooltip>
           )
         }
@@ -72,10 +72,10 @@ export default class DisplayManifest extends Component {
               />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
-                <span className="truncated" style={{width:"400px"}} key={`listitem-info-label-${hashedurl}`}>
+                <span className="truncated" key={`listitem-info-label-${hashedurl}`}>
                   {this.props.label}
                 </span>
-                <span className="truncated" style={{width:"400px"}} key={`listitem-info-url-${hashedurl}`}>
+                <span className="truncated" key={`listitem-info-url-${hashedurl}`}>
                   <QualityChips
                     theme={this.props.theme}
                     cors={this.props.cors}

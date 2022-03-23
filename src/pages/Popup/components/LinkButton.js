@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
+import Tooltip from '@mui/material/Tooltip';
 
 export default class LinkButton extends Component {
   constructor(props) {
@@ -13,14 +14,15 @@ export default class LinkButton extends Component {
     let hashedlabel=v5(this.props.link.label['en'],'1b671a63-40d3-4913-99b3-da01ff1f3343')
 
     return(
-      <button
-        onClick={() => { window.open(`${(this.props.link.url.replace("%%%URI%%%",this.props.uri))}`,'_blank') } }
-        className="ButtonOpenManifest"
-        key={`innerlinkbutton-${hashedlabel}-${hashedurl}`}
-        style={this.props.bgcolor?{backgroundColor:this.props.bgcolor}:null}
-      >
-      { (this.props.lang in this.props.link.label) ? this.props.link.label[this.props.lang] : this.props.link.label['en'] }
-      </button>
+      <Tooltip title={this.props.tooltiptitle} key={`tt-innerlinkbutton-${hashedlabel}-${hashedurl}`}>
+        <button
+          onClick={() => { window.open(`${(this.props.link.url.replace("%%%URI%%%",this.props.uri))}`,'_blank') } }
+          className="ButtonOpenManifest"
+          style={this.props.bgcolor ? {backgroundColor:this.props.bgcolor} : null}
+        >
+        { (this.props.lang in this.props.link.label) ? this.props.link.label[this.props.lang] : this.props.link.label['en'] }
+        </button>
+      </Tooltip>
     )
     // return(
     //   <a
