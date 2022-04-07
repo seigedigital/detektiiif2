@@ -32,7 +32,7 @@ export default class QualityChips extends Component {
     if(this.props.theme.qualityChips.cors
       && !( this.props.cors && this.props.theme.qualityChips.hideok )) {
       chips.push(
-        <Tooltip title={this.props.cors?"OK":qmessages[1]} key={`combinedchiptt-${hashedurl}`}>
+        <Tooltip title={this.props.cors?"OK":qmessages[1]} key={`qc-cors-${hashedurl}`}>
           <Chip label="C" size="small" color={this.props.cors?'success':'error'} key={`corschip-${hashedurl}`} />
         </Tooltip>
       )
@@ -41,7 +41,7 @@ export default class QualityChips extends Component {
     if(this.props.theme.qualityChips.https
       && !( this.props.https && this.props.theme.qualityChips.hideok )) {
       chips.push(
-        <Tooltip title={this.props.https?"OK":qmessages[2]} key={`combinedchiptt-${hashedurl}`}>
+        <Tooltip title={this.props.https?"OK":qmessages[2]} key={`qc-https-${hashedurl}`}>
           <Chip label="S" size="small" color={this.props.https?'success':'error'} key={`httpschip-${hashedurl}`} />
         </Tooltip>)
     }
@@ -49,7 +49,7 @@ export default class QualityChips extends Component {
     if(this.props.theme.qualityChips.urlid
       && !( this.props.urlid && this.props.theme.qualityChips.hideok )) {
       chips.push(
-        <Tooltip title={this.props.urlid?"OK":qmessages[4]} key={`combinedchiptt-${hashedurl}`}>
+        <Tooltip title={this.props.urlid?"OK":qmessages[4]} key={`qc-urlid-${hashedurl}`}>
           <Chip label="ID" size="small" color={this.props.urlid?'success':'error'} key={`urlidchip-${hashedurl}`} />
         </Tooltip>)
     }

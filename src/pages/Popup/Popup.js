@@ -270,16 +270,18 @@ class Popup extends Component {
     buildBasketCollection(basket) {
       var c = {
             "@context": "http://iiif.io/api/presentation/2/context.json",
-            "@id": "https://detektiiif.manducus.net/invalid",
+            "@id": "https://detektiiif.manducus.net/invalide",
             "@type": "sc:Collection",
             "label": "detektIIIF Collection",
             "manifests": []
       }
       for (var key in basket) {
+        console.log(basket[key])
         c.manifests.push({
             "@id": basket[key].url, // shoud be .id -- Yes, this is for you, guys, providing other URLs than IDs!
             "@type": "sc:Manifest",
-            "label": basket[key].label
+            "label": basket[key].label,
+            "thumbnail": basket[key].thumb
         })
       }
       return c
@@ -382,7 +384,7 @@ class Popup extends Component {
               bs.push(<
                   DisplayBasket
                   key = { `item-${this.state.basket[key].url}` }
-                  id = { this.state.basket[key].url }
+                  id = { this.state.basket[key].id }
                   label = { this.state.basket[key].label }
                   thumb = { this.state.basket[key].thumb }
                   url = { this.state.basket[key].url }

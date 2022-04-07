@@ -52,11 +52,11 @@ export default class DisplayBasket extends Component {
           buttons.push(
             <Tooltip title="Remove manifest" key={v4()} >{
               this.props.theme.trashcanImage ?
-                    <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.url)} key={`rembutton-${hashedurl}`} >
+                    <IconButton color="primary" aria-label="Basket" component="span" onClick={() => this.props.removeFromBasket(this.props.id)} key={`rembutton-${hashedurl}`} >
                       <img src={this.props.theme.trashcanImage}  className="iconSize" />
                     </IconButton>
                   :
-                  <button onClick={() => this.props.removeFromBasket(this.props.url)} className="ButtonRemoveFromBasket" key={`rembutton-${hashedurl}`} >
+                  <button onClick={() => this.props.removeFromBasket(this.props.id)} className="ButtonRemoveFromBasket" key={`rembutton-${hashedurl}`} >
                     Remove from basket
                   </button>}
             </Tooltip>

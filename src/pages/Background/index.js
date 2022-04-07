@@ -10,8 +10,7 @@ import { v4 } from 'uuid'
     var cache = {};
     var cache_cors = {};
     var ignoreDomains = [];
-    // var animCurrentText = '';
-    // var animSequence = ['.', '..', '...'];
+    var animSequence = ['◐','◓','◑','◒'] // ['.  ', '.. ', '...'];
 
     const networkFilters = {
         urls: [
@@ -58,6 +57,9 @@ import { v4 } from 'uuid'
         id: tabId,
         requests: {},
         fetch: [],
+        truncated: false,
+        badgeText: '',
+        badgeDisplay: '',
         iiif: {
             manifests: {},
             images: {},
@@ -108,7 +110,6 @@ import { v4 } from 'uuid'
           break
       }
       saveLocalTabStorage()
-      console.log("E")
       updateIcon(tabId)
     }
 
@@ -225,22 +226,6 @@ import { v4 } from 'uuid'
 
         console.log("OK for "+url);
 
-        // chrome.storage.local.get(['tabStorage'], () => {
-        //   if( (!'tabStorage' in result) || JSON.parse(result.tabStorage)[tabId]===undefined {
-        //     initTabStorage(tabId);
-        //   }
-        // })
-        // if (!tabStorage.hasOwnProperty(tabId)) {
-        //     console.log("initTabStorage from compileData")
-        //     initTabStorage(tabId);
-        // }
-
-        // manifesto experiment
-        // manifesto.loadManifest(url).then(function(manifest){
-          // var m = manifesto.parseManifest(JSON.stringify(data));
-          // console.log("MANIFESTO: "+manifesto.LanguageMap.getValue(m.getLabel(), 'en-gb'));
-        // });
-
         let item = {}
         if('@id' in data) {
           item.id = data['@id']
@@ -319,37 +304,45 @@ import { v4 } from 'uuid'
 
       // Generic 1, should match e.g. National Museum Sweden
       let regex_generic1 = /(https\:\/\/[^\"<\ ]*(iiif|i3f|manifest)[^\"<\ ]*)/gi;
-      let params = [...doc.matchAll(regex_generic1)];
-      console.log({guesses1:params})
-      if(params.length>100) {
+      let allurls = [...doc.matchAll(regex_generic1)];
+      let params = []
+      for(let key in allurls) {
+        if(!params.includes(allurls[key][1])) {
+          params.push(allurls[key][1])
+        }
+      }
+      if(params.length>99) {
         // FIXME do nice status in tab header, dont alert
         // alert("detektIIIF: limiting huge number of matches (case 1)");
-        params=params.slice(0,10);
+        console.log("detektIIIF: limiting huge number of matches (case 1)");
+        params=params.slice(0,99);
+        tabStorage[tabId].truncated=true
+        saveLocalTabStorage()
+
       }
-      if(params) {
-        params.forEach((hit, i) => {
-          if(hit.length>1) {
-            console.log("check guess type 1: "+hit[1]);
-            fetchHttp(hit[1],tabId);
-          }
-        });
+      for(let key in params) {
+        console.log("check guess type 1: "+params[key]);
+        fetchHttp(params[key],tabId);
       }
 
       // Generic 2, intra-Link
       let regex_generic2 = /http[^\"<\ ]*=(https\:\/\/[^\"\&]*(iiif|i3f|manifest)[^\"\&<]*)/gi;
-      params = [...doc.matchAll(regex_generic2)];
-      console.log({guesses2:params})
-      if(params.length>20) {
-        alert("detektIIIF: limiting huge number of matches (case 2)"); // FIXME do nice status in tab header, dont alert
-        params=params.slice(0,10);
+      allurls = [...doc.matchAll(regex_generic2)];
+      params = []
+      for(let key in allurls) {
+        if(!params.includes(allurls[key][1])) {
+          params.push(allurls[key][1])
+        }
       }
-      if(params) {
-        params.forEach((hit, i) => {
-          if(hit.length>1) {
-            console.log("check guess type 2: "+hit[1]);
-            fetchHttp(hit[1],tabId);
-          }
-        });
+      if(params.length>99) {
+        console.log("detektIIIF: limiting huge number of matches (case 2)"); // FIXME do nice status in tab header, dont alert
+        params=params.slice(0,99);
+        tabStorage[tabId].truncated=true
+        saveLocalTabStorage()
+      }
+      for(let key in params) {
+        console.log("check guess type 2: "+params[key]);
+        fetchHttp(params[key],tabId);
       }
 
       // var offdoc = document.createElement('html');
@@ -460,32 +453,72 @@ import { v4 } from 'uuid'
 
           // hourglass unicode: '\u231b' (ugly)
 
-          let mv = chrome.runtime.getManifest().manifest_version
 
-          if(mv===3) {
-            chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
-            if(typeof chrome.action.setBadgeTextColor === 'function' ) {
-              chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
-            }
-            if(num>0)  {
-              chrome.action.setBadgeText({text:num.toString()+(pending?'':''),tabId:tabId});
-            } else  {
-              chrome.action.setBadgeText({text:pending?'+':'',tabId:tabId});
-            }
-
+          if(pending) {
+            // chrome.action.setBadgeText({text:'P',tabId:tabId});
+            tabStorage[parseInt(tabId)].badgeText='P'
           } else {
-            chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
-            if(typeof chrome.browserAction.setBadgeTextColor === 'function' ) {
-              chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
-            }
-            if(num>0)  {
-              chrome.browserAction.setBadgeText({text:num.toString()+(pending?'':''),tabId:tabId});
-            } else  {
-              chrome.browserAction.setBadgeText({text:pending?'+':'',tabId:tabId});
-            }
+            // chrome.action.setBadgeText({text:num.toString(),tabId:tabId});
+            tabStorage[parseInt(tabId)].badgeText=num>0?num.toString():''
           }
+
+          // setIcon(tabStorage[parseInt(tabId)].badgeText,tabId)
+
       } catch {
         console.log("unknown error during updateIcon()")
+      }
+    }
+
+    function eternalIconUpdateLoop() {
+      for(let tabId in tabStorage) {
+        let value = false
+        let ptr = Math.floor((Date.now()/250)%animSequence.length)
+        let save = false
+        if(tabStorage[tabId].badgeText==='P') {
+          value=animSequence[ptr]
+        } else {
+          value=tabStorage[tabId].badgeText
+          if(tabStorage[tabId].truncated===true) {
+            value=value+"+"
+          }
+          save = true
+        }
+        if(value!==undefined) {
+          if(tabStorage[tabId].badgeDisplay!==value) {
+            chrome.tabs.get(
+                parseInt(tabId),
+                () => {
+                  if (chrome.runtime.lastError) {
+                    console.log(chrome.runtime.lastError.message);
+                  } else {
+                      setIcon(value,parseInt(tabId))
+                      tabStorage[tabId].badgeDisplay=value
+                      if(save) {
+                        saveLocalTabStorage()
+                      }
+                  }
+                }
+            )
+          }
+        }
+      }
+      setTimeout(eternalIconUpdateLoop,250)
+    }
+
+    function setIcon(value,tabId) {
+      let mv = chrome.runtime.getManifest().manifest_version
+      if(mv===3) {
+        chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
+        if(typeof chrome.action.setBadgeTextColor === 'function' ) {
+          chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
+        }
+        chrome.action.setBadgeText({text:value,tabId:tabId});
+      } else {
+        chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
+        if(typeof chrome.browserAction.setBadgeTextColor === 'function' ) {
+          chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
+        }
+        chrome.browserAction.setBadgeText({text:value,tabId:tabId});
       }
     }
 
@@ -562,11 +595,6 @@ import { v4 } from 'uuid'
         if(filterURLs(url)) {
             return;
         }
-
-        // if (!tabStorage.hasOwnProperty(tabId)) {
-        //     console.log("init tab "+tabId+" from chrome.webRequest.onHeadersReceived.addListener");
-        //     initTabStorage(tabId);
-        // }
 
         if (method!="GET") {
             cache[url]=false;
@@ -819,11 +847,6 @@ import { v4 } from 'uuid'
       }
     });
 
-    // function animateBadgeText() {
-    //   animCurrentText=animSequence[ Math.floor(Date.now / 1000)%animSequence.length ]
-    //   setTimeout(animateBadgeText,1000)
-    // }
-
     ignoreDomains = globalDefaults.ignoreDomains
     chrome.storage.local.get('ignoreDomains', function(data) {
       console.log({GOT:data})
@@ -831,5 +854,7 @@ import { v4 } from 'uuid'
 
     console.log("(RE)STARTED")
     loadLocalTabStorage()
+
+    eternalIconUpdateLoop()
 
 }());
