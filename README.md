@@ -68,4 +68,4 @@ Recommendation: set the version number in ```package.json``` as well as in all `
 
 ## Packaging for the Mozilla Firefox AMO
 
-* switch to version 3 and execute the shellscript ```./pack4amo.sh```
+* switch to version 2 and execute the shellscript ```./pack4amo.sh```
