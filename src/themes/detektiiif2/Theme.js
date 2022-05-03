@@ -3,9 +3,9 @@ import React from 'react'
 import './Styles.css'
 import ThemeTemplate from '../_template/ThemeTemplate.js'
 
-import LogoImageBig from './images/logo4.svg'
+import LogoImageBig from './images/logo5.svg'
 import ZBLogo from './images/ZB_Logo_RGB_1024px.png'
-import SDLogo from './images/Logo-3000-5-768x170.png'
+import SDLogo from './images/seige.digital-768x170.png'
 
 class Theme extends ThemeTemplate {
 
