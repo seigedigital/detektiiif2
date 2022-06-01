@@ -60,7 +60,11 @@ Don't forget to keep v2 and v3 manifest files both up to date, e.g. the version 
 
 ## Version numbering
 
-Recommendation: set the version number in ```package.json``` as well as in all ```manifest-v*.json``` of your theme to the same value.
+Beware! We distinguish the version number of detektiiif2 from the version number of the theme:
+
+Set the version of detektiiif2 number in the ```package.json``` file
+
+Set the version number of the theme in both ```manifest-v*.json``` files
 
 ## Packaging for the Chrome Web Store
 
