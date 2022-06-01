@@ -32,6 +32,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import Snackbar from '@mui/material/Snackbar';
 
+import {version as detektIIIFVersion} from '../../../package.json'
+
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
 
@@ -520,6 +522,9 @@ class Popup extends Component {
           )
         }
 
+        this.themeVersion = chrome.runtime.getManifest().version
+        this.softwareVersion = detektIIIFVersion
+
         let header = null
         if(this.theme.logoImageBig) {
           header= <div className="App-header" key={'App-header-0'}>
@@ -530,7 +535,7 @@ class Popup extends Component {
         } else {
           header= <div className="App-header" key={'App-header-0'}>
                     <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
-                    <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                    <small className="version" key={v4()}>{'detektIIIF '}{this.themeVersion}{' / Theme'}{this.softwareVersion}</small>
                     { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         }
