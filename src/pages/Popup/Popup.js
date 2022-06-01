@@ -32,6 +32,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import Snackbar from '@mui/material/Snackbar';
 
+import {version as detektIIIFVersion} from '../../../package.json'
+
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
 
@@ -90,6 +92,7 @@ class Popup extends Component {
             snackOpen: false,
             snackMsg: ''
         }
+        this.openLocalMirador = this.openLocalMirador.bind(this)
         this.copyBasketCollection = this.copyBasketCollection.bind(this)
         this.closeRemDialog = this.closeRemDialog.bind(this)
         this.openRemDialog = this.openRemDialog.bind(this)
@@ -190,6 +193,10 @@ class Popup extends Component {
           snackMsg:'Failed to copy URL to clipboard.'
         })
       })
+    }
+
+    openLocalMirador() {
+      chrome.tabs.create({'url': 'miradorPage.html'})
     }
 
     loadSettings() {
@@ -449,6 +456,7 @@ class Popup extends Component {
                 )}
                 <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
                 <button onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
+                <button onClick={() => this.openLocalMirador()} className="ButtonCopyBasket" key={"OPENBASKETINLOKALMIRADOR"}>Local Mirador</button>
                 <br key={v4()}/>
                 {bs}
               </TabPanel>
@@ -520,11 +528,14 @@ class Popup extends Component {
           )
         }
 
+        this.themeVersion = chrome.runtime.getManifest().version
+        this.softwareVersion = detektIIIFVersion
+
         let header = null
         if(this.theme.logoImageBig) {
           header= <div className="App-header" key={'App-header-0'}>
                     <img src={this.theme.logoImageBig} className="Logo-image-Big" />
-                    <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                    <small className="version" key={v4()}>{'detektIIIF '}{this.themeVersion}{' / Theme'}{this.softwareVersion}</small>
                     { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         } else {

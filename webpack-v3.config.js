@@ -26,6 +26,7 @@ var fileExtensions = [
   'ttf',
   'woff',
   'woff2',
+  'txt'
 ];
 
 if (fileSystem.existsSync(secretsPath)) {
@@ -37,6 +38,7 @@ var options = {
   entry: {
     // newtab: path.join(__dirname, 'src', 'pages', 'Newtab', 'index.jsx'),
     options: path.join(__dirname, 'src', 'pages', 'Options', 'index.js'),
+    miradorPage: path.join(__dirname, 'src', 'pages', 'MiradorPage', 'index.js'),
     popup: path.join(__dirname, 'src', 'pages', 'Popup', 'index.jsx'),
     background: path.join(__dirname, 'src', 'pages', 'Background', 'index.js'),
     // contentScript: path.join(__dirname, 'src', 'pages', 'Content', 'index.js'),
@@ -169,6 +171,12 @@ var options = {
       template: path.join(__dirname, 'src', 'pages', 'Options', 'index.html'),
       filename: 'options.html',
       chunks: ['options'],
+      cache: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src', 'pages', 'MiradorPage', 'index.html'),
+      filename: 'miradorPage.html',
+      chunks: ['miradorPage'],
       cache: false,
     }),
     new HtmlWebpackPlugin({

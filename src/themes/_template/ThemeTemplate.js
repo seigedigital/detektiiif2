@@ -116,6 +116,8 @@ class ThemeTemplate {
 
   }
 
+  openMiradorLink = true
+
 }
 
 export default ThemeTemplate
