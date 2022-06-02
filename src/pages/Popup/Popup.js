@@ -32,7 +32,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import Snackbar from '@mui/material/Snackbar';
 
-import {version as detektIIIFVersion} from '../../../package.json'
+import * as packageJson from '../../../package.json'
 
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
@@ -256,11 +256,8 @@ class Popup extends Component {
     removeOperation() {
       let newbasket = {}
       if(this.state.remKey!==null) {
-        console.log("removing from basket: "+this.state.remKey)
         newbasket = Object.assign(this.state.basket)
-        console.log({before:newbasket})
         delete newbasket[this.state.remKey]
-        console.log({after:newbasket})
       } else {
         console.log("NOT??? removing from basket: "+this.state.remKey)
       }
@@ -371,6 +368,8 @@ class Popup extends Component {
                   cors = { this.state.images[key].cors }
                   error = { this.state.images[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
+                  settings = {this.state.settings}
+                  theme = {this.theme}
               />)
           }
         } else {
@@ -399,7 +398,7 @@ class Popup extends Component {
               />)
           }
         } else {
-          bs = "Basket is empty."
+          bs = this.theme.basketName + " is empty."
         }
 
         // alert("APP "+JSON.stringify(this.state.manifests))
@@ -421,7 +420,7 @@ class Popup extends Component {
                 <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
                 <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
                 <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
-                <Tab label={`Basket (${bnn})`} value={3} {...a11yProps(3)} key={"TAB3"} />
+                <Tab label={`${this.theme.basketName} (${bnn})`} value={3} {...a11yProps(3)} key={"TAB3"} />
                 <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
               </Tabs>
             </div>
@@ -443,14 +442,15 @@ class Popup extends Component {
                   <PostButton
                     lang="en"
                     link={this.state.settings.postBasketCollectionTo[key]}
-                    theme={this.props.theme}
+                    theme={this.theme}
                     key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                     basket={this.state.basket}
                     buildBasketCollection={this.buildBasketCollection}
                   /> : null
                 )}
-                <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Basket Collection (JSON)</button>
-                <button onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear Basket</button>
+                <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy {this.theme.basketName} (JSON)</button>
+                <button onClick={() => this.openRemDialog(null)} className="ButtonClearBasket" key={"CLEARBASKETCOLLECTION"}>Clear {this.theme.basketName}</button>
+                <br key={v4()}/>
                 <br key={v4()}/>
                 {bs}
               </TabPanel>
@@ -470,20 +470,20 @@ class Popup extends Component {
               // subHeaderContent.push(<div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}></div>)
               break
             case 3:
-              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)
+              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">{this.theme.basketName} ({bnn})</h3>)
               subHeaderContent.push(
                 <div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}>
+                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>                  
                   {Object.keys(this.state.settings.postBasketCollectionTo).map(key =>
                     <PostButton
                       lang="en"
                       link={this.state.settings.postBasketCollectionTo[key]}
-                      theme={this.props.theme}
+                      theme={this.theme}
                       key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                       basket={this.state.basket}
                       buildBasketCollection={this.buildBasketCollection}
                     />
                   )}
-                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
                   <Tooltip title="Remove all manifests">
                     {
                       this.theme.removeAllBasketImage===null ?
@@ -523,13 +523,13 @@ class Popup extends Component {
         }
 
         this.themeVersion = chrome.runtime.getManifest().version
-        this.softwareVersion = detektIIIFVersion
+        this.softwareVersion = packageJson.version
 
         let header = null
         if(this.theme.logoImageBig) {
           header= <div className="App-header" key={'App-header-0'}>
                     <img src={this.theme.logoImageBig} className="Logo-image-Big" />
-                    <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                    <small className="version" key={v4()}>{'detektIIIF '}{this.softwareVersion}{' / Theme'}{this.themeVersion}</small>
                     { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         } else {
@@ -540,15 +540,17 @@ class Popup extends Component {
                   </div>
         }
 
+        console.log({Theme:this.theme})
+
         return(
           <div className="App" key={"App"}>
             {header}
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
               <div className="BasketIcon" style={{display:(this.defaults.tabs===true?'none':'block')}} key={v4()}  >
-                <Tooltip title={this.state.tab===0 ? "Open basket." : "Close basket."}>
+                <Tooltip title={this.state.tab===0 ? ("Open "+this.theme.basketName) : ("Close "+this.theme.basketName)}>
                 <IconButton color="primary"
-                  aria-label="Basket"
+                  aria-label={this.theme.basketName}
                   component="span"
                   onClick={ () => {
                     this.setState({tab: this.state.tab!==0?0:3 })
@@ -584,12 +586,7 @@ class Popup extends Component {
 
             <Dialog open={this.state.remDialog}>
               <DialogTitle id="alert-dialog-title">
-                {
-                  this.state.remKey===null?
-                  "Remove all items from basket?"
-                  :
-                  "Remove this item from the basket?"
-                }
+                {this.state.remKey===null?"Remove all items?":"Remove this item?"}
               </DialogTitle>
               <DialogContent>
                 <DialogContentText>

@@ -34,25 +34,23 @@ export default class DisplayManifest extends Component {
           let link = this.props.settings.openManifestLinks[key]
           if(link.tabManifests) {
             links.push(
-              <Tooltip title="Open manifest" key={`tt-${key}-${hashedurl}`}>
-                <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  />
-              </Tooltip>
+                <LinkButton lang="en" link={link} theme={this.props.theme} uri={this.props.url} key={`linkbutton-${link.url}-${hashedurl}`}  tooltiptitle={false}/>
             )
           }
         }
 
         let buttons = []
-        if(this.props.theme.generalButtons.addToBasket) {
-          buttons.push(
-            <Tooltip title="Add manifest to basket" key={`tt-add-${hashedurl}`}>
-              <button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >Add to basket</button>
-            </Tooltip>
-          )
-        }
         if(this.props.theme.generalButtons.copyURL) {
           buttons.push(
             <Tooltip title="Copy URL to clipboard" key={`tt-copy-${hashedurl}`}>
               <button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >Copy URL</button>
+            </Tooltip>
+          )
+        }
+        if(this.props.theme.generalButtons.addToBasket) {
+          buttons.push(
+            <Tooltip title={"Add manifest to "+this.props.theme.basketName} key={`tt-add-${hashedurl}`}>
+              <button onClick={() => this.props.addToBasket(this.props.id)} className="ButtonAddToBasket" key={`addbutton-${hashedurl}`} >Add to {this.props.theme.basketName}</button>
             </Tooltip>
           )
         }

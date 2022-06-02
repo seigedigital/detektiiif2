@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "detektIIIF 2",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "permissions": [

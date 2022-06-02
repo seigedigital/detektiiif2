@@ -3,6 +3,8 @@ import manifesto from 'manifesto.js';
 
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import QualityChips from './QualityChips'
+import Tooltip from '@mui/material/Tooltip';
 
 import { v5 } from 'uuid'
 
@@ -35,11 +37,12 @@ export default class DisplayImage extends Component {
         errorflag[0] = "";
         errorflag[1] = <div className="error_block">no images</div>;
 
-        // alert("DM: "+this.props.label);
-        // alert("DM "+JSON.stringify(this.props));
-
-        // need more logic here: URL vs ID
-        // <a href={this.props.id} target="_blank">{this.props.id}</a><br />
+        let showUrl = null
+        if(this.props.settings.showUrl===true) {
+          showUrl = <a href={this.props.url} className="URL" target="_blank" key={`showurl-${hashedurl}`}>
+            {this.props.url}
+          </a>
+        }
 
         <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}}>
           {errorflag[this.props.error]}
@@ -55,11 +58,20 @@ export default class DisplayImage extends Component {
             />
             </div>
             <div className="ListItem-info" key={`listitem-info-${hashedurl}`}>
-                {this.props.label}<br />
-                <a href={this.props.url} target="_blank">{this.props.url}</a><br />
-                {corsflag[this.props.cors.toString()]}
-                {httpsflag[this.props.url.startsWith("https").toString()]}<br />
-                <button onClick={() => this.props.copyUrl(this.props.url)}>COPY URL</button><br />
+            <span className="truncated" key={`listitem-info-url-${hashedurl}`}>
+                  <QualityChips
+                    theme={this.props.theme}
+                    cors={this.props.cors}
+                    hashedurl={hashedurl}
+                    https={this.props.url.startsWith("https")}
+                    urlid={this.props.url.replace('/?info\.json','')===this.props.id}
+                    key={`quality-chips-${hashedurl}`}
+                  />
+                  {showUrl}
+                </span>
+                <Tooltip title="Copy URL to clipboard" key={`tt-copy-${hashedurl}`}>
+                  <button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >Copy URL</button>
+                </Tooltip>
             </div>
           </div>
         );

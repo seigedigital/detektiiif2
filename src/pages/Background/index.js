@@ -300,8 +300,6 @@ import { v4 } from 'uuid'
 
     function analyzeHTMLBody(doc,tabId) {
 
-      console.log("ANALYZE HTML of Tab "+tabId)
-
       // Generic 1, should match e.g. National Museum Sweden
       let regex_generic1 = /(https\:\/\/[^\"<\ ]*(iiif|i3f|manifest)[^\"<\ ]*)/gi;
       let allurls = [...doc.matchAll(regex_generic1)];

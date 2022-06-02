@@ -30,6 +30,8 @@ class ThemeTemplate {
 
   optionsPunchline = <span>Options</span>
 
+  basketName = "Basket"
+
   // Images
   basketImage = null
   removeAllBasketImage = null
@@ -66,7 +68,7 @@ class ThemeTemplate {
     uv: {
       url: 'https://universalviewer.io/uv.html?manifest=%%%URI%%%',
       tabBasket: false,
-      tabManifests: false,
+      tabManifests: true,
       backgroundColor: "#5e724d",
       label: {
         en: "Open in UV",
@@ -76,7 +78,7 @@ class ThemeTemplate {
     tify: {
       url: 'https://demo.tify.rocks/demo.html?manifest=%%%URI%%%',
       tabBasket: false,
-      tabManifests: false,
+      tabManifests: true,
       backgroundColor: "#5e724d",
       label: {
         en: "Open in TIFY",
@@ -86,7 +88,7 @@ class ThemeTemplate {
     manducus: {
       url: 'https://manducus.net/m3?manifest=%%%URI%%%',
       tabBasket: false,
-      tabManifests: false,
+      tabManifests: true,
       backgroundColor: "#5e724d",
       label: {
         en: "Open in M3",

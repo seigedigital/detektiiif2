@@ -14,7 +14,9 @@ export default class LinkButton extends Component {
     let hashedlabel=v5(this.props.link.label['en'],'1b671a63-40d3-4913-99b3-da01ff1f3343')
 
     return(
-      <Tooltip title={this.props.tooltiptitle} key={`tt-innerlinkbutton-${hashedlabel}-${hashedurl}`}>
+      <Tooltip title={
+        this.props.tooltiptitle ? this.props.tooltiptitle : this.props.link.label['en']
+      } key={`tt-innerlinkbutton-${hashedlabel}-${hashedurl}`}>
         <button
           onClick={() => { window.open(`${(this.props.link.url.replace("%%%URI%%%",this.props.uri))}`,'_blank') } }
           className="ButtonOpenManifest"
