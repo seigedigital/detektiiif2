@@ -271,6 +271,22 @@ import { v4 } from 'uuid'
             // tabStorage[tabId].iiif.manifests[item.id] = item;
             addToTabStorage(tabId,'manifests',item.id,item)
         } else if (iiif.type=="collection") {
+            try {
+              if (typeof data.label === 'string' || data.label instanceof String) {
+                item.label = data.label;
+              } else {
+                if('en' in data.label) {
+                  item.label = data.label['en'][0];
+                } else if( Array.isArray(data.label) && ('@value' in data.label[0]) ){
+                  item.label = data.label[0]['@value'];
+                } else {
+                  item.label = item.id
+                }
+              }
+              console.log("LABEL: "+item.label)
+            } catch(err) {
+              item.label = url;
+            }
             // tabStorage[tabId].iiif.collections[item.id] = item;
             addToTabStorage(tabId,'collections',item.id,item)
         } else {

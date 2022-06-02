@@ -348,6 +348,8 @@ class Popup extends Component {
                   cors = { this.state.collections[key].cors }
                   error = { this.state.collections[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
+                  settings = {this.state.settings}
+                  theme = {this.theme}
               />)
           }
         } else {
@@ -473,7 +475,7 @@ class Popup extends Component {
               subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">{this.theme.basketName} ({bnn})</h3>)
               subHeaderContent.push(
                 <div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}>
-                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>                  
+                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
                   {Object.keys(this.state.settings.postBasketCollectionTo).map(key =>
                     <PostButton
                       lang="en"

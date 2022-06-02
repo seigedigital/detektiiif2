@@ -3,7 +3,7 @@ import React from 'react'
 import './Styles.css'
 import ThemeTemplate from '../_template/ThemeTemplate.js'
 
-import LogoImageBig from './images/logo5.svg'
+import LogoImageBig from './images/logo.svg'
 import ZBLogo from './images/ZB_Logo_RGB_1024px.png'
 import SDLogo from './images/seige.digital-768x170.png'
 
@@ -22,6 +22,29 @@ class Theme extends ThemeTemplate {
 
             <p style={{clear:'both',verticalAlign:'middle',padding:'20px'}}>Sources can be found on Github: <a href="https://github.com/seigedigital/detektiiif2" target="_blank">https://github.com/seigedigital/detektiiif2</a></p>
           </span>
+
+          openManifestLinks = {
+            uv: {
+              url: 'https://universalviewer.io/uv.html?manifest=%%%URI%%%',
+              tabBasket: false,
+              tabManifests: true,
+              backgroundColor: "#5e724d",
+              label: {
+                en: "Open in UV",
+                de: "In UV öffnen"
+              }
+            },
+            manducus: {
+              url: 'https://manducus.net/m3?manifest=%%%URI%%%',
+              tabBasket: false,
+              tabManifests: true,
+              backgroundColor: "#5e724d",
+              label: {
+                en: "Open in M3",
+                de: "In M3 öffnen"
+              }
+            }
+          }
 
 }
 
