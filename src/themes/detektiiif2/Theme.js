@@ -9,18 +9,18 @@ import SDLogo from './images/seige.digital-768x170.png'
 
 class Theme extends ThemeTemplate {
 
-  title = "DetektIIIF Version 2"
+  title = "detektIIIF22"
 
   logoImageBig = LogoImageBig
 
   about = <span>
-            <h2>About detektIIIF 2</h2>
+            <h2>About detektIIIF2</h2>
 
-            <p style={{clear:'both',verticalAlign:'middle',padding:'20px'}}><img src={SDLogo} style={{width:'150px',float:'right',paddingLeft:'20px'}} />Concept and Programming<br />Leander Seige (seige.digital GbR)</p>
+            <p style={{clear:'both',verticalAlign:'middle',padding:'20px 20px 20px 0px'}}><img src={SDLogo} style={{width:'150px',float:'right',paddingLeft:'20px'}} />Concept and Programming<br />Leander Seige, seige.digital GbR<br /><a href="https://seige.digital" target="_blank">https://seige.digital</a></p>
 
-            <p style={{clear:'both',verticalAlign:'middle',padding:'20px'}}><img src={ZBLogo} style={{width:'150px',float:'right',paddingLeft:'20px'}} />The development of detektIIIF 2 was generously funded and initiated by Zentralbibliothek Zürich.</p>
+            <p style={{clear:'both',verticalAlign:'middle',padding:'20px 20px 20px 0px'}}><img src={ZBLogo} style={{width:'150px',float:'right',paddingLeft:'20px'}} />The development of detektIIIF 2 was generously funded and initiated by Zentralbibliothek Zürich.</p>
 
-            <p style={{clear:'both',verticalAlign:'middle',padding:'20px'}}>Sources can be found on Github: <a href="https://github.com/seigedigital/detektiiif2" target="_blank">https://github.com/seigedigital/detektiiif2</a></p>
+            <p style={{clear:'both',verticalAlign:'middle',padding:'20px 20px 20px 0px'}}>Sources can be found on Github: <a href="https://github.com/seigedigital/detektiiif2" target="_blank">https://github.com/seigedigital/detektiiif2</a></p>
           </span>
 
           openManifestLinks = {

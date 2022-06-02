@@ -271,7 +271,7 @@ class Popup extends Component {
             "@context": "http://iiif.io/api/presentation/2/context.json",
             "@id": "https://detektiiif.manducus.net/invalide",
             "@type": "sc:Collection",
-            "label": "detektIIIF Collection",
+            "label": "detektIIIF2 Collection",
             "manifests": []
       }
       for (var key in basket) {
@@ -458,6 +458,7 @@ class Popup extends Component {
               </TabPanel>
               <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
                 {this.theme.about}
+                {'detektIIIF2 Version '}{this.softwareVersion}{' / Theme Version '}{this.themeVersion}
               </TabPanel>
             </div>
           )
@@ -518,7 +519,8 @@ class Popup extends Component {
                   {bs}
                 </TabPanel>
                 <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
-                  {this.theme.about}
+                  {this.theme.about}<br />
+                  {'detektIIIF2 '}{this.softwareVersion}{' / Theme'}{this.themeVersion}
                 </TabPanel>
             </div>
           )
@@ -531,13 +533,13 @@ class Popup extends Component {
         if(this.theme.logoImageBig) {
           header= <div className="App-header" key={'App-header-0'}>
                     <img src={this.theme.logoImageBig} className="Logo-image-Big" />
-                    <small className="version" key={v4()}>{'detektIIIF '}{this.softwareVersion}{' / Theme'}{this.themeVersion}</small>
+                    <small className="version" key={v4()}></small>
                     { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         } else {
           header= <div className="App-header" key={'App-header-0'}>
                     <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
-                    <small className="version" key={v4()}>{'detektIIIF '}{this.themeVersion}{' / Theme'}{this.softwareVersion}</small>
+                    <small className="version" key={v4()}></small>
                     { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         }

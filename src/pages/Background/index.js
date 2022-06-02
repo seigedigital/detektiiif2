@@ -128,7 +128,7 @@ import { v4 } from 'uuid'
         return
       }
       console.log("HEAD "+url);
-      var tregex = /application\/([a-z]+\+)?json/i;
+      var tregex = /^application\/(ld\+)?json(;profile=.+)?/i;
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       // Upd: ran into troubles, switch back to force-cache, ignoring dynamic cors cases
       let fkey = v4()
@@ -136,7 +136,7 @@ import { v4 } from 'uuid'
       fetch(url, {method: 'HEAD', cache: 'force-cache', follow: 'follow', referrerPolicy: 'no-referrer'})
         .then((response) => {
             let c = response.headers.get("access-control-allow-origin");
-            console.log("CORS: "+c+" for "+url);
+            // console.log("CORS: "+c+" for "+url);
             if( c==="*") {
               cache_cors[url]=true;
             } else {
@@ -146,7 +146,7 @@ import { v4 } from 'uuid'
             let s = response.headers.get("content-length");
             console.log(t+" "+s+" "+url);
             console.log(response.status);
-            if( ( t && t.match(tregex)) || response.status!=200) { // bad implementations crash if you send them HEAD
+            if( t!==undefined && t.match(tregex) )  { //  || response.status!=200) { // bad implementations crash if you send them HEAD
               console.log("Accepted for GET Req: "+url);
               fetchWorkBody(url,tabId);
             } else {
@@ -781,7 +781,7 @@ import { v4 } from 'uuid'
             chrome.tabs.get(parseInt(tabId), (tab) => {
               console.log({tab:tab})
               // just give it a try
-              fetchHttp(tab.url,tab.id)
+              // fetchHttp(tab.url,tab.id)
 
               let rules = {
                 europeana1: {
