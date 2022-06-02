@@ -22,24 +22,9 @@ import { v4 } from 'uuid'
 // FUNCTIONS
 //
 
-  // function getLocalTabStorage() {
-  //   return new Promise((resolve, reject) => {
-  //     resolve(localLocalStorage)
-  //   })
-  //   // return new Promise((resolve, reject) => {
-  //   //   chrome.storage.local.set({}, () => { // Trick 17 to make sure, previous write actions are finished
-  //   //     chrome.storage.local.get(['tabStorage'], (result) => {
-  //   //       if('tabStorage' in result) {
-  //   //         console.log({resolving:JSON.parse(result.tabStorage)})
-  //   //       }
-  //   //       resolve(result)
-  //   //     })
-  //   //   })
-  //   // })
-  // }
 
   function saveLocalTabStorage() {
-    console.log({saving:tabStorage})
+    // console.log({saving:tabStorage})
     chrome.storage.local.set({tabStorage:JSON.stringify(tabStorage)})
   }
 
@@ -52,7 +37,7 @@ import { v4 } from 'uuid'
   }
 
     function getNewTabData(tabId) {
-      console.log({NEWdata:tabId})
+      // console.log({NEWdata:tabId})
       return({
         id: tabId,
         requests: {},
@@ -70,21 +55,21 @@ import { v4 } from 'uuid'
     }
 
     function initTabStorage(tabId) {
-      console.log("RESETTING "+tabId)
+      // console.log("RESETTING "+tabId)
       tabStorage[tabId] = getNewTabData(tabId)
       saveLocalTabStorage()
       updateIcon(tabId)
     }
 
     function addToTabStorage(tabId,iiifkey,key,value) {
-      console.log({ADDING:{iiifkey:iiifkey,key:key,value:value}})
+      // console.log({ADDING:{iiifkey:iiifkey,key:key,value:value}})
       tabStorage[tabId]['iiif'][iiifkey][key]=value
       saveLocalTabStorage()
       updateIcon(tabId)
     }
 
     function updateInTabStorage(tabId,key,value) {
-      console.log({UPDInTab:{key:key,value:value}})
+      // console.log({UPDInTab:{key:key,value:value}})
       if(! (tabId in tabStorage)) {
         tabStorage[tabId] = getNewTabData(tabId)
       }
