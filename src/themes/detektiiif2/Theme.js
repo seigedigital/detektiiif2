@@ -9,7 +9,7 @@ import SDLogo from './images/seige.digital-768x170.png'
 
 class Theme extends ThemeTemplate {
 
-  title = "detektIIIF22"
+  title = "detektIIIF2"
 
   logoImageBig = LogoImageBig
 
