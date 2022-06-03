@@ -19,34 +19,12 @@ export default class DisplayImage extends Component {
 
       let hashedurl=v5(this.props.url, '1b671a64-40d5-491e-99b0-d37347111f20')
 
-        var corsflag={};
-        corsflag[true.toString()] = <span className="green_block">CORS</span>
-        corsflag["1"] = <span className="green_block">CORS</span>
-        corsflag[false.toString()] = <span className="red_block">CORS</span>
-        corsflag["0"] = <span className="red_block">CORS</span>
-        corsflag["2"] = <span className="grey_block">CORS</span>
-
-        var httpsflag={};
-        httpsflag[true.toString()] = <span className="green_block">HTTPS</span>
-        httpsflag["1"] = <span className="green_block">HTTPS</span>
-        httpsflag[false.toString()] = <span className="red_block">HTTPS</span>
-        httpsflag["0"] = <span className="red_block">HTTPS</span>
-        httpsflag["2"] = <span className="grey_block">HTTPS</span>
-
-        var errorflag={};
-        errorflag[0] = "";
-        errorflag[1] = <div className="error_block">no images</div>;
-
         let showUrl = null
         if(this.props.settings.showUrl===true) {
           showUrl = <a href={this.props.url} className="URL" target="_blank" key={`showurl-${hashedurl}`}>
             {this.props.url}
           </a>
         }
-
-        <div className="box_icon" style={{backgroundImage:`url(${this.props.thumb})`}}>
-          {errorflag[this.props.error]}
-        </div>
 
         return (
           <div className="ListItem" key={`listitem-${hashedurl}`}>
@@ -64,7 +42,7 @@ export default class DisplayImage extends Component {
                     cors={this.props.cors}
                     hashedurl={hashedurl}
                     https={this.props.url.startsWith("https")}
-                    urlid={this.props.url.replace('/?info\.json','')===this.props.id}
+                    urlid={this.props.url.replace('/info.json','')===this.props.id}
                     key={`quality-chips-${hashedurl}`}
                   />
                   {showUrl}

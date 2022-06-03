@@ -116,10 +116,10 @@ class Popup extends Component {
               this.setState({settings:Object.assign({},this.state.settings,{openManifestLinks:newValue})})
             }
 
-            console.log(
-              `Storage key "${key}" in namespace "${namespace}" changed.`,
-              `Old value was "${oldValue}", new value is "${newValue}".`
-            );
+            // console.log(
+            //   `Storage key "${key}" in namespace "${namespace}" changed.`,
+            //   `Old value was "${oldValue}", new value is "${newValue}".`
+            // )
           }
         });
     }

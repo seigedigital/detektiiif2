@@ -128,7 +128,7 @@ import { v4 } from 'uuid'
         return
       }
       console.log("HEAD "+url);
-      var tregex = /^application\/(ld\+)?json(;profile=.+)?/i;
+      var tregex = /^application\/(ld\+)?json;?.*/i;
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       // Upd: ran into troubles, switch back to force-cache, ignoring dynamic cors cases
       let fkey = v4()
@@ -783,7 +783,7 @@ import { v4 } from 'uuid'
             chrome.tabs.get(parseInt(tabId), (tab) => {
               console.log({tab:tab})
               // just give it a try
-              // fetchHttp(tab.url,tab.id)
+              fetchHttp(tab.url,tab.id)
 
               let rules = {
                 europeana1: {
