@@ -62,7 +62,7 @@ import { v4 } from 'uuid'
     }
 
     function addToTabStorage(tabId,iiifkey,key,value) {
-      // console.log({ADDING:{iiifkey:iiifkey,key:key,value:value}})
+      console.log({ADDING:{iiifkey:iiifkey,key:key,value:value}})
       tabStorage[tabId]['iiif'][iiifkey][key]=value
       saveLocalTabStorage()
       updateIcon(tabId)
@@ -146,7 +146,10 @@ import { v4 } from 'uuid'
             let s = response.headers.get("content-length");
             console.log(t+" "+s+" "+url);
             console.log(response.status);
-            if( t!==undefined && t.match(tregex) )  { //  || response.status!=200) { // bad implementations crash if you send them HEAD
+            if( (t!==undefined && t.match(tregex))
+              || (url.startsWith('https://emanus.rc.vls.io') && response.status===500) // e-manuscripta doesn't like HEAD requests
+              || (url.startsWith('https://www.e-rara.ch/') && response.status===500) // e-manuscripta doesn't like HEAD requests
+            )  {
               console.log("Accepted for GET Req: "+url);
               fetchWorkBody(url,tabId);
             } else {
@@ -177,11 +180,9 @@ import { v4 } from 'uuid'
       if(cache_cors[url]===true) {
         let cm='force-cache';
       }
-      console.log("b")
 
       let fkey = v4()
       updateInTabStorage(tabId,'addfetch',fkey)
-      console.log("c")
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       fetch(url, {method: 'GET', cache: 'no-store', referrerPolicy: 'no-referrer'})
           .then(res => res.json())
@@ -357,6 +358,7 @@ import { v4 } from 'uuid'
     }
 
     function analyzeJSONBody(body,url) {
+        // console.log({body:body})
         if(!body.hasOwnProperty("@context")) {
             console.log("NO @context")
             cache[url]=false; // that's no IIIF, block by cache rule
