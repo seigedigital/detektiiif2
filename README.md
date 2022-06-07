@@ -1,6 +1,6 @@
-# DetektIIIF 2
+# detektIIIF2
 
-Completely new revamped Version of DetektIIIF (Version 1: https://github.com/leanderseige/detektiiif)
+Completely new revamped Version of detektIIIF2 (Version 1: https://github.com/leanderseige/detektiiif)
 
 derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
 
@@ -68,8 +68,8 @@ Set the version number of the theme in both ```manifest-v*.json``` files
 
 ## Packaging for the Chrome Web Store
 
-* switch to version 3 and execute the shellscript ```./pack4cws.sh```
+* switch to manifest version 3 and execute the shellscript ```./pack4cws.sh```
 
 ## Packaging for the Mozilla Firefox AMO
 
-* switch to version 2 and execute the shellscript ```./pack4amo.sh```
+* switch to manifest version 2 and execute the shellscript ```./pack4amo.sh```
