@@ -147,8 +147,9 @@ import { v4 } from 'uuid'
             console.log(t+" "+s+" "+url);
             console.log(response.status);
             if( (t!==undefined && t.match(tregex))
+              || (url.startsWith('https://www.e-manuscripta.ch/') && response.status===500) // e-manuscripta doesn't like HEAD requests
               || (url.startsWith('https://emanus.rc.vls.io') && response.status===500) // e-manuscripta doesn't like HEAD requests
-              || (url.startsWith('https://www.e-rara.ch/') && response.status===500) // e-manuscripta doesn't like HEAD requests
+              || (url.startsWith('https://www.e-rara.ch/') && response.status===500) // e-rara doesn't like HEAD requests
             )  {
               console.log("Accepted for GET Req: "+url);
               fetchWorkBody(url,tabId);
