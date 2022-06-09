@@ -1,4 +1,4 @@
-![](src/themes/detektiiif/images/logo-2048.png)
+![](src/themes/detektiiif2/images/logo-2048.png)
 
 # detektIIIF2
 
