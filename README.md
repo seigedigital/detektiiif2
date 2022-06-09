@@ -1,11 +1,14 @@
+![](src/themes/detektiiif/images/logo-2048.png)
+
 # detektIIIF2
 
-Completely new revamped Version of detektIIIF2 (Version 1: https://github.com/leanderseige/detektiiif)
+This is the current version of detektIIIF2 (Version 1: https://github.com/leanderseige/detektiiif)
 
-derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
+If you don't want to work with the source code you may install detektIIIF2 from the Chrome Web Store: https://chrome.google.com/webstore/detail/detektiiif-2/aaodcobgcadinjipaocibamdfcffpcpp
 
+## Source Code
 
-## Usage
+used boilerplate: https://github.com/lxieyang/chrome-extension-boilerplate-react
 
 ### Install basics:
 * clone this repo ```git clone https://github.com/seigedigital/detektiiif2```
