@@ -2,7 +2,7 @@
 
 # detektIIIF2
 
-detektIIIF is a browser extension for Chrome and Firefox that detects IIIF resources in websites. It is possible to collect IIIF manifests in a basket and send them to any compatible IIIF application. detektIIIF is extensively configurable and can be customized with individual themes.
+detektIIIF is a browser extension for Chrome and Firefox that detects IIIF resources in websites. It is possible to collect IIIF manifests in a basket and send them to any compatible IIIF application. detektIIIF is extensively configurable and can be customized with individual themes. The browser extension also checks for the presence of various interoperability features (CORS, SSL, etc.) and displays warnings if necessary.
 
 This is the current version of detektIIIF2 (Version 1: https://github.com/leanderseige/detektiiif)
 
