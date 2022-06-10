@@ -65,7 +65,7 @@ export default class QualityChips extends Component {
     }
 
     return(
-      <span style={{display:'inline'}} key={`span-${hashedurl}`}>
+      <span style={{display:'inline',marginRight:'4px'}} key={`span-${hashedurl}`}>
         {chips}
       </span>
     )

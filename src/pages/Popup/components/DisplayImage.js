@@ -30,7 +30,6 @@ export default class DisplayImage extends Component {
           <div className="ListItem" key={`listitem-${hashedurl}`}>
             <div className="ListItem-image" key={`listitem-image-${hashedurl}`}>
             <LazyLoadImage
-              height={"100"}
               src={this.props.thumb}
               placeholder=<HourglassEmptyIcon sx={{color:'white'}} key={`listitem-lazyimage-${hashedurl}`} />
             />

@@ -285,7 +285,7 @@ button {
     white-space: nowrap; /* forces text to single line */
     overflow: hidden;
     text-overflow: ellipsis;
-    width:400px;
+    width:380px;
 }
 
 .Quality-Chip {

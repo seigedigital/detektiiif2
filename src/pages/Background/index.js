@@ -264,7 +264,19 @@ import { v4 } from 'uuid'
             }
         } else if (iiif.api=="image") {
             item.label = url;
-            item.thumb = data['@id']+'/full/100,/0/default.jpg';
+            switch(iiif.version) {
+              case 2:
+              case "2":
+                item.thumb = data['@id']+'/full/100,/0/default.jpg';
+                break
+              case 3:
+              case "3":
+                item.thumb = data['id']+'/full/100,/0/default.jpg';
+                break
+              default:
+                item.thumb = "logo-small-grey.png";
+                break
+            }
         } else {
             item.label = url;
             item.thumb = "logo-small.png";
