@@ -4,6 +4,7 @@ import manifesto from 'manifesto.js';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import QualityChips from './QualityChips'
+import LinkButton from './LinkButton'
 import Tooltip from '@mui/material/Tooltip';
 
 import { v5 } from 'uuid'
@@ -49,6 +50,15 @@ export default class DisplayImage extends Component {
                 <Tooltip title="Copy URL to clipboard" key={`tt-copy-${hashedurl}`}>
                   <button onClick={() => this.props.copyUrl(this.props.url)} className="ButtonCopyURL" key={`copybutton-${hashedurl}`} >Copy URL</button>
                 </Tooltip>
+                <LinkButton lang="en" link={
+                  { label:
+                    {
+                      en:'Download full image'
+                    },
+                    url: this.props.url.replace('/info.json','') +
+                    (this.props.version==3 ? '/full/max/0/default.jpg':'/full/full/0/default.jpg')
+                  }
+                } theme={this.props.theme} uri={this.props.url} key={`downloadbutton-${hashedurl}`}  tooltiptitle={"Download full size image"}/>
             </div>
           </div>
         );

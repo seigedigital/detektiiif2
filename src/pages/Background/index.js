@@ -222,6 +222,7 @@ import { v4 } from 'uuid'
         item.url = url
         item.cors = cache_cors[url]
         item.error = 0
+        item.version = iiif.version
 
         if(iiif.api==="presentation" && iiif.type==="manifest") {
             console.log("is manifest")

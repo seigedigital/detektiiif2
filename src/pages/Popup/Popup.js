@@ -369,6 +369,7 @@ class Popup extends Component {
                   url = { this.state.images[key].url }
                   cors = { this.state.images[key].cors }
                   error = { this.state.images[key].error }
+                  version = { this.state.images[key].version }
                   copyUrl = {this.copyUrl.bind(this)}
                   settings = {this.state.settings}
                   theme = {this.theme}

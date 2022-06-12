@@ -53,7 +53,8 @@ class ThemeTemplate {
   generalButtons = {
     copyURL: true,
     addToBasket: true,
-    removeFromBasket: true
+    removeFromBasket: true,
+    downloadFullImage: true // only for images
   }
 
   qualityChips = {
