@@ -163,15 +163,14 @@ import { v4 } from 'uuid'
             updateInTabStorage(tabId,'remfetch',fkey)
             cache[url] = false;
             console.debug('Error HEAD Req:', error);
-            if(url.startsWith('http')) {
-              console.log("Let's try GET... "+" // "+url);
-              fetchWorkBody(url,tabId);
-            }
+            // if(url.startsWith('http') && !url.includes('?')) {
+            //   console.log("Let's try GET... "+" // "+url);
+            //   fetchWorkBody(url,tabId);
+            // }
         });
     }
 
     function fetchWorkBody(url,tabId) {
-      console.log("a")
       if(!url.startsWith('http')) {
         console.log("URL denied (BODY), we're http(s) only.")
         return

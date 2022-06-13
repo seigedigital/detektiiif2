@@ -18,7 +18,7 @@ import ManifestViewers from './components/ManifestViewers.js'
 import CollectionViewers from './components/CollectionViewers.js'
 import IgnoreDomains from './components/IgnoreDomains.js'
 
-import * as packageJson from '../../../package.json'
+import packageJson from '../../../package.json'
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 

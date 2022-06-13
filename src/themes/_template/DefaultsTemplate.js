@@ -9,7 +9,7 @@ class DefaultsTemplate {
   storeBasket = "local" // or sync but not now because we should make sure that sync works
 
   ignoreDomains = [
-    "google.com", "googleusercontent.com", "gstatic.com", "google.de",
+    "chrome.google.com", "google.com", "googleusercontent.com", "gstatic.com", "google.de",
     "twitter.com", "linkedin.com", "paypal.com", "ebay.de",
     "ebay.com", "ebaystatic.com", "ebayimg.com", "googletagservices.com",
     "amazon.de", "amazon.com", "amazon.co.uk", "reddit.com", "facebook.com",

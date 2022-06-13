@@ -32,7 +32,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import Snackbar from '@mui/material/Snackbar';
 
-import * as packageJson from '../../../package.json'
+import packageJson from '../../../package.json'
 
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
