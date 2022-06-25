@@ -86,7 +86,7 @@ class Popup extends Component {
               openManifestLinks: Object.assign({},this.theme.openManifestLinks),
               viewManifestInfo: Object.assign({},this.theme.viewManifestInfo)
             },
-            tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
+            tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket 4=About
             remDialog: false,
             remKey: null,
             snackOpen: false,
@@ -177,6 +177,18 @@ class Popup extends Component {
         this.getDataFromLocalStorage()
         this.loadBasket()
         this.loadSettings()
+
+        if(Object.keys(this.state.manifests).length>0) {
+          this.setState({tab:0})
+        } else if(Object.keys(this.state.images).length>0) {
+          this.setState({tab:1})
+        } else if(Object.keys(this.state.collections).length>0) {
+          this.setState({tab:2})
+        } else if(Object.keys(this.state.basket).length>0) {
+          this.setState({tab:3})
+        } else {
+          this.setState({tab:0})
+        }
     }
 
     copyUrl(url) {
@@ -420,10 +432,10 @@ class Popup extends Component {
           outputContent.push(
             <div key={"TABBOX2"}>
               <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
-                <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
-                <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
-                <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
-                <Tab label={`${this.theme.basketName} (${bnn})`} value={3} {...a11yProps(3)} key={"TAB3"} />
+                <Tab label={"Manifests"+(mnn>0?` (${mnn})`:``)} value={0} {...a11yProps(0)} key={"TAB0"} />
+                <Tab label={"Images"+(inn>0?` (${inn})`:``)} value={1} {...a11yProps(1)} key={"TAB1"} />
+                <Tab label={"Collections"+(cnn>0?` (${cnn})`:``)} value={2}  {...a11yProps(2)} key={"TAB2"} />
+                <Tab label={`${this.theme.basketName}`+(bnn>0?` (${bnn})`:``)} value={3} {...a11yProps(3)} key={"TAB3"} />
                 <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
               </Tabs>
             </div>

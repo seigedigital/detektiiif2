@@ -6,11 +6,11 @@ import { v4 } from 'uuid'
 
     var globalDefaults = new Defaults()
 
-    var tabStorage = {};
-    var cache = {};
-    var cache_cors = {};
-    var ignoreDomains = [];
-    var animSequence = ['◐','◓','◑','◒'] // ['.  ', '.. ', '...'];
+    var tabStorage = {}
+    var cache = {}
+    var cache_cors = {}
+    var ignoreDomains = []
+    var animSequence = ['◐','◓','◑','◒']
 
     const networkFilters = {
         urls: [
@@ -32,6 +32,9 @@ import { v4 } from 'uuid'
     chrome.storage.local.get(['tabStorage'], (result) => {
       if('tabStorage' in result) {
         tabStorage = JSON.parse(result.tabStorage)
+        for(let tabId in tabStorage) {
+          tabStorage[tabId].badgeDisplay=''
+        }
       }
     })
   }
@@ -45,6 +48,7 @@ import { v4 } from 'uuid'
         truncated: false,
         badgeText: '',
         badgeDisplay: '',
+        url: '',
         iiif: {
             manifests: {},
             images: {},
@@ -106,14 +110,14 @@ import { v4 } from 'uuid'
 
       // we always try https too
       if(url.startsWith("http:")) {
-        fetchWorkStart(url.replace(/^http\:/i,"https:"),tabId);
+        fetchWorkStart(url.replace(/^http\:/i,"https:"),tabId)
       }
 
     }
 
     function fetchWorkStart(url,tabId) {
       // check Cache
-      if(url in cache) {
+      if(cache[url]!==undefined && cache[url]!=="INPROGRESS") {
         // known already? jusr recompile data
         compileData(url,tabId)
         return
@@ -127,47 +131,52 @@ import { v4 } from 'uuid'
         console.log("URL denied (HEAD), we're http(s) only.")
         return
       }
-      console.log("HEAD "+url);
-      var tregex = /^application\/(ld\+)?json;?.*/i;
+      console.log("HEAD "+url)
+      var tregex = /^application\/(ld\+)?json?.*/i
       // FIXME workaround to avoid problems chrome's cache vs dynamic cors headers, example: https://edl.beniculturali.it/beu/850013655
       // Upd: ran into troubles, switch back to force-cache, ignoring dynamic cors cases
       let fkey = v4()
       updateInTabStorage(tabId,'addfetch',fkey)
       fetch(url, {method: 'HEAD', cache: 'force-cache', follow: 'follow', referrerPolicy: 'no-referrer'})
         .then((response) => {
-            let c = response.headers.get("access-control-allow-origin");
-            // console.log("CORS: "+c+" for "+url);
-            if( c==="*") {
-              cache_cors[url]=true;
-            } else {
-              cache_cors[url]=false;
+            if(response.status===405) {
+              console.log(response)
+              console.log("HEAD method not allowed. GETting...")
+              fetchWorkBody(url,tabId)
             }
-            let t = response.headers.get("content-type");
-            let s = response.headers.get("content-length");
-            console.log(t+" "+s+" "+url);
-            console.log(response.status);
+            let c = response.headers.get("access-control-allow-origin")
+            // console.log("CORS: "+c+" for "+url)
+            if( c==="*") {
+              cache_cors[url]=true
+            } else {
+              cache_cors[url]=false
+            }
+            let t = response.headers.get("content-type")
+            let s = response.headers.get("content-length")
+            console.log(t+" "+s+" "+url)
+            console.log(response.status)
             if( (t!==undefined && t.match(tregex))
               || (url.startsWith('https://www.e-manuscripta.ch/') && response.status===500) // e-manuscripta doesn't like HEAD requests
               || (url.startsWith('https://emanus.rc.vls.io') && response.status===500) // e-manuscripta doesn't like HEAD requests
               || (url.startsWith('https://www.e-rara.ch/') && response.status===500) // e-rara doesn't like HEAD requests
             )  {
-              console.log("Accepted for GET Req: "+url);
-              fetchWorkBody(url,tabId);
+              console.log("Accepted for GET Req: "+url)
+              fetchWorkBody(url,tabId)
             } else {
               cache[url] = false
-              console.log("Rejected: "+url);
+              console.log("Rejected: "+url)
             }
             updateInTabStorage(tabId,'remfetch',fkey)
         })
         .catch((error) => {
             updateInTabStorage(tabId,'remfetch',fkey)
-            cache[url] = false;
-            console.debug('Error HEAD Req:', error);
+            cache[url] = false
+            console.debug('Error HEAD Req:', error)
             // if(url.startsWith('http') && !url.includes('?')) {
-            //   console.log("Let's try GET... "+" // "+url);
-            //   fetchWorkBody(url,tabId);
+            //   console.log("Let's try GET... "+" // "+url)
+            //   fetchWorkBody(url,tabId)
             // }
-        });
+        })
     }
 
     function fetchWorkBody(url,tabId) {
@@ -178,7 +187,7 @@ import { v4 } from 'uuid'
 
       let cm='no-store'
       if(cache_cors[url]===true) {
-        let cm='force-cache';
+        let cm='force-cache'
       }
 
       let fkey = v4()
@@ -188,29 +197,59 @@ import { v4 } from 'uuid'
           .then(res => res.json())
           .then((data) => {
               console.log({got:data})
-              cache[url] = data;
-              compileData(url,tabId);
+              cache[url] = data
+              compileData(url,tabId)
+              console.log("ADDing "+url+"to "+tabId)
               updateInTabStorage(tabId,'remfetch',fkey)
           })
           .catch((error) => {
-              console.debug('Error GET Req:', error);
-              cache[url] = false;
+              console.debug('Error GET Req:', error)
+              cache[url] = false
               updateInTabStorage(tabId,'remfetch',fkey)
-          });
+          })
+    }
+
+    function fetchHTML(url,tabId) {
+      if(!url.startsWith('http')) {
+        console.log("URL denied (fetchHTML), we're http(s) only.")
+        return
+      }
+      fetch(url, {method: 'GET', cache: 'no-store', referrerPolicy: 'no-referrer'})
+      .then(function (response) {
+        return response.text()
+      }).then(function (html) {
+        // console.log(html)
+        analyzeHTMLBody(html,tabId)
+      }).catch(function (err) {
+        // There was an error
+        console.warn('Something went wrong.', err)
+      })
+
     }
 
     function compileData(url,tabId) {
-        console.log("compileData")
+        console.log("compileData "+url)
         let data = cache[url]
 
-        let iiif = analyzeJSONBody(data,url);
+        if(cache[url]===false) {
+          console.log("cache denial for "+url)
+          return
+        }
+
+        if(cache[url]==="INPROGRESS") {
+          console.log("skipping INPROGRESS "+url)
+          return
+        }
+
+        let iiif = analyzeJSONBody(data,url)
         if(!iiif) {
-            console.log("NO for "+url);
-            return;
+            cache[url] = false
+            console.log("NO for "+url)
+            return
         }
         console.log({IIIF:iiif})
 
-        console.log("OK for "+url);
+        console.log("OK for "+url)
 
         let item = {}
         if('@id' in data) {
@@ -227,12 +266,12 @@ import { v4 } from 'uuid'
             console.log("is manifest")
             try {
               if (typeof data.label === 'string' || data.label instanceof String) {
-                item.label = data.label;
+                item.label = data.label
               } else {
                 if('en' in data.label) {
-                  item.label = data.label['en'][0];
+                  item.label = data.label['en'][0]
                 } else if( Array.isArray(data.label) && ('@value' in data.label[0]) ){
-                  item.label = data.label[0]['@value'];
+                  item.label = data.label[0]['@value']
                 } else {
                   item.label = item.id
                 }
@@ -251,60 +290,60 @@ import { v4 } from 'uuid'
                   break
                 default:
                   console.log("xc")
-                  item.thumb = "logo-small-grey.png";
+                  item.thumb = "logo-small-grey.png"
                   break
               }
 
             } catch(err) {
               console.log("NO NO NO")
               console.log(err)
-              item.error = 1;
-              item.label = url;
-              item.thumb = "logo-small-grey.png";
+              item.error = 1
+              item.label = url
+              item.thumb = "logo-small-grey.png"
             }
         } else if (iiif.api=="image") {
-            item.label = url;
+            item.label = url
             switch(iiif.version) {
               case 2:
               case "2":
-                item.thumb = data['@id']+'/full/100,/0/default.jpg';
+                item.thumb = data['@id']+'/full/100,/0/default.jpg'
                 break
               case 3:
               case "3":
-                item.thumb = data['id']+'/full/100,/0/default.jpg';
+                item.thumb = data['id']+'/full/100,/0/default.jpg'
                 break
               default:
-                item.thumb = "logo-small-grey.png";
+                item.thumb = "logo-small-grey.png"
                 break
             }
         } else {
-            item.label = url;
-            item.thumb = "logo-small.png";
+            item.label = url
+            item.thumb = "logo-small.png"
         }
         if(iiif.type=="manifest") {
-            // tabStorage[tabId].iiif.manifests[item.id] = item;
+            // tabStorage[tabId].iiif.manifests[item.id] = item
             addToTabStorage(tabId,'manifests',item.id,item)
         } else if (iiif.type=="collection") {
             try {
               if (typeof data.label === 'string' || data.label instanceof String) {
-                item.label = data.label;
+                item.label = data.label
               } else {
                 if('en' in data.label) {
-                  item.label = data.label['en'][0];
+                  item.label = data.label['en'][0]
                 } else if( Array.isArray(data.label) && ('@value' in data.label[0]) ){
-                  item.label = data.label[0]['@value'];
+                  item.label = data.label[0]['@value']
                 } else {
                   item.label = item.id
                 }
               }
               console.log("LABEL: "+item.label)
             } catch(err) {
-              item.label = url;
+              item.label = url
             }
-            // tabStorage[tabId].iiif.collections[item.id] = item;
+            // tabStorage[tabId].iiif.collections[item.id] = item
             addToTabStorage(tabId,'collections',item.id,item)
         } else {
-            // tabStorage[tabId].iiif.images[item.id] = item;
+            // tabStorage[tabId].iiif.images[item.id] = item
             addToTabStorage(tabId,'images',item.id,item)
         }
         // if(tabId==activeTab) {
@@ -315,56 +354,95 @@ import { v4 } from 'uuid'
 
     function analyzeHTMLBody(doc,tabId) {
 
+      let url
+
       // Generic 1, should match e.g. National Museum Sweden
-      let regex_generic1 = /(https\:\/\/[^\"<\ ]*(iiif|i3f|manifest)[^\"<\ ]*)/gi;
-      let allurls = [...doc.matchAll(regex_generic1)];
+      let regex_generic1 = /(https\:\/\/[^\"<\ ]*(iiif|i3f|manifest)[^\"<\ ]*(?<!.jpg))/gi
+      let allurls = [...doc.matchAll(regex_generic1)]
       let params = []
       for(let key in allurls) {
         if(!params.includes(allurls[key][1])) {
           params.push(allurls[key][1])
         }
       }
-      if(params.length>99) {
+      if(params.length>19) {
         // FIXME do nice status in tab header, dont alert
-        // alert("detektIIIF: limiting huge number of matches (case 1)");
-        console.log("detektIIIF: limiting huge number of matches (case 1)");
-        params=params.slice(0,99);
+        // alert("detektIIIF: limiting huge number of matches (case 1)")
+        console.log("detektIIIF: limiting huge number of matches (case 1)")
+        params=params.slice(0,19)
         tabStorage[tabId].truncated=true
         saveLocalTabStorage()
 
       }
       for(let key in params) {
-        console.log("check guess type 1: "+params[key]);
-        fetchHttp(params[key],tabId);
+        url = params[key]
+        if(cache[url]===undefined) {
+          console.log("check guess type 1: "+url)
+          cache[url] = "INPROGRESS"
+          fetchHttp(url,tabId)
+        } else {
+          // console.log("NO check type 1: "+url)
+        }
       }
 
       // Generic 2, intra-Link
-      let regex_generic2 = /http[^\"<\ ]*=(https\:\/\/[^\"\&]*(iiif|i3f|manifest)[^\"\&<]*)/gi;
-      allurls = [...doc.matchAll(regex_generic2)];
+      let regex_generic2 = /http[^\"<\ ]*=(https\:\/\/[^\"\&]*(iiif|i3f|manifest)[^\"\&<]*)/gi
+      allurls = [...doc.matchAll(regex_generic2)]
       params = []
       for(let key in allurls) {
         if(!params.includes(allurls[key][1])) {
           params.push(allurls[key][1])
         }
       }
-      if(params.length>99) {
-        console.log("detektIIIF: limiting huge number of matches (case 2)"); // FIXME do nice status in tab header, dont alert
-        params=params.slice(0,99);
+      if(params.length>19) {
+        console.log("detektIIIF: limiting huge number of matches (case 2)") // FIXME do nice status in tab header, dont alert
+        params=params.slice(0,19)
         tabStorage[tabId].truncated=true
         saveLocalTabStorage()
       }
       for(let key in params) {
-        console.log("check guess type 2: "+params[key]);
-        fetchHttp(params[key],tabId);
+        url = params[key]
+        if(cache[url]===undefined) {
+          console.log("check guess type 2: "+url)
+          cache[url] = "INPROGRESS"
+          fetchHttp(url,tabId)
+        } else {
+          // console.log("NO check type 2: "+url)
+        }
       }
 
-      // var offdoc = document.createElement('html');
-      // offdoc.innerHTML = doc;
-      // var links = offdoc.getElementsByTagName('a');
-      // for(var i = 0; i< links.length; i++) {
-      //   var link = links[i].href;
+      let regex_imageapi = /(https:\/\/[^\"\>]+\/)[maxful0-9,!]+\/[maxful0-9,!]+\/[0-9\!]{1,4}\/default\.jpg/gm
+      allurls = [...doc.matchAll(regex_imageapi)]
+      params = []
+      for(let key in allurls) {
+        if(!params.includes(allurls[key][1])) {
+          params.push(allurls[key][1])
+        }
+      }
+      if(params.length>19) {
+        console.log("detektIIIF: limiting huge number of matches (case 3)") // FIXME do nice status in tab header, dont alert
+        params=params.slice(0,19)
+        tabStorage[tabId].truncated=true
+        saveLocalTabStorage()
+      }
+      for(let key in params) {
+        url = params[key]+"info.json"
+        if(cache[url]===undefined) {
+          console.log("check guess type 3: "+url)
+          cache[url] = "INPROGRESS"
+          fetchHttp(url,tabId)
+        } else {
+          // console.log("NO check type 3: "+url)
+        }
+      }
+
+      // var offdoc = document.createElement('html')
+      // offdoc.innerHTML = doc
+      // var links = offdoc.getElementsByTagName('a')
+      // for(var i = 0 i< links.length i++) {
+      //   var link = links[i].href
       //   if(link.includes("iiif")) {
-      //     console.log(link);
+      //     console.log(link)
       //   }
       // }
 
@@ -374,35 +452,41 @@ import { v4 } from 'uuid'
         // console.log({body:body})
         if(!body.hasOwnProperty("@context")) {
             console.log("NO @context")
-            cache[url]=false; // that's no IIIF, block by cache rule
-            return(false);
+            cache[url]=false // that's no IIIF, block by cache rule
+            return(false)
         }
 
-        var ctx = body["@context"].split("/");
-        // alert(JSON.stringify(ctx));
+        var ctx = body["@context"].split("/")
+        // alert(JSON.stringify(ctx))
 
-        if(ctx[2]!=="iiif.io" || ctx[3]!=="api") {
+        if(body["@context"]==="http://www.shared-canvas.org/ns/context.json") {
+          var iiif = {
+              api: "presentation",
+              version: "2"
+          }
+        } else if(ctx[2]!=="iiif.io" || ctx[3]!=="api") {
             console.log("NO iiif")
-            cache[url]=false; // again. no IIIF, block by cache rule
-            return false;
-        }
-
-        var iiif = {
-            api: ctx[4].toLowerCase(),
-            version: ctx[5].toLowerCase()
+            console.log({ctx:ctx})
+            cache[url]=false // again. no IIIF, block by cache rule
+            return false
+        } else {
+          var iiif = {
+              api: ctx[4].toLowerCase(),
+              version: ctx[5].toLowerCase()
+          }
         }
 
         if(body.hasOwnProperty("@type")) {
-            iiif.type=body["@type"].split(":")[1].toLowerCase();
+            iiif.type=body["@type"].split(":")[1].toLowerCase()
         } else {
           if(body.hasOwnProperty("type")) {
-              iiif.type=body["type"].toLowerCase();
+              iiif.type=body["type"].toLowerCase()
           } else {
             iiif.type=false
           }
         }
 
-        return(iiif);
+        return(iiif)
     }
 
     function updateAllIcons() {
@@ -467,12 +551,18 @@ import { v4 } from 'uuid'
 
           // hourglass unicode: '\u231b' (ugly)
 
+          // console.log({TSBADGE:tabStorage[tabId]})
+          // console.log("tabId: "+tabId)
+          // console.log("NM: "+Object.keys(tabStorage[tabId].iiif.manifests).length)
+          // console.log("NC: "+Object.keys(tabStorage[tabId].iiif.collections).length)
+          // console.log("NI: "+Object.keys(tabStorage[tabId].iiif.images).length)
+          // console.log("NUM: "+num)
 
           if(pending) {
-            // chrome.action.setBadgeText({text:'P',tabId:tabId});
+            // chrome.action.setBadgeText({text:'P',tabId:tabId})
             tabStorage[parseInt(tabId)].badgeText='P'
           } else {
-            // chrome.action.setBadgeText({text:num.toString(),tabId:tabId});
+            // chrome.action.setBadgeText({text:num.toString(),tabId:tabId})
             tabStorage[parseInt(tabId)].badgeText=num>0?num.toString():''
           }
 
@@ -503,7 +593,7 @@ import { v4 } from 'uuid'
                 parseInt(tabId),
                 () => {
                   if (chrome.runtime.lastError) {
-                    console.log(chrome.runtime.lastError.message);
+                    console.log(chrome.runtime.lastError.message)
                   } else {
                       setIcon(value,parseInt(tabId))
                       tabStorage[tabId].badgeDisplay=value
@@ -522,46 +612,51 @@ import { v4 } from 'uuid'
     function setIcon(value,tabId) {
       let mv = chrome.runtime.getManifest().manifest_version
       if(mv===3) {
-        chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
+        chrome.action.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId })
         if(typeof chrome.action.setBadgeTextColor === 'function' ) {
-          chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
+          chrome.action.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId })
         }
-        chrome.action.setBadgeText({text:value,tabId:tabId});
+        chrome.action.setBadgeText({text:value,tabId:tabId})
       } else {
-        chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId });
+        chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255],tabId:tabId })
         if(typeof chrome.browserAction.setBadgeTextColor === 'function' ) {
-          chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId });
+          chrome.browserAction.setBadgeTextColor({ color: [255, 255, 255, 255],tabId:tabId })
         }
-        chrome.browserAction.setBadgeText({text:value,tabId:tabId});
+        chrome.browserAction.setBadgeText({text:value,tabId:tabId})
       }
     }
 
     function filterURLs(url) { // returns true=block, false=accept
+        console.log("url: "+url)
+        console.log({cacheFromUrl:cache[url]})
         if(cache[url]===false) {
-            // console.log("IGNORED BY CACHE RULE: "+url);
-            return true;
+            console.log("IGNORED BY CACHE RULE: "+url)
+            return true
         } else if (cache.hasOwnProperty(url)) {
-            // console.log("ALLOWING URL BY CACHE: "+url);
-            return false;
+            console.log("ALLOWING URL BY CACHE: "+url)
+            return false
         }
 
         let filter = ignoreDomains
 
         // console.log("matching "+url)
-        var hostname = url.match(/^(https?\:)\/\/([^:\/]*)(.*)$/);
+        var hostname = url.match(/^(https?\:)\/\/([^:\/]*)\/(.*)$/)
         if(!hostname) {
-            // console.log("NO REGEX MATCH: "+url);
-            return true;
+            console.log("NO REGEX MATCH: "+url)
+            return true
         }
-        hostname = hostname[2].split('.');
-        hostname = hostname[hostname.length-2]+"."+hostname[hostname.length-1];
-        if(filter.includes(hostname)) {
-            // console.log("IGNORED BY HOSTNAME ("+hostname+"), SETTING CACHE RULE: "+url);
-            cache[url]=false;
-            return true;
+        hostname = hostname[2] // .split('.')
+        // hostname = hostname[hostname.length-2]+"."+hostname[hostname.length-1]
+        for(let key in filter) {
+          // console.log("CHECKING if "+filter[key]+" ends with "+hostname)
+          if(hostname.endsWith(filter[key])) {
+              console.log("IGNORED BY HOSTNAME ("+hostname+"), SETTING CACHE RULE: "+url)
+              cache[url]=false
+              return true
+          }
         }
-        // console.log("GOOD: "+url);
-        return false;
+        // console.log("GOOD: "+url)
+        return false
     }
 
 //
@@ -576,73 +671,81 @@ import { v4 } from 'uuid'
               console.log(tabStorage)
               //  send Info on current Tab
               response(Object.assign({},tabStorage[msg.tabId])) // ,{basket: basket}))
-              break;
+              break
           case 'docLoad':
-              console.log("DOC RECIEVED");
-              analyzeHTMLBody(msg.doc,msg.tabId);
-              break;
+              console.log("DOC RECIEVED")
+              // console.log(msg.doc)
+              if( typeof msg.doc === 'string' ) {
+                // console.log(msg.doc.indexOf('manifest'))
+                analyzeHTMLBody(msg.doc,msg.tabId)
+              }
+              break
+          case 'fetchHTML':
+              console.log("Getting iframe "+msg.url)
+              fetchHTML(msg.url,msg.tabId)
+              break
           // case 'basketUpd':
-          //     console.log("BASKET WAS UPDATED");
-          //     basket = msg.basket;
-          //     break;
+          //     console.log("BASKET WAS UPDATED")
+          //     basket = msg.basket
+          //     break
           default:
-              response('unknown request');
-              break;
+              response('unknown request')
+              break
       }
-  });
+  })
 
 
     chrome.webRequest.onHeadersReceived.addListener((details) => {
         // console.log("HEADERS RECVD")
         // console.log(details)
 
-        var { tabId, requestId, url, timeStamp, method } = details;
+        var { tabId, requestId, url, timeStamp, method } = details
 
         if(tabId===chrome.tabs.TAB_ID_NONE) {
-            return;
+            return
         }
 
-        // console.log("URL: "+url);
+        // console.log("URL: "+url)
 
-        // tabId = fixTabId(tabId);
+        // tabId = fixTabId(tabId)
 
         if(filterURLs(url)) {
-            return;
+            return
         }
 
         if (method!="GET") {
-            cache[url]=false;
-            return;
+            cache[url]=false
+            return
         }
 
-        var accepted = false;
-        var cors = false;
+        var accepted = false
+        var cors = false
 
         for (let index = 0; index < details.responseHeaders.length; index++) {
-            var item=details.responseHeaders[index];
+            var item=details.responseHeaders[index]
             if(
                 item.name.toLowerCase().includes("type") &&
                 item.value.toLowerCase().includes("json")
             ) {
-                accepted = true;
+                accepted = true
             }
             if(
                 item.name.toLowerCase().includes("access-control-allow-origin") &&
                 item.value.toLowerCase().includes("*".toUpperCase())
             ) {
-                cache_cors[url] = cors = true;
+                cache_cors[url] = cors = true
             }
             if(item.name=="Content-Length" && item.value>1000000) {
-                // console.log("discard(2) "+details.url);
-                accepted = false;
-                cache[url]=false;
-                return;
+                // console.log("discard(2) "+details.url)
+                accepted = false
+                cache[url]=false
+                return
             }
         }
 
         if (accepted==false) {
-            cache[url]=false;
-            return;
+            cache[url]=false
+            return
         }
 
         // tabStorage[tabId].requests[requestId] = {
@@ -651,7 +754,7 @@ import { v4 } from 'uuid'
         //     startTime: details.timeStamp,
         //     cors: cors,
         //     status: 'pending'
-        // };
+        // }
         updateInTabStorage(tabId,'addrequest',{
             requestId: requestId,
             url: details.url,
@@ -660,8 +763,8 @@ import { v4 } from 'uuid'
             status: 'pending'
         })
 
-        // console.log(tabStorage[tabId].requests[requestId]);
-    }, networkFilters, ["responseHeaders"]);
+        // console.log(tabStorage[tabId].requests[requestId])
+    }, networkFilters, ["responseHeaders"])
 
 
     chrome.webRequest.onCompleted.addListener((details) => {
@@ -684,107 +787,181 @@ import { v4 } from 'uuid'
       })
 
         if (!tabStorage.hasOwnProperty(tabId) || !tabStorage[tabId].requests.hasOwnProperty(requestId)) {
-            return;
+            return
         }
 
-        // console.debug("DETEKTIIIF CHECKING "+url);
+        // console.debug("DETEKTIIIF CHECKING "+url)
 
         if(cache.hasOwnProperty(url)) {
-            console.debug("DETEKTIIIF CACHE HIT: "+url);
+            console.debug("DETEKTIIIF CACHE HIT: "+url)
             if(cache[url]) {
-                compileData(url,tabId);
-                return;
+                compileData(url,tabId)
+                return
             }
         } else {
-            console.debug("DETEKTIIIF CACHE MISS: "+url);
-            fetchHttp(url,tabId);
+            console.debug("DETEKTIIIF CACHE MISS: "+url)
+            fetchHttp(url,tabId)
         }
-    }, networkFilters, ["responseHeaders"]);
+    }, networkFilters, ["responseHeaders"])
 
     function sendMsg(tabId) {
+      console.log("sendMsg")
       if(document===undefined) {
         console.log("NO DOCUMENT DEFINED")
         return
       }
+
       chrome.runtime.sendMessage(
         {type: 'docLoad', doc: document.documentElement.innerHTML, tabId: tabId}
       )
+
+      let container = document.documentElement || document.body
+
+      console.log({container:container})
+
+      let config = { attributes: true, childList: true, characterData: true, subtree:true }
+
+      console.log("< YES NEW OBSERVER YES >")
+      let observer = new MutationObserver(function(mutation) {
+          console.log("MUTATION event")
+          console.log({mutation:mutation})
+          chrome.runtime.sendMessage(
+            {type: 'docLoad', doc: document.documentElement.innerHTML, tabId: tabId}
+          )
+      })
+      observer.observe(container, config)
+
+      // let iframes = Array.from(document.getElementsByTagName("iframe"))
+      // // let ifobservers = []
+      // for(let key in iframes) {
+      //   if(filterURLs(iframes[key].src)===false) {
+      //     chrome.runtime.sendMessage(
+      //       {type: 'fetchHTML', url: iframes[key].src, tabId: tabId}
+      //     )
+      //   }
+      //
+      //   // ifobservers[key] = new MutationObserver(function(mutation) {
+      //   //     console.log("CCC")
+      //   //     console.log(mutation)
+      //   //     // chrome.runtime.sendMessage(
+      //   //     //   {type: 'docLoad', doc: iframes[key].document.documentElement.innerHTML, tabId: tabId}
+      //   //     // )
+      //   // })
+      //   // console.log("key: "+key)
+      //   // console.log({iframe:iframes[key]})
+      //   // ifobservers[key].observe(iframes[key].contentWindow.body,config)
+      // }
+
     }
 
-    chrome.tabs.onUpdated.addListener((tabId,changeInfo,tab) => {
-        console.log("UPDATE TAB "+tabId)
+    function getAndObserve(tabId) {
+      let mv = chrome.runtime.getManifest().manifest_version
 
-        if(changeInfo.status === 'complete') {
-
-          // console.log(changeInfo)
-
-          if(!tab.url.startsWith('http')) {
-            // console.log("Ignoring non-http")
-            return
-          }
-
-          let mv = chrome.runtime.getManifest().manifest_version
-
+          console.log("MV is " + mv)
           if(mv===3) {
+            console.log("EXEC SCRIPT")
             chrome.scripting.executeScript({
                 target: {tabId: parseInt(tabId)},
                 func: sendMsg,
                 args: [tabId]
-              },null
+              }, () => {
+                console.log("What the fish?")
+                if(chrome.runtime.lastError) {
+                  console.log("Whoops.. " + chrome.runtime.lastError.message)
+                } else {
+                }
+              }
             )
+
           } else {
               console.log("chrome.tabs.executeScript")
               chrome.tabs.executeScript({
-                code: "chrome.runtime.sendMessage({type: 'docLoad', doc: document.documentElement.innerHTML, tabId:"+tabId+"});" // or 'file: "getPagesSource.js"'
+                code:
+                  this.sendMsg.toString()
+                  + ```
+                    sendMsg(${tabId})
+                  ```// or 'file: "getPagesSource.js"'
               }, function(result) {
                 if (chrome.runtime.lastError) {
-                  console.log("tabs.executeScript: "+chrome.runtime.lastError.message);
+                  console.log("tabs.executeScript: "+chrome.runtime.lastError.message)
                 } else {
                   console.log(result)
                 }
               })
           }
 
-        }
+    }
 
-        if(!changeInfo.url) {
-            console.log("NO URL INFO")
-            console.log(changeInfo)
-            return;
-        }
+    chrome.tabs.onUpdated.addListener((tabId,changeInfo,tab) => {
+        console.log("UPDATE TAB "+tabId)
+        console.log(changeInfo)
 
-        // alert("UPDATE");
         if(tabId==chrome.tabs.TAB_ID_NONE) {
-            return;
+          console.log("chrome.tabs.onUpdated: called on none-tab")
+          return
         }
-        // activeTab=tabId;
-        // tabStorage[tabId] = null;
-        console.log("initTabStorage from chrome.tabs.onUpdated.addListener")
-        initTabStorage(tabId);
-        console.log("onUpdated")
-        updateIcon(tabId)
-    });
+
+        if((typeof tab.url === 'string') && (!tab.url.startsWith('http'))) {
+          return
+        }
+
+        // if(changeInfo.url) {
+        //   if(tabStorage[tabId].url!==changeInfo.url) {
+        //     tabStorage[tabId].url = changeInfo.url
+        //     initTabStorage(tabId)
+        //   }
+        // }
+
+        if(tabStorage[tabId]!==undefined) {
+          tabStorage[tabId].badgeDisplay = ''
+        }
+
+        if(typeof tab.url === 'string') {
+          let regex = /(https:\/\/[^\"\>]+\/)[maxful0-9,!]+\/[maxful0-9,!]+\/[0-9\!]{1,4}\/default\.jpg/gm
+          let matches = tab.url.matchAll(regex)
+          matches = [...matches]
+          if(matches!==null && matches.length>0) {
+            console.log({matches:matches})
+            fetchHttp(matches[0][1]+"info.json",tabId)
+          }
+        }
+
+        // if(filterURLs(tab.url)) {
+        //   console.log("chrome.tabs.onUpdated: filtered URL "+tab.url)
+        //   return
+        // }
+
+        if(changeInfo.status==='complete' || true) {
+          console.log(tab)
+          if(!filterURLs(tab.url)) {
+            getAndObserve(tabId)
+          }
+          updateIcon(tabId)
+        }
+    })
+
+    //
 
     chrome.tabs.onActivated.addListener((tabInfo) => {
         console.log({activatedTab:tabInfo})
 
         if(!tabInfo) {
           console.log("No tab, returning.")
-          return;
+          return
         }
 
-        const tabId = tabInfo.tabId;
+        const tabId = tabInfo.tabId
         if(tabId===chrome.tabs.TAB_ID_NONE) {
             console.log("TAB_ID_NONE, returning.")
-            return;
+            return
         }
 
           console.log("ACTIVE TAB is "+tabId)
           console.log({tabStoragebytabid:tabStorage[tabId]})
 
-          if(! (tabId in tabStorage)) {
+          if(tabStorage[tabId]===undefined) {
               console.log("NO INFO about "+tabId+" resetting tabStorage")
-              initTabStorage(tabId);
+              initTabStorage(tabId)
           }
           console.log("onActivated")
           updateIcon(tabId)
@@ -818,30 +995,30 @@ import { v4 } from 'uuid'
           } catch {
             console.log("Couldn't get Tab "+tabId)
           }
-    });
+    })
 
     chrome.tabs.onReplaced.addListener((newTabId,oldTabId) => {
       console.log("onReplaced from:"+oldTabId+" to:"+newTabId)
       tabStorage[newTabId] = JSON.parse(JSON.stringify(tabStorage[oldTabId]))
       delete tabStorage[oldTabId]
       saveLocalTabStorage()
-    });
+    })
 
     chrome.tabs.onRemoved.addListener((tabId) => {
       console.log("REM "+tabId)
-      if(tabId==chrome.tabs.TAB_ID_NONE) {
+      if(tabId===chrome.tabs.TAB_ID_NONE) {
           console.log("NO REM 1 "+tabId)
-          return;
+          return
       }
 
       if (!tabStorage.hasOwnProperty(tabId)) {
           console.log("NO REM 2 "+tabId)
-          return;
+          return
       }
       console.log("REMOVING "+tabId)
       delete tabStorage[tabId]
       saveLocalTabStorage()
-    });
+    })
 
     chrome.storage.onChanged.addListener( (changes, namespace) => {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
@@ -857,9 +1034,9 @@ import { v4 } from 'uuid'
         // console.log(
         //   `Storage key "${key}" in namespace "${namespace}" changed.`,
         //   `Old value was "${oldValue}", new value is "${newValue}".`
-        // );
+        // )
       }
-    });
+    })
 
     ignoreDomains = globalDefaults.ignoreDomains
     chrome.storage.local.get('ignoreDomains', function(data) {
@@ -871,4 +1048,4 @@ import { v4 } from 'uuid'
 
     eternalIconUpdateLoop()
 
-}());
+}())

@@ -25,6 +25,7 @@ In this file:
   height: 600px;
   font-size: 14px;
   overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 .OptionsBody {
