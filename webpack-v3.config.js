@@ -25,8 +25,7 @@ var fileExtensions = [
   'svg',
   'ttf',
   'woff',
-  'woff2',
-  'txt'
+  'woff2'
 ];
 
 if (fileSystem.existsSync(secretsPath)) {
