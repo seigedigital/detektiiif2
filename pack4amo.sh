@@ -13,5 +13,7 @@ else
   varname=$(jq -r .name src/themes/manifest.json | tr ' ' '_')
   NODE_ENV=production
   npm run "buildv$varmanversion"
-  (cd build/ ; zip -r "../$1/$varname-$varversion-M$varmanversion-forAMO-build-$(date +%s).zip" ./ )
+  zeit=$(date +%s)
+  (cd build/ ; zip -r "../$1/$varname-$varversion-M$varmanversion-forAMO-build-$zeit.zip" ./ )
+  tar --exclude './node_modules' --exclude './build' --exclude './.git' -cvzf "$1/$varname-$varversion-M$varmanversion-forAMO-source-$zeit.tar.gz" ./
 fi

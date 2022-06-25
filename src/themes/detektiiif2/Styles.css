@@ -9,6 +9,12 @@ In this file:
 
 */
 
+:root {
+--d2-red: #ff00ffff;
+--d2-green: #00ff00ff;
+--d2-blue: #00ffffff;
+--d2-yellow: #ffff00ff;
+}
 
 /* layout */
 
@@ -19,6 +25,7 @@ In this file:
   height: 600px;
   font-size: 14px;
   overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 .OptionsBody {
@@ -132,8 +139,8 @@ In this file:
 
 .ButtonAddToBasket {
   border-radius:8px;
-  background-color: #208020;
-  color: white;
+  background-color: var(--d2-green);
+  color: black;
   border: none;
   padding: 4px 8px 4px 8px;
 }
@@ -141,7 +148,7 @@ In this file:
 .ButtonClearBasket,
 .ButtonRemoveFromBasket {
   border-radius:8px;
-  background-color: #ff2020;
+  background-color: var(--d2-red);
   color: white;
   border: none;
   padding: 4px 8px 4px 8px;
@@ -150,8 +157,8 @@ In this file:
 .ButtonCopyBasket,
 .ButtonCopyURL {
   border-radius:8px;
-  background-color: #ff8020;
-  color: white;
+  background-color: var(--d2-blue);
+  color: black;
   border: none;
   padding: 4px 8px 4px 8px;
 }
@@ -189,7 +196,7 @@ In this file:
   grid-row: 1;
   grid-column: 1;
   width:100px;
-  background-color: #eee;
+  background-color: #ccc;
   border:0px solid #ccc;
   display: grid;
 }
@@ -206,6 +213,7 @@ In this file:
   grid-row: 1;
   grid-column: 2;
   height:100px;
+  line-height: 22px;
 }
 
 #Options-Container {
@@ -229,6 +237,14 @@ In this file:
 
 .optionsFloatRight {
   margin-left: auto;
+}
+
+.CollectionImage {
+  margin: auto;
+  font-size: 48px;
+  font-weight: bolder;
+  padding-bottom: 12px;
+  color: white;
 }
 
 /* generic elements */
@@ -270,7 +286,7 @@ button {
     white-space: nowrap; /* forces text to single line */
     overflow: hidden;
     text-overflow: ellipsis;
-    width:400px;
+    width:380px;
 }
 
 .Quality-Chip {

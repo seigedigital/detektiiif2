@@ -32,7 +32,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import Snackbar from '@mui/material/Snackbar';
 
-import {version as detektIIIFVersion} from '../../../package.json'
+import packageJson from '../../../package.json'
 
 import { v4 } from 'uuid'
 import { v5 } from 'uuid'
@@ -86,7 +86,7 @@ class Popup extends Component {
               openManifestLinks: Object.assign({},this.theme.openManifestLinks),
               viewManifestInfo: Object.assign({},this.theme.viewManifestInfo)
             },
-            tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket
+            tab: 0, // 0=Manifests 1=Images 2=Collections 3=Basket 4=About
             remDialog: false,
             remKey: null,
             snackOpen: false,
@@ -117,10 +117,10 @@ class Popup extends Component {
               this.setState({settings:Object.assign({},this.state.settings,{openManifestLinks:newValue})})
             }
 
-            console.log(
-              `Storage key "${key}" in namespace "${namespace}" changed.`,
-              `Old value was "${oldValue}", new value is "${newValue}".`
-            );
+            // console.log(
+            //   `Storage key "${key}" in namespace "${namespace}" changed.`,
+            //   `Old value was "${oldValue}", new value is "${newValue}".`
+            // )
           }
         });
     }
@@ -178,6 +178,18 @@ class Popup extends Component {
         this.getDataFromLocalStorage()
         this.loadBasket()
         this.loadSettings()
+
+        if(Object.keys(this.state.manifests).length>0) {
+          this.setState({tab:0})
+        } else if(Object.keys(this.state.images).length>0) {
+          this.setState({tab:1})
+        } else if(Object.keys(this.state.collections).length>0) {
+          this.setState({tab:2})
+        } else if(Object.keys(this.state.basket).length>0) {
+          this.setState({tab:3})
+        } else {
+          this.setState({tab:0})
+        }
     }
 
     copyUrl(url) {
@@ -261,11 +273,8 @@ class Popup extends Component {
     removeOperation() {
       let newbasket = {}
       if(this.state.remKey!==null) {
-        console.log("removing from basket: "+this.state.remKey)
         newbasket = Object.assign(this.state.basket)
-        console.log({before:newbasket})
         delete newbasket[this.state.remKey]
-        console.log({after:newbasket})
       } else {
         console.log("NOT??? removing from basket: "+this.state.remKey)
       }
@@ -279,7 +288,7 @@ class Popup extends Component {
             "@context": "http://iiif.io/api/presentation/2/context.json",
             "@id": "https://detektiiif.manducus.net/invalide",
             "@type": "sc:Collection",
-            "label": "detektIIIF Collection",
+            "label": "detektIIIF2 Collection",
             "manifests": []
       }
       for (var key in basket) {
@@ -356,6 +365,8 @@ class Popup extends Component {
                   cors = { this.state.collections[key].cors }
                   error = { this.state.collections[key].error }
                   copyUrl = {this.copyUrl.bind(this)}
+                  settings = {this.state.settings}
+                  theme = {this.theme}
               />)
           }
         } else {
@@ -375,7 +386,10 @@ class Popup extends Component {
                   url = { this.state.images[key].url }
                   cors = { this.state.images[key].cors }
                   error = { this.state.images[key].error }
+                  version = { this.state.images[key].version }
                   copyUrl = {this.copyUrl.bind(this)}
+                  settings = {this.state.settings}
+                  theme = {this.theme}
               />)
           }
         } else {
@@ -404,7 +418,7 @@ class Popup extends Component {
               />)
           }
         } else {
-          bs = "Basket is empty."
+          bs = this.theme.basketName + " is empty."
         }
 
         // alert("APP "+JSON.stringify(this.state.manifests))
@@ -423,10 +437,10 @@ class Popup extends Component {
           outputContent.push(
             <div key={"TABBOX2"}>
               <Tabs value={this.state.tab} onChange={(e,v)=>{this.setState({tab:v})}} aria-label="basic tabs example">
-                <Tab label="Manifests" value={0} {...a11yProps(0)} key={"TAB0"} />
-                <Tab label="Images" value={1} {...a11yProps(1)} key={"TAB1"} />
-                <Tab label="Collections" value={2}  {...a11yProps(2)} key={"TAB2"} />
-                <Tab label={`Basket (${bnn})`} value={3} {...a11yProps(3)} key={"TAB3"} />
+                <Tab label={"Manifests"+(mnn>0?` (${mnn})`:``)} value={0} {...a11yProps(0)} key={"TAB0"} />
+                <Tab label={"Images"+(inn>0?` (${inn})`:``)} value={1} {...a11yProps(1)} key={"TAB1"} />
+                <Tab label={"Collections"+(cnn>0?` (${cnn})`:``)} value={2}  {...a11yProps(2)} key={"TAB2"} />
+                <Tab label={`${this.theme.basketName}`+(bnn>0?` (${bnn})`:``)} value={3} {...a11yProps(3)} key={"TAB3"} />
                 <Tab label="About" value={4} {...a11yProps(4)} key={"TAB4"} />
               </Tabs>
             </div>
@@ -448,7 +462,7 @@ class Popup extends Component {
                   <PostButton
                     lang="en"
                     link={this.state.settings.postBasketCollectionTo[key]}
-                    theme={this.props.theme}
+                    theme={this.theme}
                     key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                     basket={this.state.basket}
                     buildBasketCollection={this.buildBasketCollection}
@@ -462,6 +476,7 @@ class Popup extends Component {
               </TabPanel>
               <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
                 {this.theme.about}
+                {'detektIIIF2 Version '}{this.softwareVersion}{' / Theme Version '}{this.themeVersion}
               </TabPanel>
             </div>
           )
@@ -476,20 +491,20 @@ class Popup extends Component {
               // subHeaderContent.push(<div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}></div>)
               break
             case 3:
-              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">Basket ({bnn})</h3>)
+              subHeaderContent.push(<h3 key={'TABB'} className="SubHeaderHeading">{this.theme.basketName} ({bnn})</h3>)
               subHeaderContent.push(
                 <div className="SubHeaderButtons" key={"SUBHEADERBUTTONS"}>
+                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
                   {Object.keys(this.state.settings.postBasketCollectionTo).map(key =>
                     <PostButton
                       lang="en"
                       link={this.state.settings.postBasketCollectionTo[key]}
-                      theme={this.props.theme}
+                      theme={this.theme}
                       key={`postbutton-${v5(this.state.settings.postBasketCollectionTo[key].url+key,'1b671a64-40d5-491e-99b0-d37347111f20')}`}
                       basket={this.state.basket}
                       buildBasketCollection={this.buildBasketCollection}
                     />
                   )}
-                  <button onClick={() => this.copyBasketCollection()} className="ButtonCopyBasket" key={"COPYBASKETCOLLECTION"}>Copy Collection (JSON)</button>
                   <Tooltip title="Remove all manifests">
                     {
                       this.theme.removeAllBasketImage===null ?
@@ -522,14 +537,15 @@ class Popup extends Component {
                   {bs}
                 </TabPanel>
                 <TabPanel value={this.state.tab} index={4} key={"TABPANEL4"}>
-                  {this.theme.about}
+                  {this.theme.about}<br />
+                  {'detektIIIF2 '}{this.softwareVersion}{' / Theme'}{this.themeVersion}
                 </TabPanel>
             </div>
           )
         }
 
         this.themeVersion = chrome.runtime.getManifest().version
-        this.softwareVersion = detektIIIFVersion
+        this.softwareVersion = packageJson.version
 
         let header = null
         if(this.theme.logoImageBig) {
@@ -541,10 +557,12 @@ class Popup extends Component {
         } else {
           header= <div className="App-header" key={'App-header-0'}>
                     <h2 className="App-title" key={v4()}>{this.theme.title}<img src={this.theme.logoImage} className="Logo-image" /></h2>
-                    <small className="version" key={v4()}>{chrome.runtime.getManifest().version}</small>
+                    <small className="version" key={v4()}></small>
                     { this.theme.logoSecondaryImageBig ? <img src={this.theme.logoSecondaryImageBig} alt={this.theme.title} className="Logo-image-Secondary-Big" /> : null }
                   </div>
         }
+
+        console.log({Theme:this.theme})
 
         return(
           <div className="App" key={"App"}>
@@ -552,9 +570,9 @@ class Popup extends Component {
             <div className="App-subheader" key={'App-subheader-0'}>
               {subHeaderContent}
               <div className="BasketIcon" style={{display:(this.defaults.tabs===true?'none':'block')}} key={v4()}  >
-                <Tooltip title={this.state.tab===0 ? "Open basket." : "Close basket."}>
+                <Tooltip title={this.state.tab===0 ? ("Open "+this.theme.basketName) : ("Close "+this.theme.basketName)}>
                 <IconButton color="primary"
-                  aria-label="Basket"
+                  aria-label={this.theme.basketName}
                   component="span"
                   onClick={ () => {
                     this.setState({tab: this.state.tab!==0?0:3 })
@@ -590,12 +608,7 @@ class Popup extends Component {
 
             <Dialog open={this.state.remDialog}>
               <DialogTitle id="alert-dialog-title">
-                {
-                  this.state.remKey===null?
-                  "Remove all items from basket?"
-                  :
-                  "Remove this item from the basket?"
-                }
+                {this.state.remKey===null?"Remove all items?":"Remove this item?"}
               </DialogTitle>
               <DialogContent>
                 <DialogContentText>

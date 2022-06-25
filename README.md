@@ -1,11 +1,18 @@
-# DetektIIIF 2
+![](src/themes/detektiiif2/images/logo-2048.png)
 
-Completely new revamped Version of DetektIIIF (Version 1: https://github.com/leanderseige/detektiiif)
+# detektIIIF2
 
-derived from https://github.com/lxieyang/chrome-extension-boilerplate-react
+detektIIIF is a browser extension for Chrome and Firefox that detects IIIF resources in websites. It is possible to collect IIIF manifests in a basket and send them to any compatible IIIF application. detektIIIF is extensively configurable and can be customized with individual themes. The browser extension also checks for the presence of various interoperability features (CORS, SSL, etc.) and displays warnings if necessary.
 
+This code is considered to be in beta state. __Important steps: splitting code into components and reducing redundancy and incompleteness of quickly written code.__
 
-## Usage
+This is the current version of detektIIIF2 (Version 1: https://github.com/leanderseige/detektiiif)
+
+If you don't want to work with the source code you may install detektIIIF2 from the Chrome Web Store: https://chrome.google.com/webstore/detail/detektiiif-2/aaodcobgcadinjipaocibamdfcffpcpp
+
+## Source Code
+
+used boilerplate: https://github.com/lxieyang/chrome-extension-boilerplate-react
 
 ### Install basics:
 * clone this repo ```git clone https://github.com/seigedigital/detektiiif2```
@@ -60,12 +67,16 @@ Don't forget to keep v2 and v3 manifest files both up to date, e.g. the version 
 
 ## Version numbering
 
-Recommendation: set the version number in ```package.json``` as well as in all ```manifest-v*.json``` of your theme to the same value.
+Beware! We distinguish the version number of detektiiif2 from the version number of the theme:
+
+Set the version of detektiiif2 number in the ```package.json``` file
+
+Set the version number of the theme in both ```manifest-v*.json``` files
 
 ## Packaging for the Chrome Web Store
 
-* switch to version 3 and execute the shellscript ```./pack4cws.sh```
+* switch to manifest version 3 and execute the shellscript ```./pack4cws.sh```
 
 ## Packaging for the Mozilla Firefox AMO
 
-* switch to version 2 and execute the shellscript ```./pack4amo.sh```
+* switch to manifest version 2 and execute the shellscript ```./pack4amo.sh```

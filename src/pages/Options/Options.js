@@ -18,6 +18,8 @@ import ManifestViewers from './components/ManifestViewers.js'
 import CollectionViewers from './components/CollectionViewers.js'
 import IgnoreDomains from './components/IgnoreDomains.js'
 
+import packageJson from '../../../package.json'
+
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 class Options extends Component {
@@ -36,6 +38,9 @@ class Options extends Component {
     this.state = {
     }
 
+    this.themeVersion = chrome.runtime.getManifest().version
+    this.softwareVersion = packageJson.version
+
     chrome.storage.onChanged.addListener( (changes, namespace) => {
       for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
 
@@ -43,10 +48,10 @@ class Options extends Component {
           this.setState({showUrl:newValue})
         }
 
-        console.log(
-          `Storage key "${key}" in namespace "${namespace}" changed.`,
-          `Old value was "${oldValue}", new value is "${newValue}".`
-        );
+        // console.log(
+        //   `Storage key "${key}" in namespace "${namespace}" changed.`,
+        //   `Old value was "${oldValue}", new value is "${newValue}".`
+        // )
       }
     });
 
@@ -59,7 +64,7 @@ class Options extends Component {
 
   render() {
 
-    console.log({render_opts_with_state:this.state})
+    // console.log({render_opts_with_state:this.state})
 
     return (
       <span>
@@ -75,7 +80,8 @@ class Options extends Component {
           }
           { this.theme.optionsSecondaryLogoImage ? <img src={this.theme.optionsSecondaryLogoImage} alt={this.theme.title} className="optionsSecondaryLogoImage" /> : null }
         </div>
-        <p>Version: {chrome.runtime.getManifest().version}</p>
+        <p>Version detektIIIF: {this.softwareVersion}</p>
+        <p>Version Theme: {this.themeVersion}</p>
 
         <h2>Description</h2>
 

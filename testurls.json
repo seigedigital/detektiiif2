@@ -1,0 +1,33 @@
+[
+  {
+    url: "https://digital.deutsches-museum.de/en/digital-catalogue/collection-object/2001-1198T3/",
+    manifests: 0,
+    images: 1,
+    collections: 0
+  },
+  {
+    url: "https://emakimono.iiif.cloud/manifests/0105/emakimono1",
+    manifests: 1,
+    images: 0,
+    collections: 0
+  },
+  {
+    url: "https://emakimono.iiif.cloud/collections/0105/all/collection.json",
+    manifests: 0,
+    images: 0,
+    collections: 1
+  },
+  {
+    url: "https://www.e-rara.ch/bes_1/content/titleinfo/20150223",
+    manifests: 1,
+    images: 0,
+    collections: 0
+  },
+  {
+    url: "https://mirador-dev.netlify.app/__tests__/integration/mirador/",
+    manifests: 11,
+    images: 2,
+    collections: 1
+  }
+
+]
