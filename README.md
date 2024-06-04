@@ -1,4 +1,6 @@
-![](src/themes/detektiiif2/images/logo-2048.png)
+# THIS IS OUTDATED, GO TO https://github.com/seigedigital/detektiiif3 for the latest Version of detektIIIF!
+
+
 
 # detektIIIF2
 
